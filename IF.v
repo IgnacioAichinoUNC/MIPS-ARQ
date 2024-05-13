@@ -9,7 +9,7 @@ module IF #(
 	input 	wire 		    		i_step,
     input 	wire 			    	i_reset,
 	input   wire                    hazard_pc_write,
-	input   wire    [BITS_SIZE-1:0] i_instrucction_address,
+	input   wire    [BITS_SIZE-1:0] i_instruction_address,
 	input   wire    [BITS_SIZE-1:0] i_instruction,
 	input   wire                    i_flag_write_intruc,
 	input   wire                    i_is_jump,
@@ -48,7 +48,7 @@ module IF #(
         .o_pc_8             (o_IF_PC8)
     );
     
-    memory_instrucc
+    memory_instruc
     #(
         .SIZE_ADDR_PC       (BITS_SIZE),
         .TOTAL_SIZE         (SIZE_TOTAL)
@@ -59,7 +59,7 @@ module IF #(
         .i_reset                (i_reset),
         .i_step                 (i_step),
         .i_pc                   (wire_o_IF_PC),
-        .i_instrucction_address (i_instrucction_address),
+        .i_instruction_address  (i_instruction_address),
         .i_instruction          (i_instruction),
         .i_flag_write_intruc    (i_flag_write_intruc),
         .o_instruction          (o_instruction)

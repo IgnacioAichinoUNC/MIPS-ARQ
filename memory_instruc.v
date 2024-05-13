@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module memory_instrucc
+module memory_instruc
     #(
         parameter SIZE_ADDR_PC      = 32,
         parameter TOTAL_SIZE        = 256
@@ -10,7 +10,7 @@ module memory_instrucc
         input   wire                            i_reset,
         input   wire                            i_step,
         input   wire    [SIZE_ADDR_PC-1    :0]  i_pc,
-        input   wire    [SIZE_ADDR_PC-1    :0]  i_instrucction_address,
+        input   wire    [SIZE_ADDR_PC-1    :0]  i_instruction_address,
         input   wire    [SIZE_ADDR_PC-1    :0]  i_instruction,
         input   wire                            i_flag_write_intruc,
         output  reg     [SIZE_ADDR_PC-1    :0]  o_instruction   
@@ -35,7 +35,7 @@ module memory_instrucc
     end
 
     always @(posedge i_flag_write_intruc) begin
-            reg_memory[i_instrucction_address] <= i_instruction; 
+            reg_memory[i_instruction_address] <= i_instruction; 
     end
 
 endmodule
