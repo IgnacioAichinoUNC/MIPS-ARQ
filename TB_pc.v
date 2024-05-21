@@ -4,7 +4,7 @@
 
 module TB_pc();
 
-    localparam     SIZE_ADDR_PC    = 32,    
+    localparam     SIZE_ADDR_PC    = 32;
 
     reg                            i_clk;
     reg                            i_reset; 
