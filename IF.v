@@ -8,7 +8,7 @@ module IF #(
 	input 	wire 					i_clk,
 	input 	wire 		    		i_step,
     input 	wire 			    	i_reset,
-	input   wire                    hazard_pc_write,
+	input   wire                    i_hazard_pc_write,
 	input   wire    [BITS_SIZE-1:0] i_instruction_address,
 	input   wire    [BITS_SIZE-1:0] i_instruction,
 	input   wire                    i_flag_write_intruc,
@@ -31,6 +31,7 @@ module IF #(
 
     assign o_IF_PC  = wire_o_IF_PC;
     assign o_IF_PC4 = wire_o_IF_PC4;
+    assign o_IF_PC8 = wire_o_IF_PC8;
 
     pc
    #(
@@ -45,7 +46,7 @@ module IF #(
         .i_pc_write         (hazard_pc_write),
         .o_pc               (wire_o_IF_PC),
         .o_pc_4             (wire_o_IF_PC4),
-        .o_pc_8             (o_IF_PC8)
+        .o_pc_8             (wire_o_IF_PC8)
     );
     
     memory_instruc
