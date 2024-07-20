@@ -9,210 +9,215 @@ module IDEX
         //GeneralInputs
         input   wire                        i_clk,
         input   wire                        i_reset,
-        input   wire                        i_Flush,
-        input   wire    [BITS_SIZE-1:0]         i_pc8,
         input   wire                        i_step,
-        input   wire    [BITS_SIZE-1:0]         i_pc4,
-        input   wire    [BITS_SIZE-1:0]         i_Instruction,
-        input   wire    [BITS_SIZE-1:0]         i_Reg1, // dato leido 1
-        input   wire    [BITS_SIZE-1:0]         i_Reg2, // dato leido 2
-        input   wire    [BITS_SIZE-1:0]         i_extension,
-        input   wire    [BITS_REGS-1:0]        i_rt,
-        input   wire    [BITS_REGS-1:0]        i_Rd,
-        input   wire    [BITS_REGS-1:0]        i_rs,
-        input   wire    [BITS_SIZE-1:0]         i_DJump,
-        ///ControlEX
-        input   wire                        i_ALUSrc,
-        input   wire    [1:0]               i_ALUOp,
-        input   wire                        i_RegDst,
-        input   wire                        i_Jump,
-        input   wire                        i_JAL,
-        ///ControlM
-        input   wire                        i_Branch,
-        input   wire                        i_NBranch,
-        input   wire                        i_MemWrite,
-        input   wire                        i_MemRead ,
-        input   wire    [1:0]               i_TamanoFiltro,
-        ///ControlWB
-        input   wire                        i_MemToReg,
-        input   wire                        i_RegWrite,
-        input   wire    [1:0]               i_TamanoFiltroL,
-        input   wire                        i_ZeroExtend,
-        input   wire                        i_LUI,
-        input   wire                        i_JALR,
-        input   wire                        i_HALT,
+        input   wire                        i_flush_latch,
+        input   wire    [BITS_SIZE-1:0]     i_pc4,
+        input   wire    [BITS_SIZE-1:0]     i_pc8,
+        input   wire    [BITS_SIZE-1:0]     i_instruction,
 
-        output  wire    [BITS_SIZE-1:0]      o_pc4,
-        output  wire    [BITS_SIZE-1:0]      o_pc8,
-        output  wire    [BITS_SIZE-1:0]      o_instruction,
-        output  wire    [BITS_SIZE-1:0]      o_Registro1,
-        output  wire    [BITS_SIZE-1:0]      o_Registro2,
-        output  wire    [BITS_SIZE-1:0]      o_Extension,
-        output  wire    [BITS_REGS-1:0]     o_Rs,
-        output  wire    [BITS_REGS-1:0]     o_Rt,
-        output  wire    [BITS_REGS-1:0]     o_Rd,
-        output  wire    [BITS_SIZE-1:0]      o_DJump,
+        input   wire    [BITS_SIZE-1:0]     i_data_rs, // dato leido 1
+        input   wire    [BITS_SIZE-1:0]     i_register_data_2, // dato leido 2
+        input   wire    [BITS_SIZE-1:0]     i_extension,
+        input   wire    [BITS_REGS-1:0]     i_rt,
+        input   wire    [BITS_REGS-1:0]     i_rd,
+        input   wire    [BITS_REGS-1:0]     i_rs,
+        input   wire    [BITS_SIZE-1:0]     i_DJump,
+        
         ///ControlEX
-        output  wire                      o_Jump,
-        output  wire                      o_JAL,
-        output  wire                      o_ALUSrc,
-        output  wire    [1:0]             o_ALUOp,
-        output  wire                      o_RegDst,
+        input   wire                        i_reg_dst_rd,
+        input   wire                        i_jump,
+        input   wire                        i_jal,
+        input   wire                        i_alu_src,
+        input   wire    [1:0]               i_alu_op,
         ///ControlM
-        output  wire                        o_Branch,
-        output  wire                        o_NBranch,
-        output  wire                        o_MemWrite,
-        output  wire                        o_MemRead ,
-        output  wire    [1:0]               o_TamanoFiltro,
+        input   wire                        i_branch,
+        input   wire                        i_new_branch,
+        input   wire                        i_mem_write,
+        input   wire                        i_mem_read ,
+        input   wire    [1:0]               i_size_filter,
         ///ControlWB
-        output  wire                        o_MemToReg,
-        output  wire                        o_RegWrite,
-        output  wire   [1:0]                o_TamanoFiltroL ,
-        output  wire                        o_ZeroExtend,
-        output  wire                        o_LUI ,
-        output  wire                        o_JALR,
-        output  wire                        o_HALT
+        input   wire                        i_mem_to_reg,
+        input   wire                        i_reg_write,
+        input   wire    [1:0]               i_size_filterL,
+        input   wire                        i_zero_extend,
+        input   wire                        i_lui,
+        input   wire                        i_jalR,
+        input   wire                        i_halt,
+
+        output  wire    [BITS_SIZE-1:0]     o_pc4,
+        output  wire    [BITS_SIZE-1:0]     o_pc8,
+        output  wire    [BITS_SIZE-1:0]     o_instruction,
+        output  wire    [BITS_SIZE-1:0]     o_register_1,
+        output  wire    [BITS_SIZE-1:0]     o_register_2,
+        output  wire    [BITS_SIZE-1:0]     o_extension,
+        output  wire    [BITS_REGS-1:0]     o_rs,
+        output  wire    [BITS_REGS-1:0]     o_rt,
+        output  wire    [BITS_REGS-1:0]     o_rd,
+        output  wire    [BITS_SIZE-1:0]     o_DJump,
+        ///Control
+        output  wire                        o_jump,
+        output  wire                        o_jal,
+        output  wire                        o_alu_src,
+        output  wire    [1:0]               o_alu_op,
+        output  wire                        o_register_rd_dst,
+        ///ControlM
+        output  wire                        o_branch,
+        output  wire                        o_new_branch,
+        output  wire                        o_mem_write,
+        output  wire                        o_mem_read ,
+        output  wire    [1:0]               o_size_filter,
+        ///ControlWB
+        output  wire                        o_mem_to_reg,
+        output  wire                        o_register_write,
+        output  wire    [1:0]               o_size_filterL,
+        output  wire                        o_zero_extend,
+        output  wire                        o_lui ,
+        output  wire                        o_jalR,
+        output  wire                        o_halt
     );
 
-    reg     [BITS_SIZE-1:0] PC4_reg;
-    reg     [BITS_SIZE-1:0] PC8_reg;
-    reg     [BITS_SIZE-1:0] Instruction_reg;
-    reg     [BITS_SIZE-1:0] Registro1_reg;
-    reg     [BITS_SIZE-1:0] Registro2_reg;
-    reg     [BITS_SIZE-1:0] Extension_reg;
-    reg     [BITS_REGS-1:0] Rs_reg;
-    reg     [BITS_REGS-1:0] Rt_reg;
-    reg     [BITS_REGS-1:0] Rd_reg;
-    reg     [BITS_SIZE-1:0] DJump_reg;
+    reg     [BITS_SIZE-1:0] reg_PC4;
+    reg     [BITS_SIZE-1:0] reg_PC8;
+    reg     [BITS_SIZE-1:0] reg_instruction;
+    reg     [BITS_SIZE-1:0] reg_data_reg1;
+    reg     [BITS_SIZE-1:0] reg_data_reg2;
+    reg     [BITS_SIZE-1:0] reg_extension;
+    reg     [BITS_REGS-1:0] reg_rs;
+    reg     [BITS_REGS-1:0] reg_rt;
+    reg     [BITS_REGS-1:0] reg_rd;
+    reg     [BITS_SIZE-1:0] reg_DJump;
 
     //RegEX
-    reg                     Jump_reg;
-    reg                     JAL_reg ;
-    reg                     ALUSrc_reg;
-    reg     [1          :0] ALUOp_reg;
-    reg                     RegDst_reg;
+    reg                     reg_jump;
+    reg                     reg_jal ;
+    reg                     reg_alu_src;
+    reg     [1:0]           reg_alu_op;
+    reg                     reg_register_rd;
 
     //RegM
-    reg                     Branch_reg;
-    reg                     NBranch_reg;
-    reg                     MemWrite_reg ;
-    reg                     MemRead_reg;
-    reg     [1          :0] TamanoFiltro_reg;
+    reg                     reg_branch;
+    reg                     reg_new_branch;
+    reg                     reg_mem_write ;
+    reg                     reg_mem_read;
+    reg     [1:0]           reg_size_filter;
 
     //RegWB
-    reg                     MemToReg_reg;
-    reg                     RegWrite_reg;
-    reg     [1          :0] TamanoFiltroL_reg;
-    reg                     ZeroExtend_reg;
-    reg                     LUI_reg;
-    reg                     JALR_reg;
-    reg                     HALT_reg;
+    reg                     reg_mem_to_register;
+    reg                     reg_register_write;
+    reg     [1:0]           reg_size_filterL;
+    reg                     reg_zero_extend;
+    reg                     reg_lui;
+    reg                     reg_jalR;
+    reg                     reg_halt;
 
 
     always @(posedge i_clk)
-        if(i_Flush | i_reset)
+        if(i_flush_latch | i_reset)
         begin
-            PC4_reg             <=  {BITS_SIZE{1'b0}};
-            PC8_reg             <=  {BITS_SIZE{1'b0}};
-            Instruction_reg     <=  {BITS_SIZE{1'b0}};
-            Registro1_reg       <=  {BITS_SIZE{1'b0}} ;
-            Registro2_reg       <=  {BITS_SIZE{1'b0}};
-            Extension_reg       <=  {BITS_SIZE{1'b0}};
-            Rs_reg              <=  {BITS_REGS{1'b0}} ;
-            Rt_reg              <=  {BITS_REGS{1'b0}} ;
-            Rd_reg              <=  {BITS_REGS{1'b0}};
-            DJump_reg           <=  {BITS_SIZE{1'b0}} ;
+            reg_PC4             <=  {BITS_SIZE{1'b0}};
+            reg_PC8             <=  {BITS_SIZE{1'b0}};
+            reg_instruction     <=  {BITS_SIZE{1'b0}};
+            reg_data_reg1       <=  {BITS_SIZE{1'b0}} ;
+            reg_data_reg2       <=  {BITS_SIZE{1'b0}};
+            reg_extension       <=  {BITS_SIZE{1'b0}};
+            reg_rs              <=  {BITS_REGS{1'b0}} ;
+            reg_rt              <=  {BITS_REGS{1'b0}} ;
+            reg_rd              <=  {BITS_REGS{1'b0}};
+            reg_DJump           <=  {BITS_SIZE{1'b0}} ;
 
             //EX
-            Jump_reg            <=  1'b0;
-            JALR_reg            <=  1'b0;
-            JAL_reg             <=  1'b0;
-            ALUSrc_reg          <=  1'b0 ;
-            ALUOp_reg           <=  2'b00 ;
-            RegDst_reg          <=  1'b0 ;
+            reg_jump            <=  1'b0;
+            reg_jalR            <=  1'b0;
+            reg_jal             <=  1'b0;
+            reg_alu_src         <=  1'b0 ;
+            reg_alu_op          <=  2'b00 ;
+            reg_register_rd     <=  1'b0 ;
 
             //M
-            Branch_reg          <=  1'b0;
-            NBranch_reg         <=  1'b0;
-            MemWrite_reg        <=  1'b0;
-            MemRead_reg         <=  1'b0;
-            TamanoFiltro_reg    <=  2'b00 ;
+            reg_branch          <=  1'b0;
+            reg_new_branch      <=  1'b0;
+            reg_mem_write       <=  1'b0;
+            reg_mem_read        <=  1'b0;
+            reg_size_filter     <=  2'b00 ;
 
             //WB
-            MemToReg_reg        <=  1'b0 ;
-            RegWrite_reg        <=  1'b0 ;
-            TamanoFiltroL_reg   <=  2'b00;
-            ZeroExtend_reg      <=  1'b0 ;
-            LUI_reg             <=  1'b0 ;
-            HALT_reg            <=  1'b0 ;
+            reg_mem_to_register <=  1'b0 ;
+            reg_register_write  <=  1'b0 ;
+            reg_size_filterL    <=  2'b00;
+            reg_zero_extend     <=  1'b0 ;
+            reg_lui             <=  1'b0 ;
+            reg_halt            <=  1'b0 ;
         end
         else if (i_step)
         begin
-            PC4_reg             <=  i_pc4;
-            PC8_reg             <=  i_pc8 ;
-            Instruction_reg     <=  i_Instruction  ;
-            Registro1_reg       <=  i_Reg1;
-            Registro2_reg       <=  i_Reg2;
-            Extension_reg       <=  i_extension;
-            Rs_reg              <=  i_rs ;
-            Rt_reg              <=  i_rt;
-            Rd_reg              <=  i_Rd ;
-            DJump_reg           <=  i_DJump  ;
+            reg_PC4             <=  i_pc4;
+            reg_PC8             <=  i_pc8 ;
+            reg_instruction     <=  i_instruction  ;
+            reg_data_reg1       <=  i_data_rs;
+            reg_data_reg2       <=  i_register_data_2;
+            reg_extension       <=  i_extension;
+            reg_rs              <=  i_rs ;
+            reg_rt              <=  i_rt;
+            reg_rd              <=  i_rd ;
+            reg_DJump           <=  i_DJump  ;
 
             //EX
-            Jump_reg            <=  i_Jump;
-            JALR_reg            <=  i_JALR ;
-            JAL_reg             <=  i_JAL;
-            ALUSrc_reg          <=  i_ALUSrc  ;
-            ALUOp_reg           <=  i_ALUOp   ;
-            RegDst_reg          <=  i_RegDst  ;
+            reg_jump            <=  i_jump;
+            reg_jalR            <=  i_jalR ;
+            reg_jal             <=  i_jal;
+            reg_alu_src         <=  i_alu_src  ;
+            reg_alu_op          <=  i_alu_op   ;
+            reg_register_rd     <=  i_reg_dst_rd  ;
 
             //M
-            Branch_reg          <=  i_Branch ;
-            NBranch_reg         <=  i_NBranch ;
-            MemWrite_reg        <=  i_MemWrite ;
-            MemRead_reg         <=  i_MemRead;
-            TamanoFiltro_reg    <=  i_TamanoFiltro ;
+            reg_branch          <=  i_branch ;
+            reg_new_branch      <=  i_new_branch ;
+            reg_mem_write       <=  i_mem_write ;
+            reg_mem_read        <=  i_mem_read;
+            reg_size_filter     <=  i_size_filter ;
 
             //WB
-            MemToReg_reg        <=  i_MemToReg ;
-            RegWrite_reg        <=  i_RegWrite  ;
-            TamanoFiltroL_reg   <=  i_TamanoFiltroL ;
-            ZeroExtend_reg      <=  i_ZeroExtend ;
-            LUI_reg             <=  i_LUI  ;
-            HALT_reg            <=  i_HALT  ;
+            reg_mem_to_register <=  i_mem_to_reg ;
+            reg_register_write  <=  i_reg_write  ;
+            reg_size_filterL    <=  i_size_filterL ;
+            reg_zero_extend     <=  i_zero_extend ;
+            reg_lui             <=  i_lui  ;
+            reg_halt            <=  i_halt  ;
         end
-    assign o_pc4            =   PC4_reg;
-    assign o_pc8            =   PC8_reg;
-    assign o_instruction    =   Instruction_reg;
-    assign o_Registro1      =   Registro1_reg;
-    assign o_Registro2      =   Registro2_reg;
-    assign o_Extension      =   Extension_reg;
-    assign o_Rs             =   Rs_reg;
-    assign o_Rt             =   Rt_reg;
-    assign o_Rd             =   Rd_reg;
-    assign o_DJump          =   DJump_reg;
+
+
+    assign o_pc4            =   reg_PC4;
+    assign o_pc8            =   reg_PC8;
+    assign o_instruction    =   reg_instruction;
+    assign o_register_1     =   reg_data_reg1;
+    assign o_register_2     =   reg_data_reg2;
+    assign o_extension      =   reg_extension;
+    assign o_rs             =   reg_rs;
+    assign o_rt             =   reg_rt;
+    assign o_rd             =   reg_rd;
+    assign o_DJump          =   reg_DJump;
 
     //AssignEX
-    assign o_Jump           =   Jump_reg;
-    assign o_JALR           =   JALR_reg;
-    assign o_JAL            =   JAL_reg;
-    assign o_ALUSrc         =   ALUSrc_reg;
-    assign o_ALUOp          =   ALUOp_reg;
-    assign o_RegDst         =   RegDst_reg ;
+    assign o_jump            =   reg_jump;
+    assign o_jalR            =   reg_jalR;
+    assign o_jal             =   reg_jal;
+    assign o_alu_src         =   reg_alu_src;
+    assign o_alu_op          =   reg_alu_op;
+    assign o_register_rd_dst =   reg_register_rd ;
 
     //AssignM
-    assign o_Branch         =   Branch_reg;
-    assign o_NBranch        =   NBranch_reg;
-    assign o_MemWrite       =   MemWrite_reg;
-    assign o_MemRead        =   MemRead_reg;
-    assign o_TamanoFiltro   =   TamanoFiltro_reg;
+    assign o_branch          =   reg_branch;
+    assign o_new_branch      =   reg_new_branch;
+    assign o_mem_write       =   reg_mem_write;
+    assign o_mem_read        =   reg_mem_read;
+    assign o_size_filter     =   reg_size_filter;
 
     //AssignWB
-    assign o_MemToReg       =   MemToReg_reg;
-    assign o_RegWrite       =   RegWrite_reg ;
-    assign o_TamanoFiltroL  =   TamanoFiltroL_reg ;
-    assign o_ZeroExtend     =   ZeroExtend_reg ;
-    assign o_LUI            =   LUI_reg;
-    assign o_HALT           =   HALT_reg;
+    assign o_mem_to_reg      =   reg_mem_to_register;
+    assign o_register_write       =   reg_register_write ;
+    assign o_size_filterL    =   reg_size_filterL ;
+    assign o_zero_extend     =   reg_zero_extend ;
+    assign o_lui             =   reg_lui;
+    assign o_halt            =   reg_halt;
+    
 endmodule

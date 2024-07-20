@@ -6,23 +6,25 @@ module TOP_MIPS
         parameter   BITS_SIZE           = 32,
         parameter   SIZE_MEM_INSTRUC    = 256,
         parameter   SIZE_INSTRUC_DEBUG  = 8,
+
         parameter   BITS_JUMP           = 26,
-        parameter   BITS_REGS            = 5,
+        parameter   BITS_REGS           = 5,
         parameter   REG_SIZE            = 32,
         parameter   BITS_INMEDIATE      = 16,
         parameter   BITS_EXTENSION      = 2,
-        parameter   BITS_UNIT_CONTROL   = 6,
-        parameter   BITS_ALU_CONTROL    = 2
-        
+        parameter   BITS_SIZE_CTL       = 6,
+        parameter   BITS_ALU_CTL        = 2
     )
     (   
         input   wire                                i_clk,
         input   wire                                i_reset,
         input   wire                                i_ctl_clk_wiz,
-        input   wire     [BITS_REGS-1:0]            i_select_reg_dir,
         input   wire     [SIZE_INSTRUC_DEBUG-1:0]   i_select_address_mem_instr,
         input   wire     [BITS_SIZE-1:0]            i_dato_mem_ins,
         input   wire                                i_flag_write_mem_ins,
+        
+        input   wire     [BITS_REGS-1:0]            i_select_address_register,
+
         output  wire     [BITS_SIZE-1:0]            o_pc
     );
 
@@ -39,139 +41,155 @@ module TOP_MIPS
     wire    [BITS_SIZE-1:0]        IFID_PC8;
     wire    [BITS_SIZE-1:0]        IFID_Instr;
 
+
+
+
+
  // ---------ID-----------------------------------------------    //Implementar en modulo, solo sirve ahora en debug  
 // Unidad Riesgos
     wire                            if_risk_pc_write;       //Unidad de riesgo para write en PC
     wire                            ifid_unit_risk_write;  //Riesgo de escritura
-    wire                            id_risk_Mux;
-    wire                            id_risk_latch_flush;
+    wire                            id_unit_risk_mux;
+    wire                            id_unit_risk_latch;
 
-    // Unidad Control
-    wire     [BITS_UNIT_CONTROL-1:0]        ID_InstrControl;
-    wire     [BITS_UNIT_CONTROL-1:0]        ID_InstrSpecial;
-    wire                            ctl_unidad_regWrite;
-    wire                            ctl_unidad_mem_to_reg;
-    wire                            ctl_unidad_branch;
-    wire     [BITS_ALU_CONTROL-1:0]        ctl_unidad_alu_op;
-    wire     [BITS_EXTENSION-1:0]           ctl_unidad_extend_mode;
-    wire     [BITS_EXTENSION-1:0]           ctl_unidad_size_filter;
-    wire     [BITS_EXTENSION-1:0]           ctl_unidad_size_filterL;
-    wire                            ctl_unidad_Nbranch;
-    wire                            ctl_unidad_jump;
-    wire                            ctl_unidad_jal;
-    wire                            ctl_unidad_reg_rd;
-    wire                            ctl_unidad_alu_src;
-    wire                            ctl_unidad_mem_read;
-    wire                            ctl_unidad_mem_write;
-    wire                            ctl_unidad_zero_extend;
-    wire                            ctl_unidad_lui;
-    wire                            ctl_unidad_jalR;
-    wire                            ctl_unidad_halt;
 
-    //Mux Unidad Riesgos
-    wire                            Rctl_unidad_regWrite;
-    wire                            Rctl_unidad_mem_to_reg;
-    wire                            Rctl_unidad_branch;
-    wire     [BITS_ALU_CONTROL-1:0]        Rctl_unidad_alu_op;
-    wire     [BITS_EXTENSION-1:0]           Rctl_unidad_extend_mode;
-    wire                            Rctl_unidad_Nbranch;
-    wire                            Rctl_unidad_jump;
-    wire                            Rctl_unidad_jal;
-    wire                            Rctl_unidad_reg_rd;
-    wire                            Rctl_unidad_alu_src;
-    wire                            Rctl_unidad_mem_read;
-    wire                            Rctl_unidad_mem_write;
-    wire     [BITS_EXTENSION-1:0]           Rctl_unidad_size_filter;
-    wire     [BITS_EXTENSION-1:0]           Rctl_unidad_size_filterL;
-    wire                            Rctl_unidad_zero_extend ;
-    wire                            Rctl_unidad_lui;
-    wire                            Rctl_unidad_jalR;
-    wire                            Rctl_unidad_halt;
+// Banco de registros
+    wire     [BITS_REGS-1:0]        ID_register_rs;
+    wire     [BITS_REGS-1:0]        ID_register_rt;
+    wire     [BITS_REGS-1:0]        ID_register_rd;
+    wire     [BITS_SIZE-1:0]        ID_data_rs;
+    wire     [BITS_SIZE-1:0]        ID_data_rt;
+    wire     [BITS_SIZE-1:0]        ID_data_register_Debug;
+//Extensor de signo
+    wire     [BITS_INMEDIATE-1:0]   ID_intruct_16;
+    wire     [BITS_SIZE-1:0]        ID_intruct_ext;
+//Sumador PC Jump 
+    wire     [BITS_JUMP-1:0]        ID_JUMP_i;
+    wire     [BITS_SIZE-1:0]        ID_JUMP_o;
+//Unidad de control
+    wire     [BITS_SIZE_CTL-1:0]    ID_ctl_instruction;
+    wire     [BITS_SIZE_CTL-1:0]    ID_ctl_instruction_funct;
+    wire     [BITS_ALU_CTL-1:0]     ctl_unit_alu_op;
+    wire     [BITS_EXTENSION-1:0]   ctl_unit_extend_mode;
+    wire     [BITS_EXTENSION-1:0]   ctl_unit_size_filter;
+    wire     [BITS_EXTENSION-1:0]   ctl_unit_size_filterL;
+    wire                            ctl_unit_mem_to_reg;
+    wire                            ctl_unit_register_write;
+    wire                            ctl_unit_jal_R;
+    wire                            ctl_unit_halt;
+    wire                            ctl_unit_register_rd;
+    wire                            ctl_unit_jump;
+    wire                            ctl_unit_jal;
+    wire                            ctl_unit_new_branch;
+    wire                            ctl_unit_branch;
+    wire                            ctl_unit_mem_read;
+    wire                            ctl_unit_mem_write;
+    wire                            ctl_unit_alu_src;
+    wire                            ctl_unit_zero_extend;
+    wire                            ctl_unit_lui;
+    wire                            ctl_unit_jalR;
+    wire                            ctl_unit_halt;
+//Mux Unidad de riesgos
+    wire     [BITS_ALU_CTL-1:0]     mux_ctl_unit_alu_op;
+    wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_extend_mode;
+    wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_size_filter;
+    wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_size_filterL;
+    wire                            mux_ctl_unit_mem_to_reg;
+    wire                            mux_ctl_unit_register_write;
+    wire                            mux_ctl_unit_jal_R;
+    wire                            mux_ctl_unit_halt;
+    wire                            mux_ctl_unit_register_rd;
+    wire                            mux_ctl_unit_jump;
+    wire                            mux_ctl_unit_jal;
+    wire                            mux_ctl_unit_new_branch;
+    wire                            mux_ctl_unit_branch;
+    wire                            mux_ctl_unit_mem_read;
+    wire                            mux_ctl_unit_mem_write;
+    wire                            mux_ctl_unit_alu_src;
+    wire                            mux_ctl_unit_zero_extend;
+    wire                            mux_ctl_unit_lui;
+    wire                            mux_ctl_unit_jalR;
+    wire                            mux_ctl_unit_halt;
     
-    //Sumador PC Jump 
-    wire     [BITS_JUMP-1:0]        ID_JUMP_in;
-    wire     [BITS_SIZE-1:0]        ID_JUMP_out;
 
-    //Regs
-    wire     [BITS_REGS-1:0]            ID_Reg_rs_i;
-    wire     [BITS_REGS-1:0]            ID_Reg_rd_i;
-    wire     [BITS_REGS-1:0]            ID_Reg_rt_i;
-    wire     [BITS_SIZE-1:0]           ID_data_read1;
-    wire     [BITS_SIZE-1:0]           ID_data_read2;
-    wire     [BITS_SIZE-1:0]           ID_Reg_Debug;
-
-    // Extensor de signo
-    wire     [INBITS-1:0]          ID_Instr16_i;
-    wire     [BITS_SIZE-1:0]       ID_InstrExt;
-
-// ---------IDEX----------------------------------------------- //Implementar en modulo, solo sirve ahora en debug  
-
-    //   IDEX
-    wire    [BITS_SIZE-1:0]            IDEX_PC4;
-    wire    [BITS_SIZE-1:0]            IDEX_PC8;
-    wire    [BITS_SIZE-1:0]            IDEX_Reg1;
-    wire    [BITS_SIZE-1:0]            IDEX_Reg2;
-    wire    [BITS_REGS-1:0]            IDEX_Rs;
-    wire    [BITS_REGS-1:0]            IDEX_Rt;
-    wire    [BITS_REGS-1:0]            IDEX_Rd;
-    wire    [BITS_SIZE-1:0]            IDEX_DJump;
-    wire    [BITS_SIZE-1:0]            IDEX_Extension;
-    wire    [BITS_SIZE-1:0]            IDEX_Instr;
-
-    //ID/EX/CONTROL
+// ---------IDEX--
+//CONTROL
     wire                            IDEX_ctl_alu_src;
     wire                            IDEX_ctl_jump;
     wire                            IDEX_ctl_JALR;
-    wire                            IDEX_ctl_unidad_jal;
-    wire    [1:0]                   IDEX_ctl_unidad_alu_op;
-    wire                            IDEX_ctl_unidad_reg_rd;
-    wire                            IDEX_ctl_unidad_branch;
-    wire                            IDEX_ctl_unidad_Nbranch;
-    wire                            IDEX_ctl_unidad_mem_write;
-    wire                            IDEX_ctl_unidad_mem_read;
-    wire                            IDEX_ctl_unidad_mem_to_reg;
-    wire                            IDEX_ctl_unidad_regWrite;
-    wire                            IDEX_ctl_unidad_lui;
-    wire                            IDEX_ctl_unidad_halt;
-    wire    [1:0]                   IDEX_ctl_unidad_size_filter;
-    wire    [1:0]                   IDEX_ctl_unidad_size_filterL;
-    wire                            IDEX_ctl_unidad_zero_extend;
+    wire                            IDEX_ctl_mem_read;
+    wire     [BITS_ALU_CTL-1:0]     IDEX_ctl_alu_op;
+    wire     [BITS_EXTENSION-1:0]   IDEX_ctl_size_filter;
+    wire     [BITS_EXTENSION-1:0]   IDEX_ctL_size_filterL;
+    wire                            IDEX_ctl_mem_to_reg;
+    wire                            IDEX_ctl_register_write;
+    wire                            IDEX_ctl_jal;
+    wire                            IDEX_ctl_halt;
+    wire                            IDEX_ctl_register_rd;
+    wire                            IDEX_ctl_new_branch;
+    wire                            IDEX_ctl_branch;
+    wire                            IDEX_ctl_mem_write;
+    wire                            IDEX_ctl_zero_extend;
+    wire                            IDEX_ctl_lui;
+    wire                            IDEX_ctl_halt;
+
+    wire    [BITS_SIZE-1:0]         IDEX_extension;
+    wire    [BITS_SIZE-1:0]         IDEX_instruction;
+    wire    [BITS_SIZE-1:0]         IDEX_PC4;
+    wire    [BITS_SIZE-1:0]         IDEX_PC8;
+    wire    [BITS_REGS-1:0]         IDEX_RS;
+    wire    [BITS_REGS-1:0]         IDEX_RT;
+    wire    [BITS_REGS-1:0]         IDEX_RD;
+    wire    [BITS_SIZE-1:0]         IDEX_DJump;
+    wire    [BITS_SIZE-1:0]         IDEX_register1;
+    wire    [BITS_SIZE-1:0]         IDEX_register2;
+
 
 
 //--------EX/MEM---------------------------
     wire    [BITS_SIZE-1:0]         EXMEM_PC_Branch;
+    wire                            EXMEM_mem_Read;
 //MEM
     wire                            MEM_PC_src_o; 
 
+//MEM_W 
+    wire                            MEM_WB_register_write;
+    wire    [BITS_REGS-1:0]         WB_register_adrr_result;
+    //MultiplexorEscribirDato
+    wire    [BITS_SIZE-1:0]         WB_data_write;
 
 
-//--------EX/MEM---------------------------
+
+
+
+//--------EX/MEM--
 //MuxShamt
     wire     [BITS_SIZE-1:0]        EX_alu_regA;
-
-//    MEM 
-
-//   MEM_WB
-    wire                            MEM_WB_RegWrite;
-
-    //MultiplexorMemoria 
-    wire    [REGS-1:0]              WB_RegistroDestino_o;
-    //MultiplexorEscribirDato
-    wire    [NBITS-1:0]             WB_EscribirDato_o;
-
-    //Extensor
-    assign ID_Instr16_i        =   IFID_Instr     [BITS_INMEDIATE-1:0];
+    wire     [BITS_REGS-1:0]        EXMEM_register_addr_result;
 
 
-    // ID
-    assign ID_InstrControl     =    IFID_Instr     [BITS_SIZE-1:BITS_SIZE-BITS_UNIT_CONTROL]; //[31:26] sería el identificador de la instrucción (op)
-    assign ID_InstrSpecial     =    IFID_Instr     [BITS_UNIT_CONTROL-1:0] ; //[5:0]
-    assign ID_Jump_in          =    IFID_Instr     [BITS_JUMP-1:0] ; //En caso de ser un salto, la dirección se encuentra en los bits 0 a 26.
+
+
+
 
     //Memoria de instrucciones
     assign IF_IntrAddress_Debug       =   i_select_address_mem_instr;
     assign IF_Instr_Debug             =   i_dato_mem_ins;
     assign IF_flag_WriteInstr_Debug   =   i_flag_write_mem_ins;
+
+
+        //ID
+        assign ID_Jump_i                  =   IFID_Instr[BITS_JUMP-1:0];
+        //Unit Control
+        assign ID_ctl_instruction         =   IFID_Instr[BITS_SIZE-1:BITS_SIZE-BITS_SIZE_CTL];
+        assign ID_ctl_instruction_funct   =   IFID_Instr[BITS_SIZE_CTL-1:0];
+        //Registers
+        assign ID_register_rs             =   IFID_Instr[BITS_INMEDIATE+BITS_REGS+BITS_REGS-1:BITS_INMEDIATE+BITS_REGS];//BITS_INMEDIATE+RT+RS-1=16+5+5-1=25; BITS_INMEDIATE+RT=16+5=21; [25-21]
+        assign ID_register_rt             =   IFID_Instr[BITS_INMEDIATE+BITS_REGS-1:BITS_INMEDIATE];//BITS_INMEDIATE+BITS_REGS-1=16+5-1=20; BITS_INMEDIATE=16; [20-16]
+        assign ID_register_rd             =   IFID_Instr [BITS_INMEDIATE-1:BITS_INMEDIATE-BITS_REGS]; //BITS_INMEDIATE-1=16-1=15; BITS_INMEDIATE-RD=16-5=11; [15-11]
+        //Extensor
+        assign ID_intruct_16              =   IFID_Instr[BITS_INMEDIATE-1:0];
+
 
 //ETAPA IF
     IF
@@ -220,220 +238,216 @@ module TOP_MIPS
         .o_instruction              (IFID_Instr)
     );
 
-    //ETAPA ID  
 
-
+//ETAPA ID
     ID
     #(
-        .BITS_SIZE           (BITS_SIZE),
-        .BITS_JUMP           (BITS_JUMP),
-        .BITS_REGS           (BITS_REGS),
-        .REG_SIZE            (REG_SIZE),
-        .BITS_INMEDIATE      (BITS_INMEDIATE),
-        .BITS_EXTENSION      (BITS_EXTENSION)
+        .BITS_SIZE                  (BITS_SIZE),
+        .BITS_JUMP                  (BITS_JUMP),
+        .BITS_REGS                  (BITS_REGS),
+        .REG_SIZE                   (REG_SIZE),
+        .BITS_INMEDIATE             (BITS_INMEDIATE),
+        .BITS_EXTENSION             (BITS_EXTENSION)
     )
-    u_ID
+    module_ID
     (
-        .i_clk                 (i_clk),
-        .i_reset               (i_reset),
-        .i_step                (i_ctl_clk_wiz),
-        .i_mem_wb_regwrite     (MEM_WB_RegWrite),
-        .i_dir_rs              (ID_Reg_rs_i),
-        .i_dir_rt              (ID_Reg_rt_i),
-        .i_tx_dir_debug        (i_select_reg_dir),
-        .i_wb_dir_rd           (WB_RegistroDestino_o),
-        .i_wb_write            (WB_EscribirDato_o),
-        .i_IFID_JUMP          (ID_JUMP_in), //los bits 0 a 26 de la instrucción que entrega el IF (dirección a la que voy a saltar)
-        .i_id_expc4            (IDEX_PC4),
-        .i_id_inmediate        (ID_Instr16_i),
-        .i_rctrl_extensionmode (ctl_unidad_extend_mode),
-        .o_data_rs             (ID_data_read1),
-        .o_data_rt             (ID_data_read2),
-        .o_data_tx_debug       (ID_Reg_Debug),
-        .o_JUMP_ID             (ID_JUMP_out),
-        .o_extensionresult     (ID_InstrExt) 
-    );
-  
-    // UNIDAD DE CONTROL
+        .i_clk                      (i_clk),
+        .i_reset                    (i_reset),
+        .i_step                     (i_ctl_clk_wiz),
+        .i_wb_reg_write             (MEM_WB_register_write),
+        .i_addr_rs                  (ID_register_rs),
+        .i_addr_rt                  (ID_register_rt),
+        .i_wb_addr_rd               (WB_register_adrr_result),
+        .i_tx_adrr_reg_unitdebug    (i_select_address_register),
+        .i_wb_data                  (WB_data_write),
 
+        .i_IFID_JUMP                (ID_Jump_i),
+        .i_IDEX_PC4                 (IDEX_PC4),
+        .i_id_inmediate             (ID_intruct_16),
+        .i_rctrl_extensionmode      (ctl_unit_extend_mode),
+        .o_rs                       (ID_data_rs),
+        .o_rt                       (ID_data_rt),
+        .o_data_tx_debug            (ID_data_register_Debug),
+        .o_ID_JUMP                  (ID_JUMP_o),
+        .o_extension_result         (ID_intruct_ext) 
+    );
+
+//Unidad de Control
     UnitControl
     #(
-        .BITS_SIZE                      (BITS_UNIT_CONTROL)
+        .BITS_SIZE                 (BITS_SIZE_CTL)
     )
-    u_Unit_Control
+    Unidad_de_Control
     (
-        .i_Instruction              (ID_InstrControl     ),
-        .i_Special                  (ID_InstrSpecial     ),
-        .o_RegDst                   (ctl_unidad_reg_rd         ),
-        .o_Jump                     (ctl_unidad_jump           ),
-        .o_JAL                      (ctl_unidad_jal            ),
-        .o_Branch                   (ctl_unidad_branch         ),
-        .o_NBranch                  (ctl_unidad_Nbranch        ),
-        .o_MemRead                  (ctl_unidad_mem_read        ),
-        .o_MemToReg                 (ctl_unidad_mem_to_reg),
-        .o_ALUOp                    (ctl_unidad_alu_op          ),
-        .o_MemWrite                 (ctl_unidad_mem_write       ),
-        .o_ALUSrc                   (ctl_unidad_alu_src         ),
-        .o_RegWrite                 (ctl_unidad_regWrite       ),
-        .o_ExtensionMode            (ctl_unidad_extend_mode  ),
-        .o_TamanoFiltro             (ctl_unidad_size_filter   ),
-        .o_TamanoFiltroL            (ctl_unidad_size_filterL  ),
-        .o_ZeroExtend               (ctl_unidad_zero_extend     ),
-        .o_LUI                      (ctl_unidad_lui            ),
-        .o_JALR                     (ctl_unidad_jalR           ),
-        .o_HALT                     (ctl_unidad_halt           )
+        .i_ctl_instruction          (ID_ctl_instruction),
+        .i_ctl_instr_funct          (ID_ctl_instruction_funct),
+        .o_register_rd              (ctl_unit_register_rd),
+        .o_jump                     (ctl_unit_jump),
+        .o_jal                      (ctl_unit_jal),
+        .o_lui                      (ctl_unit_lui),
+        .o_jalR                     (ctl_unit_jal_R),
+        .o_halt                     (ctl_unit_halt),
+        .o_branch                   (ctl_unit_new_branch),
+        .o_new_branch               (ctl_unit_branch),
+        .o_mem_read                 (ctl_unit_mem_read),
+        .o_mem_write                (ctl_unit_mem_write),
+        .o_alu_src                  (ctl_unit_alu_src),
+        .o_zero_extend              (ctl_unit_zero_extend),
+        .o_extension_mode           (ctl_unit_extend_mode),
+        .o_mem_to_reg               (ctl_unit_mem_to_reg),
+        .o_alu_op                   (ctl_unit_alu_op),
+        .o_register_write           (ctl_unit_register_write),
+        .o_size_filter              (ctl_unit_size_filter),
+        .o_size_filterL             (ctl_unit_size_filter_L)  
     );
 
-    // UNIDAD DE RIESGOS
+//Unidad de Riegos
     UnitRisk
     #(
-        .BITS_REGS                      (BITS_REGS)
+        .BITS_REGS                  (BITS_REGS)
     )
-    u_Unit_Risk
+    Unidad_de_Riesgos
     (
-        .i_EXMEM_Flush             (MEM_PC_src_o),
-        .i_IDEX_MemRead            (IDEX_ctl_unidad_mem_read),
-        .i_EXMEM_MemRead           (EXMEM_MemRead),
-        .i_JALR                     (ctl_unidad_jalR),
-        .i_HALT                     (ctl_unidad_halt),
-        .i_IDEX_Rt                 (IDEX_Rt ),
-        .i_EXMEM_Rt                (EXMEM_RegistroDestino),
-        .i_IFID_Rs                 (ID_Reg_rs_i),
-        .i_IFID_Rt                 (ID_Reg_rt_i),
-        .o_Mux_Risk                 (id_risk_Mux),
-        .o_pc_Write                 (if_risk_pc_write),
-        .o_IFID_Write              (if_id_risk_Write),
-        .o_Latch_Flush              (id_risk_latch_flush)
+        .i_EXMEM_flush              (MEM_PC_src_o),
+        .i_IDEX_mem_read            (IDEX_ctl_mem_read),
+        .i_EXMEM_mem_read           (EXMEM_mem_Read),
+        .i_JALR                     (ctl_unit_jal_R),
+        .i_HALT                     (ctl_unit_halt),
+        .i_IDEX_rt                  (IDEX_rt),
+        .i_EXMEM_rt                 (EXMEM_register_addr_result),
+        .i_IFID_rs                  (ID_register_rs),
+        .i_IFID_rt                  (ID_register_rt),
+        .o_risk_mux                 (id_unit_risk_mux),
+        .o_pc_write                 (if_risk_pc_write),
+        .o_IFID_write               (ifid_unit_risk_write),
+        .o_flush_latch              (id_unit_risk_latch)
     );
 
-
-    // MUX UNIDAD DE RIESGOS
-
+//Mux
     mux_unit_risk
     #(
     )
-    u_mux_unit_risk
+    ID_Mux_Unit_Risk
     (
-        .i_Risk                     (id_risk_Mux         ),
-        .i_RegDst                   (ctl_unidad_reg_rd        ),
-        .i_Jump                     (ctl_unidad_jump          ),
-        .i_JAL                      (ctl_unidad_jal           ),
-        .i_Branch                   (ctl_unidad_branch        ),
-        .i_NBranch                  (ctl_unidad_Nbranch       ),
-        .i_MemRead                  (ctl_unidad_mem_read       ),
-        .i_MemToReg                 (ctl_unidad_mem_to_reg      ),
-        .i_ALUOp                    (ctl_unidad_alu_op         ),
-        .i_MemWrite                 (ctl_unidad_mem_write      ),
-        .i_ALUSrc                   (ctl_unidad_alu_src        ),
-        .i_RegWrite                 (ctl_unidad_regWrite      ),
-        .i_extension_mode            (ctl_unidad_extend_mode ),
-        .i_TamanoFiltro             (ctl_unidad_size_filter  ),
-        .i_TamanoFiltroL            (ctl_unidad_size_filterL ),
-        .i_ZeroExtend               (ctl_unidad_zero_extend    ),
-        .i_LUI                      (ctl_unidad_lui           ),
-        .i_JALR                     (ctl_unidad_jalR          ),
-        .i_HALT                     (ctl_unidad_halt          ),
-        .o_RegDst                   (Rctl_unidad_reg_rd        ),
-        .o_Jump                     (Rctl_unidad_jump          ),
-        .o_JAL                      (Rctl_unidad_jal           ),
-        .o_Branch                   (Rctl_unidad_branch        ),
-        .o_NBranch                  (Rctl_unidad_Nbranch       ),
-        .o_MemRead                  (Rctl_unidad_mem_read       ),
-        .o_MemToReg                 (Rctl_unidad_mem_to_reg      ),
-        .o_ALUOp                    (Rctl_unidad_alu_op         ),
-        .o_MemWrite                 (Rctl_unidad_mem_write      ),
-        .o_ALUSrc                   (Rctl_unidad_alu_src        ),
-        .o_RegWrite                 (Rctl_unidad_regWrite      ),
-        .o_ExtensionMode            (Rctl_unidad_extend_mode ),
-        .o_TamanoFiltro             (Rctl_unidad_size_filter  ),
-        .o_TamanoFiltroL            (Rctl_unidad_size_filterL ),
-        .o_ZeroExtend               (Rctl_unidad_zero_extend    ),
-        .o_LUI                      (Rctl_unidad_lui           ),
-        .o_JALR                     (Rctl_unidad_jalR          ),
-        .o_HALT                     (Rctl_unidad_halt          )
+        .i_risk                     (id_unit_risk_mux),
+        .i_reg_dst_rd               (ctl_unit_register_rd),
+        .i_jump                     (ctl_unit_jump),
+        .i_jal                      (ctl_unit_jal),
+        .i_branch                   (ctl_unit_branch),
+        .i_new_branch               (ctl_unit_new_branch),
+        .i_mem_read                 (ctl_unit_mem_read),
+        .i_mem_to_reg               (ctl_unit_mem_to_reg),
+        .i_alu_op                   (ctl_unit_alu_op),
+        .i_mem_write                (ctl_unit_mem_write),
+        .i_alu_src                  (ctl_unit_alu_src),
+        .i_reg_write                (ctl_unit_register_write),
+        .i_extension_mode           (ctl_unit_extend_mode),
+        .i_size_filter              (ctl_unit_size_filter),
+        .i_size_filterL             (ctl_unit_size_filterL),
+        .i_zero_extend              (ctl_unit_zero_extend),
+        .i_lui                      (ctl_unit_lui),
+        .i_jalR                     (ctl_unit_jalR),
+        .i_halt                     (ctl_unit_halt),
+
+
+        .o_reg_dst_rd               (mux_ctl_unit_register_rd),
+        .o_jump                     (mux_ctl_unit_jump),
+        .o_jal                      (mux_ctl_unit_jal),
+        .o_lui                      (mux_ctl_unit_lui),
+        .o_jalR                     (mux_ctl_unit_jalR),
+        .o_halt                     (mux_ctl_unit_halt)
+        .o_branch                   (mux_ctl_unit_branch),
+        .o_new_branch               (mux_ctl_unit_new_branch),
+        .o_mem_read                 (mux_ctl_unit_mem_read),
+        .o_mem_to_reg               (mux_ctl_unit_mem_to_reg),
+        .o_alu_op                   (mux_ctl_unit_alu_op),
+        .o_mem_write                (mux_ctl_unit_mem_write),
+        .o_alu_src                  (mux_ctl_unit_alu_src),
+        .o_register_write           (mux_ctl_unit_register_write),
+        .o_extension_mode           (mux_ctl_unit_extend_mode),
+        .o_size_filter              (mux_ctl_unit_size_filter),
+        .o_size_filterL             (mux_ctl_unit_size_filterL),
+        .o_zero_extend              (mux_ctl_unit_zero_extend),
+        
     );  
 
-
     // ETAPA ID/EX
-
     IDEX
     #(
-        .BITS_SIZE                      (BITS_SIZE          ),
-        .BITS_REGS                     (BITS_REGS           )
+        .BITS_SIZE                  (BITS_SIZE),
+        .BITS_REGS                  (BITS_REGS)
     )
-    u_ID_EX
+    module_IDEX
     (
         //General
-        .i_clk                      (i_clk                      ),
-        .i_reset                    (i_reset                    ),
-        .i_step                     (i_control_clk_wiz),
-        .i_Flush                    (id_risk_latch_flush         ),
-        .i_pc4                      (IFID_PC4                ),
-        .i_pc8                      (IFID_PC8                ),
-        .i_Instruction              (IFID_Instr              ),
+        .i_clk                      (i_clk),
+        .i_reset                    (i_reset),
+        .i_step                     (i_ctl_clk_wiz),
+        .i_flush_latch              (id_unit_risk_latch),
+        .i_pc4                      (IFID_PC4),
+        .i_pc8                      (IFID_PC8),
+        .i_instruction              (IFID_Instr),
 
         //ControlEX
-        .i_Jump                     (Rctl_unidad_jump               ),
-        .i_JAL                      (Rctl_unidad_jal                ),
-        .i_ALUSrc                   (Rctl_unidad_alu_src             ),
-
-        .i_ALUOp                    (Rctl_unidad_alu_op              ),
-        .i_RegDst                   (Rctl_unidad_reg_rd             ),
+        .i_jump                     (mux_ctl_unit_jump),
+        .i_jal                      (mux_ctl_unit_jal),
+        .i_alu_src                  (mux_ctl_unit_alu_src),
+        .i_alu_op                   (mux_ctl_unit_alu_op),
+        .i_reg_dst_rd               (mux_ctl_unit_register_rd),
         //ControlM
-        .i_Branch                   (Rctl_unidad_branch             ),
-        .i_NBranch                  (Rctl_unidad_Nbranch            ),
-        .i_MemWrite                 (Rctl_unidad_mem_write           ),
-        .i_MemRead                  (Rctl_unidad_mem_read            ),
-        .i_TamanoFiltro             (Rctl_unidad_size_filter       ),
+        .i_branch                   (mux_ctl_unit_branch),
+        .i_new_branch               (mux_ctl_unit_new_branch),
+        .i_mem_write                (mux_ctl_unit_mem_write),
+        .i_mem_read                 (mux_ctl_unit_mem_read),
+        .i_size_filter              (mux_ctl_unit_size_filter),
         //ControlWB
-        .i_MemToReg                 (Rctl_unidad_mem_to_reg           ),
-        .i_RegWrite                 (Rctl_unidad_regWrite           ),
-        .i_TamanoFiltroL            (Rctl_unidad_size_filterL      ),
-        .i_ZeroExtend               (Rctl_unidad_zero_extend         ),
-        .i_LUI                      (Rctl_unidad_lui                ),
-        .i_JALR                     (Rctl_unidad_jalR               ),
-        .i_HALT                     (Rctl_unidad_halt               ),
+        .i_mem_to_reg               (mux_ctl_unit_mem_to_reg),
+        .i_reg_write                (mux_ctl_unit_register_write),
+        .i_size_filterL             (mux_ctl_unit_size_filterL),
+        .i_zero_extend              (mux_ctl_unit_zero_extend),
+        .i_lui                      (mux_ctl_unit_lui),
+        .i_jalR                     (mux_ctl_unit_jalR),
+        .i_halt                     (mux_ctl_unit_halt),
 
-        //Modules
-        .i_Reg1                     (ID_data_read1         ),
-        .i_Reg2                     (ID_data_read2         ),
-        .i_extension                (ID_InstrExt           ),
-        .i_rs                       (ID_Reg_rs_i             ),
-        .i_rt                       (ID_Reg_rt_i             ),
-        .i_Rd                       (ID_Reg_rd_i             ),
-        .i_DJump                    (ID_Jump_o               ),
-
-        .o_pc4                      (IDEX_PC4          ),
-        .o_pc8                      (IDEX_PC8          ),
-        .o_instruction              (IDEX_Instr        ),
-        .o_Registro1                (IDEX_Reg1    ),
-        .o_Registro2                (IDEX_Reg2    ),
-        .o_Extension                (IDEX_Extension    ),
-        .o_Rs                       (IDEX_Rs           ),
-        .o_Rt                       (IDEX_Rt           ),
-        .o_Rd                       (IDEX_Rd           ),
-        .o_DJump                    (IDEX_DJump        ),
+        //idex
+        .i_data_rs                 (ID_data_rs),
+        .i_register_data_2         (ID_data_rt),
+        .i_extension               (ID_intruct_ext),
+        .i_rs                      (ID_register_rs),
+        .i_rt                      (ID_register_rt),
+        .i_rd                      (ID_register_rd),
+        .i_DJump                   (ID_Jump_o),
+        .o_pc4                     (IDEX_PC4),
+        .o_pc8                     (IDEX_PC8),
+        .o_instruction             (IDEX_instruction),
+        .o_register_1              (IDEX_register1),
+        .o_register_2              (IDEX_register2),
+        .o_extension               (IDEX_extension),
+        .o_rs                      (IDEX_RS),
+        .o_rt                      (IDEX_RT),   
+        .o_rd                      (IDEX_RD),
+        .o_DJump                   (IDEX_DJump),
 
         //ControlEX
-        .o_Jump                     (IDEX_ctl_unidad_jump         ),
-        .o_JALR                     (IDEX_ctl_unidad_jalR         ),
-        .o_JAL                      (IDEX_ctl_unidad_jal          ),
-        .o_ALUSrc                   (IDEX_ctl_unidad_alu_src       ),
-        .o_ALUOp                    (IDEX_ctl_unidad_alu_op        ),
-        .o_RegDst                   (IDEX_ctl_unidad_reg_rd       ),
+        .o_jump                    (IDEX_ctl_jump),
+        .o_jalR                    (IDEX_ctl_JALR),
+        .o_jal                     (IDEX_ctl_jal),
+        .o_alu_src                 (IDEX_ctl_alu_src),
+        .o_alu_op                  (IDEX_ctl_alu_op),
+        .o_register_rd_dst         (IDEX_ctl_register_rd),
         //ControlM
-        .o_Branch                   (IDEX_ctl_unidad_branch       ),
-        .o_NBranch                  (IDEX_ctl_unidad_Nbranch      ),
-        .o_MemWrite                 (IDEX_ctl_unidad_mem_write     ),
-        .o_MemRead                  (IDEX_ctl_unidad_mem_read      ),
-        .o_TamanoFiltro             (IDEX_ctl_unidad_size_filter ),
+        .o_branch                  (IDEX_ctl_branch),
+        .o_new_branch              (IDEX_ctl_new_branch),
+        .o_mem_write               (IDEX_ctl_mem_write),
+        .o_mem_read                (IDEX_ctl_mem_read),
+        .o_size_filter             (IDEX_ctl_size_filter),
         //ControlWB
-        .o_MemToReg                 (IDEX_ctl_unidad_mem_to_reg     ),
-        .o_RegWrite                 (IDEX_ctl_unidad_regWrite),
-        .o_TamanoFiltroL            (IDEX_ctl_unidad_size_filterL),
-        .o_ZeroExtend               (IDEX_ctl_unidad_zero_extend   ),
-        .o_LUI                      (IDEX_ctl_unidad_lui          ),
-        .o_HALT                     (IDEX_ctl_unidad_halt         )
+        .o_mem_to_reg              (IDEX_ctl_mem_to_reg),
+        .o_register_write          (IDEX_ctl_register_write),
+        .o_size_filterL            (IDEX_ctL_size_filterL),
+        .o_zero_extend             (IDEX_ctl_zero_extend),
+        .o_lui                     (IDEX_ctl_lui),
+        .o_halt                    (IDEX_ctl_halt)
     );
 
 
