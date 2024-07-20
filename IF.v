@@ -43,7 +43,7 @@ module IF #(
         .i_reset            (i_reset),
         .i_step             (i_step),
         .i_NPC              (wire_IF_PC),
-        .i_pc_write         (hazard_pc_write),
+        .i_pc_write         (i_hazard_pc_write),
         .o_pc               (wire_o_IF_PC),
         .o_pc_4             (wire_o_IF_PC4),
         .o_pc_8             (wire_o_IF_PC8)
