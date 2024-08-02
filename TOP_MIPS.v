@@ -13,7 +13,9 @@ module TOP_MIPS
         parameter   BITS_INMEDIATE      = 16,
         parameter   BITS_EXTENSION      = 2,
         parameter   BITS_SIZE_CTL       = 6,
-        parameter   BITS_ALU_CTL        = 2
+        parameter   BITS_ALU_CTL        = 2,
+        parameter   BITS_OP             = 6,
+        parameter   BITS_CORTOCIRCUITO  = 3
     )
     (   
         input   wire                                i_clk,
@@ -159,18 +161,37 @@ module TOP_MIPS
     wire    [BITS_SIZE-1:0]         WB_data_write;
 
 
+//Unidad cortocircuito
+    wire    [BITS_CORTOCIRCUITO-1:0]   corto_register_A;
+    wire    [BITS_CORTOCIRCUITO-1:0]   corto_register_B;
 
 
 
 //--------EX/MEM--
 //MuxShamt
-    wire     [BITS_SIZE-1:0]        EX_alu_regA;
+    wire     [BITS_SIZE-1:0]        EX_alu_register_A;
+    //ALU
+    wire     [BITS_SIZE-1:0]        EX_alu_result;
+    wire                            EX_flag_alu_zero;
     wire     [BITS_REGS-1:0]        EXMEM_register_addr_result;
+    wire     [BITS_REGS-1:0]        EX_alu_shamt;
+    wire     [BITS_SIZE-1:0]        EXMEM_alu;
 
+//ALUControl
 
+    wire                           EX_flag_shamt;
+    wire     [BITS_OP-1:0]         EX_ctl_alu_op;
 
+//Sumador branch
+    wire     [BITS_SIZE-1:0]       EX_sum_pc_branch;
 
+//MultiplexorRegistro
+    wire     [BITS_REGS-1:0]       EX_mux_register_rd;    
 
+//  WB
+
+//MultiplexorMemoria
+    wire    [BITS_SIZE-1:0]        WB_data_write;
 
     //Memoria de instrucciones
     assign IF_IntrAddress_Debug       =   i_select_address_mem_instr;
@@ -183,6 +204,8 @@ module TOP_MIPS
         //Unit Control
         assign ID_ctl_instruction         =   IFID_Instr[BITS_SIZE-1:BITS_SIZE-BITS_SIZE_CTL];
         assign ID_ctl_instruction_funct   =   IFID_Instr[BITS_SIZE_CTL-1:0];
+        //SumadorJump
+        assign EX_alu_shamt               =   IDEX_instruction [10:6];
         //Registers
         assign ID_register_rs             =   IFID_Instr[BITS_INMEDIATE+BITS_REGS+BITS_REGS-1:BITS_INMEDIATE+BITS_REGS];//BITS_INMEDIATE+RT+RS-1=16+5+5-1=25; BITS_INMEDIATE+RT=16+5=21; [25-21]
         assign ID_register_rt             =   IFID_Instr[BITS_INMEDIATE+BITS_REGS-1:BITS_INMEDIATE];//BITS_INMEDIATE+BITS_REGS-1=16+5-1=20; BITS_INMEDIATE=16; [20-16]
@@ -211,7 +234,7 @@ module TOP_MIPS
         .i_pc_source                (MEM_PC_src_o),
         .i_suma_branch              (EXMEM_PC_Branch),
         .i_suma_jump                (IDEX_DJump),
-        .i_rs                       (EX_alu_regA),
+        .i_rs                       (EX_alu_register_A),
         .o_IF_PC4                   (IF_PC4_o),
         .o_IF_PC                    (o_pc),
         .o_instruction              (IF_Instr),
@@ -448,6 +471,41 @@ module TOP_MIPS
         .o_zero_extend             (IDEX_ctl_zero_extend),
         .o_lui                     (IDEX_ctl_lui),
         .o_halt                    (IDEX_ctl_halt)
+    );
+
+
+        //ETAPA EX
+
+    EX
+    #
+    (
+        .BITS_SIZE                  (BITS_SIZE),
+        .BITS_REGS                  (BITS_REGS),
+        .BITS_OP                    (BITS_OP),
+        .BITS_CORTOCIRCUITO         (BITS_CORTOCIRCUITO)
+    )
+    u_EX
+    (
+        .i_id_extension        (IDEX_extension),
+        .i_id_pc4              (IDEX_PC4),
+        .i_alu_shamt           (EX_alu_shamt),
+        .i_flag_shamt          (EX_flag_shamt),
+        .i_alu_op              (EX_ctl_alu_op), 
+        .i_corto_register_A    (corto_register_A),
+        .i_register1           (IDEX_register1),
+        .i_exmem_register      (EXMEM_alu),
+        .i_wb_data_write       (WB_data_write),   
+        .i_idex_ctl_alu_src    (IDEX_ctl_alu_src),
+        .i_corto_register_B    (corto_register_B),
+        .i_register2           (IDEX_register2),
+        .i_select_register     (IDEX_ctl_register_rd),
+        .i_rt                  (IDEX_RT),
+        .i_rd                  (IDEX_RD),
+        .o_alu_zero            (EX_flag_alu_zero),
+        .o_alu_result          (EX_alu_result),
+        .o_sum_pc_branch       (EX_sum_pc_branch),
+        .o_data_register_A     (EX_alu_register_A),
+        .o_mux_register_rd     (EX_mux_register_rd)
     );
 
 
