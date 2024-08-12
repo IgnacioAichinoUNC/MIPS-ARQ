@@ -14,7 +14,9 @@ module TOP_MIPS
         parameter   BITS_EXTENSION      = 2,
         parameter   BITS_SIZE_CTL       = 6,
         parameter   BITS_ALU_CTL        = 2,
+        parameter   BITS_ALU            = 6,
         parameter   BITS_OP             = 6,
+        parameter   ALU_OP              = 4,
         parameter   BITS_CORTOCIRCUITO  = 3
     )
     (   
@@ -31,14 +33,14 @@ module TOP_MIPS
     );
 
 // ---------IF-----------------------------------------------
-//PC
+    //PC
     wire    [BITS_SIZE-1:0]        IF_PC4_o;
     wire    [BITS_SIZE-1:0]        IF_PC8_o;
-//Memoria de instrucciones
+    //Memoria de instrucciones
     wire    [BITS_SIZE-1:0]        IF_Instr;
     wire    [BITS_SIZE-1:0]        IF_Instr_Debug;
     wire    [BITS_SIZE-1:0]        IF_IntrAddress_Debug;
-//IF_ID  
+    //IF_ID  
     wire    [BITS_SIZE-1:0]        IFID_PC4;
     wire    [BITS_SIZE-1:0]        IFID_PC8;
     wire    [BITS_SIZE-1:0]        IFID_Instr;
@@ -48,27 +50,27 @@ module TOP_MIPS
 
 
  // ---------ID-----------------------------------------------    //Implementar en modulo, solo sirve ahora en debug  
-// Unidad Riesgos
+    //Unidad Riesgos
     wire                            if_risk_pc_write;       //Unidad de riesgo para write en PC
     wire                            ifid_unit_risk_write;  //Riesgo de escritura
     wire                            id_unit_risk_mux;
     wire                            id_unit_risk_latch;
 
 
-// Banco de registros
+    //Banco de registros
     wire     [BITS_REGS-1:0]        ID_register_rs;
     wire     [BITS_REGS-1:0]        ID_register_rt;
     wire     [BITS_REGS-1:0]        ID_register_rd;
     wire     [BITS_SIZE-1:0]        ID_data_rs;
     wire     [BITS_SIZE-1:0]        ID_data_rt;
     wire     [BITS_SIZE-1:0]        ID_data_register_Debug;
-//Extensor de signo
+    //Extensor de signo
     wire     [BITS_INMEDIATE-1:0]   ID_intruct_16;
     wire     [BITS_SIZE-1:0]        ID_intruct_ext;
-//Sumador PC Jump 
+    //Sumador PC Jump 
     wire     [BITS_JUMP-1:0]        ID_JUMP_i;
     wire     [BITS_SIZE-1:0]        ID_JUMP_o;
-//Unidad de control
+    //Unidad de control
     wire     [BITS_SIZE_CTL-1:0]    ID_ctl_instruction;
     wire     [BITS_SIZE_CTL-1:0]    ID_ctl_instruction_funct;
     wire     [BITS_ALU_CTL-1:0]     ctl_unit_alu_op;
@@ -91,7 +93,7 @@ module TOP_MIPS
     wire                            ctl_unit_lui;
     wire                            ctl_unit_jalR;
     wire                            ctl_unit_halt;
-//Mux Unidad de riesgos
+    //Mux Unidad de riesgos
     wire     [BITS_ALU_CTL-1:0]     mux_ctl_unit_alu_op;
     wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_extend_mode;
     wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_size_filter;
@@ -114,15 +116,15 @@ module TOP_MIPS
     wire                            mux_ctl_unit_halt;
     
 
-// ---------IDEX--
-//CONTROL
+// ---------IDEX------------------------------------------------
+    //CONTROL
     wire                            IDEX_ctl_alu_src;
     wire                            IDEX_ctl_jump;
     wire                            IDEX_ctl_JALR;
     wire                            IDEX_ctl_mem_read;
-    wire     [BITS_ALU_CTL-1:0]     IDEX_ctl_alu_op;
-    wire     [BITS_EXTENSION-1:0]   IDEX_ctl_size_filter;
-    wire     [BITS_EXTENSION-1:0]   IDEX_ctL_size_filterL;
+    wire     [1:0]                  IDEX_ctl_alu_op;
+    wire     [1:0]                  IDEX_ctl_size_filter;
+    wire     [1:0]                  IDEX_ctL_size_filterL;
     wire                            IDEX_ctl_mem_to_reg;
     wire                            IDEX_ctl_register_write;
     wire                            IDEX_ctl_jal;
@@ -148,50 +150,66 @@ module TOP_MIPS
 
 
 
-//--------EX/MEM---------------------------
-    wire    [BITS_SIZE-1:0]         EXMEM_PC_Branch;
-    wire                            EXMEM_mem_Read;
-//MEM
-    wire                            MEM_PC_src_o; 
-
-//MEM_W 
-    wire                            MEM_WB_register_write;
-    wire    [BITS_REGS-1:0]         WB_register_adrr_result;
-    //MultiplexorEscribirDato
-    wire    [BITS_SIZE-1:0]         WB_data_write;
-
-
-//Unidad cortocircuito
-    wire    [BITS_CORTOCIRCUITO-1:0]   corto_register_A;
-    wire    [BITS_CORTOCIRCUITO-1:0]   corto_register_B;
-
-
-
-//--------EX/MEM--
-//MuxShamt
-    wire     [BITS_SIZE-1:0]        EX_alu_register_A;
+//--------EX--------------------------------------------
+   
     //ALU
     wire     [BITS_SIZE-1:0]        EX_alu_result;
     wire                            EX_flag_alu_zero;
-    wire     [BITS_REGS-1:0]        EXMEM_register_addr_result;
     wire     [BITS_REGS-1:0]        EX_alu_shamt;
-    wire     [BITS_SIZE-1:0]        EXMEM_alu;
+    //Sumador branch
+    wire     [BITS_SIZE-1:0]        EX_sum_pc_branch;
+    //MuxShamt
+    wire     [BITS_SIZE-1:0]        EX_alu_register_A;
 
-//ALUControl
+    //Unidad cortocircuito
+    wire    [BITS_CORTOCIRCUITO-1:0]   corto_register_A;
+    wire    [BITS_CORTOCIRCUITO-1:0]   corto_register_B;
+    //ALUControl
+    wire                            EX_flag_shamt;
+    wire     [BITS_OP-1:0]          EX_ctl_alu_op;
+    wire     [BITS_ALU-1:0]         EX_ctl_alu_instruction;
+    wire     [BITS_ALU-1:0]         EX_ctl_alu_opcode;
+    //Mux Registers
+    wire     [BITS_REGS-1:0]        EX_mux_register_rd;    
 
-    wire                           EX_flag_shamt;
-    wire     [BITS_OP-1:0]         EX_ctl_alu_op;
+//--------EXMEM--------------------------------------------
 
-//Sumador branch
-    wire     [BITS_SIZE-1:0]       EX_sum_pc_branch;
+//   EX_MEM
+    wire    [BITS_SIZE-1:0]         EXMEM_PC4;
+    wire    [BITS_SIZE-1:0]         EXMEM_PC8;
+    wire    [BITS_SIZE-1:0]         EXMEM_PC_Branch;
+    wire    [BITS_SIZE-1:0]         EXMEM_Instr;
+    wire                            EXMEM_zero_alu;
+    wire    [BITS_SIZE-1:0]         EXMEM_alu;    
+    wire    [BITS_SIZE-1:0]         EXMEM_register2;
+    wire    [BITS_REGS-1:0]         EXMEM_register_dst;
+    wire    [BITS_SIZE-1:0]         EXMEM_extension;
+    wire                            EXMEM_branch;
+    wire                            EXMEM_new_branch;
+    wire                            EXMEM_mem_write;
+    wire                            EXMEM_mem_read;
+    wire                            EXMEM_mem_to_reg;
+    wire                            EXMEM_register_write;
+    wire    [1:0]                   EXMEM_size_filter;
+    wire    [1:0]                   EXMEM_size_filterL;
+    wire                            EXMEM_zero_extend;
+    wire                            EXMEM_lui;
+    wire                            EXMEM_halt;
 
-//MultiplexorRegistro
-    wire     [BITS_REGS-1:0]       EX_mux_register_rd;    
+    //MEM
+    wire                            MEM_PC_src_o; 
 
-//  WB
 
-//MultiplexorMemoria
+//-------WB--------------------------------------------
+    //Multiplexor Escribir Dato
+    wire    [BITS_SIZE-1:0]        WB_data_write_EX;
+    //Multiplexor Memoria
     wire    [BITS_SIZE-1:0]        WB_data_write;
+    //MEMWB
+    wire                           MEM_WB_register_write;
+    wire    [BITS_REGS-1:0]        MEM_WB_register_dst;
+
+    wire    [BITS_REGS-1:0]        WB_register_adrr_result;
 
     //Memoria de instrucciones
     assign IF_IntrAddress_Debug       =   i_select_address_mem_instr;
@@ -199,7 +217,7 @@ module TOP_MIPS
     assign IF_flag_WriteInstr_Debug   =   i_flag_write_mem_ins;
 
 
-        //ID
+    //ID
         assign ID_Jump_i                  =   IFID_Instr[BITS_JUMP-1:0];
         //Unit Control
         assign ID_ctl_instruction         =   IFID_Instr[BITS_SIZE-1:BITS_SIZE-BITS_SIZE_CTL];
@@ -209,10 +227,14 @@ module TOP_MIPS
         //Registers
         assign ID_register_rs             =   IFID_Instr[BITS_INMEDIATE+BITS_REGS+BITS_REGS-1:BITS_INMEDIATE+BITS_REGS];//BITS_INMEDIATE+RT+RS-1=16+5+5-1=25; BITS_INMEDIATE+RT=16+5=21; [25-21]
         assign ID_register_rt             =   IFID_Instr[BITS_INMEDIATE+BITS_REGS-1:BITS_INMEDIATE];//BITS_INMEDIATE+BITS_REGS-1=16+5-1=20; BITS_INMEDIATE=16; [20-16]
-        assign ID_register_rd             =   IFID_Instr [BITS_INMEDIATE-1:BITS_INMEDIATE-BITS_REGS]; //BITS_INMEDIATE-1=16-1=15; BITS_INMEDIATE-RD=16-5=11; [15-11]
+        assign ID_register_rd             =   IFID_Instr[BITS_INMEDIATE-1:BITS_INMEDIATE-BITS_REGS]; //BITS_INMEDIATE-1=16-1=15; BITS_INMEDIATE-RD=16-5=11; [15-11]
         //Extensor
         assign ID_intruct_16              =   IFID_Instr[BITS_INMEDIATE-1:0];
 
+    // EX
+        //Control ALU
+        assign EX_ctl_alu_instruction     =   IDEX_extension[BITS_ALU-1:0];
+        assign EX_ctl_alu_opcode          =   IDEX_instruction[BITS_SIZE-1:BITS_REGS+BITS_REGS+BITS_INMEDIATE];
 
 //ETAPA IF
     IF
@@ -242,7 +264,7 @@ module TOP_MIPS
     );
 
 
-///LATCH IF/ID
+    ///LATCH IF/ID
     IFID
     #(
         .BITS_SIZE                  (BITS_SIZE)
@@ -295,7 +317,7 @@ module TOP_MIPS
         .o_extension_result         (ID_intruct_ext) 
     );
 
-//Unidad de Control
+    //Unidad de Control
     UnitControl
     #(
         .BITS_SIZE                 (BITS_SIZE_CTL)
@@ -324,7 +346,7 @@ module TOP_MIPS
         .o_size_filterL             (ctl_unit_size_filter_L)  
     );
 
-//Unidad de Riegos
+    //Unidad de Riegos
     UnitRisk
     #(
         .BITS_REGS                  (BITS_REGS)
@@ -333,11 +355,11 @@ module TOP_MIPS
     (
         .i_EXMEM_flush              (MEM_PC_src_o),
         .i_IDEX_mem_read            (IDEX_ctl_mem_read),
-        .i_EXMEM_mem_read           (EXMEM_mem_Read),
+        .i_EXMEM_mem_read           (EXMEM_mem_read),
         .i_JALR                     (ctl_unit_jal_R),
         .i_HALT                     (ctl_unit_halt),
         .i_IDEX_rt                  (IDEX_rt),
-        .i_EXMEM_rt                 (EXMEM_register_addr_result),
+        .i_EXMEM_rt                 (EXMEM_register_dst),
         .i_IFID_rs                  (ID_register_rs),
         .i_IFID_rt                  (ID_register_rt),
         .o_risk_mux                 (id_unit_risk_mux),
@@ -346,7 +368,7 @@ module TOP_MIPS
         .o_flush_latch              (id_unit_risk_latch)
     );
 
-//Mux
+    //Mux
     mux_unit_risk
     #(
     )
@@ -394,7 +416,7 @@ module TOP_MIPS
         
     );  
 
-    // ETAPA ID/EX
+    //LATCH ID/EX
     IDEX
     #(
         .BITS_SIZE                  (BITS_SIZE),
@@ -473,9 +495,7 @@ module TOP_MIPS
         .o_halt                    (IDEX_ctl_halt)
     );
 
-
-        //ETAPA EX
-
+//ETAPA EX
     EX
     #
     (
@@ -484,29 +504,132 @@ module TOP_MIPS
         .BITS_OP                    (BITS_OP),
         .BITS_CORTOCIRCUITO         (BITS_CORTOCIRCUITO)
     )
-    u_EX
+    module_EX
     (
-        .i_id_extension        (IDEX_extension),
-        .i_id_pc4              (IDEX_PC4),
-        .i_alu_shamt           (EX_alu_shamt),
-        .i_flag_shamt          (EX_flag_shamt),
-        .i_alu_op              (EX_ctl_alu_op), 
-        .i_corto_register_A    (corto_register_A),
-        .i_register1           (IDEX_register1),
-        .i_exmem_register      (EXMEM_alu),
-        .i_wb_data_write       (WB_data_write),   
-        .i_idex_ctl_alu_src    (IDEX_ctl_alu_src),
-        .i_corto_register_B    (corto_register_B),
-        .i_register2           (IDEX_register2),
-        .i_select_register     (IDEX_ctl_register_rd),
-        .i_rt                  (IDEX_RT),
-        .i_rd                  (IDEX_RD),
-        .o_alu_zero            (EX_flag_alu_zero),
-        .o_alu_result          (EX_alu_result),
-        .o_sum_pc_branch       (EX_sum_pc_branch),
-        .o_data_register_A     (EX_alu_register_A),
-        .o_mux_register_rd     (EX_mux_register_rd)
+        .i_id_extension             (IDEX_extension),
+        .i_id_pc4                   (IDEX_PC4),
+        .i_alu_shamt                (EX_alu_shamt),
+        .i_flag_shamt               (EX_flag_shamt),
+        .i_alu_op                   (EX_ctl_alu_op), 
+        .i_corto_register_A         (corto_register_A),
+        .i_register1                (IDEX_register1),
+        .i_exmem_register           (EXMEM_alu),
+        .i_wb_data_write            (WB_data_write_EX),   
+        .i_idex_ctl_alu_src         (IDEX_ctl_alu_src),
+        .i_corto_register_B         (corto_register_B),
+        .i_register2                (IDEX_register2),
+        .i_select_register          (IDEX_ctl_register_rd),
+        .i_rt                       (IDEX_RT),
+        .i_rd                       (IDEX_RD),
+        .o_alu_zero                 (EX_flag_alu_zero),
+        .o_alu_result               (EX_alu_result),
+        .o_sum_pc_branch            (EX_sum_pc_branch),
+        .o_data_register_A          (EX_alu_register_A),
+        .o_mux_register_rd          (EX_mux_register_rd)
     );
+
+
+    //Control ALU
+    Control_ALU
+    #(
+        .BITS_ALU                   (BITS_ALU ),
+        .BITS_ALU_CTL               (BITS_ALU_CTL),
+        .ALU_OP                     (ALU_OP)
+    )
+    module_ctl_alu
+    (
+        .i_funct                  (EX_ctl_alu_instruction),
+        .i_opcode                 (EX_ctl_alu_opcode),
+        .i_alu_op                 (IDEX_ctl_alu_op),
+        .o_alu_op                 (EX_ctl_alu_op),
+        .o_shamt                  (EX_flag_shamt)
+    );
+
+
+    //CORTOCIRCUITO
+    UnitCortocircuito
+    #(
+        .BITS_REGS                (BITS_REGS),
+        .BITS_CORTOCIRCUITO       (BITS_CORTOCIRCUITO)
+    )
+    Unidad_de_Cortocicuito
+    (
+        .i_EXMEM_register_write (EXMEM_register_write),  //Se escribe Registro Destino en EX/MEM
+        .i_EXMEM_rd             (EXMEM_register_dst),   //Registro destino en EX/MEM
+        .i_MEM_WR_reg_write     (MEM_WB_register_write), //Se escribe Registro Destino en MEM/WB
+        .i_MEM_WR_rd            (MEM_WB_register_dst),  //Registro destino en MEM/WB
+        .i_rs                   (IDEX_RS),              //Rs para comparar con Registro Destino
+        .i_rt                   (IDEX_RT),              //Rt para comparar con Registro Destino
+        .o_mux_A                (corto_register_A),     //para RegistroA
+        .o_mux_B                (corto_register_B)      //para RegistroB
+    );
+
+
+    //LATCH EXMEM
+    EXMEM
+    #(
+        .BITS_SIZE              (BITS_SIZE),
+        .BITS_REGS              (BITS_REGS)
+    )
+    module_EXMEM
+    (
+        //General
+        .i_clk                      (i_clk),
+        .i_reset                    (i_reset),
+        .i_step                     (i_ctl_clk_wiz),
+        .i_flush_latch              (id_unit_risk_latch),
+        .i_pc4                      (IDEX_PC4),
+        .i_pc8                      (IDEX_PC8),
+        .i_pc_branch                (EX_sum_pc_branch),
+        .i_idex_instruction         (IDEX_instruction),
+        .i_flag_alu_zero            (EX_flag_alu_zero),
+        .i_alu_result               (EX_alu_result),
+        .i_idex_register2           (IDEX_register2),
+        .i_register_dst             (EX_mux_register_rd),
+        .i_idex_extension           (IDEX_extension),
+
+        //ControlIM
+        .i_jal                      (IDEX_ctl_jal),
+        .i_branch                   (IDEX_ctl_branch),
+        .i_new_branch               (IDEX_ctl_new_branch),
+        .i_mem_write                (IDEX_ctl_mem_write),
+        .i_mem_read                 (IDEX_ctl_mem_read),
+        .i_size_filter              (IDEX_ctl_size_filter),
+        
+        //ControlWB
+        .i_mem_to_reg               (IDEX_ctl_mem_to_reg),
+        .i_reg_write                (IDEX_ctl_register_write),
+        .i_size_filterL             (IDEX_ctL_size_filterL),
+        .i_zero_extend              (IDEX_ctl_zero_extend),
+        .i_lui                      (IDEX_ctl_lui),
+        .i_halt                     (IDEX_ctl_halt),
+
+        .o_pc4                      (EXMEM_PC4),
+        .o_pc8                      (EXMEM_PC8),
+        .o_pc_branch                (EXMEM_PC_Branch),
+        .o_instruction              (EXMEM_Instr),
+        .o_zero                     (EXMEM_zero_alu),
+        .o_alu                      (EXMEM_alu),
+        .o_register_2               (EXMEM_register2),
+        .o_register_rd_dst          (EXMEM_register_dst),
+        .o_extension                (EXMEM_extension       ),
+
+        //ControlM
+        .o_jal                      (EXMEM_jal),
+        .o_branch                   (EXMEM_branch),
+        .o_new_branch               (EXMEM_new_branch),
+        .o_mem_write                (EXMEM_mem_write),
+        .o_mem_read                 (EXMEM_mem_read),
+        .o_size_filter              (EXMEM_size_filter),
+
+        //ControlWB
+        .o_mem_to_reg               (EXMEM_mem_to_reg),
+        .o_register_write           (EXMEM_register_write),
+        .o_size_filterL             (EXMEM_size_filterL),
+        .o_zero_extend              (EXMEM_zero_extend),
+        .o_lui                      (EXMEM_lui),
+        .o_halt                     (EXMEM_halt)
+    );    
 
 
 endmodule

@@ -7,12 +7,12 @@ module mux_alu
         
     )
     (
-        input   wire                                 i_alu_src,                   //Usas inmediato o registro
-        input   wire    [BITS_CORTOCIRCUITO-1:0]     i_corto_register_B,   //Registro ha usar x BITS_CORTOCIRCUITO
-        input   wire    [BITS_SIZE-1:0]             i_idex_register2,                 //Dato leido Registro 2
-        input   wire    [BITS_SIZE-1:0]             i_extension_data,            //Inst Extendida
-        input   wire    [BITS_SIZE-1:0]             i_exmem_register,          //Resultado ALU EX/MEM
-        input   wire    [BITS_SIZE-1:0]             i_memwb_register,          //Resultado ALU MEM/WR
+        input   wire                                i_alu_src,                   //Usas inmediato o registro
+        input   wire    [BITS_CORTOCIRCUITO-1:0]    i_corto_register_B,   //Registro ha usar x BITS_CORTOCIRCUITO
+        input   wire    [BITS_SIZE-1:0]             i_idex_register2,     //Dato leido Registro 2
+        input   wire    [BITS_SIZE-1:0]             i_extension_data,     //Inst Extendida
+        input   wire    [BITS_SIZE-1:0]             i_exmem_register,     //Resultado ALU EX/MEM
+        input   wire    [BITS_SIZE-1:0]             i_memwb_register,     //Resultado ALU MEM/WR
         output  wire    [BITS_SIZE-1:0]             o_mux_alu_b                 
     );
     
