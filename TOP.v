@@ -99,7 +99,7 @@ module TOP
 
     UnitDebug #(
         .SIZE_TRAMA     (SIZE_INSTRUC_DEBUG),
-        .SIZE_INSTRUC   (BITS_SIZE)
+        .BITS_SIZE      (BITS_SIZE)
     )
     module_Debug
     (
@@ -117,7 +117,7 @@ module TOP
         .o_ctl_clk_wiz          (ctl_clk_wiz),
         .o_uart_tx_data         (uart_tx_data),
         .o_flag_tx_ready        (uart_tx_start),
-        .o_select_mem_dir       (select_mem_dir) 
+        .o_select_mem_dir       (select_mem_dir), 
         .o_select_mem_ins_dir   (select_mem_ins_dir),
         .o_select_register_dir  (select_register_dir),
         .o_dato_mem_ins         (dato_mem_ins),

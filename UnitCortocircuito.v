@@ -48,6 +48,6 @@ module UnitCortocircuito
 
 
     assign  o_mux_A =   reg_mux_A;
-    assign  o_mux_B =   mux_B;
+    assign  o_mux_B =   reg_mux_B;
 
 endmodule

@@ -16,7 +16,6 @@ module TOP_MIPS
         parameter   BITS_ALU_CTL        = 2,
         parameter   BITS_ALU            = 6,
         parameter   BITS_OP             = 6,
-        parameter   ALU_OP              = 4,
         parameter   BITS_CORTOCIRCUITO  = 3
     )
     (   
@@ -28,9 +27,8 @@ module TOP_MIPS
         input   wire     [BITS_SIZE-1:0]            i_dato_mem_ins,
         input   wire                                i_flag_write_mem_ins,
 
-        output  wire     [BITS_SIZE-1:0]            o_pc
-        output  wire     [BITS_SIZE-1:0]            o_data_reg_file,
-
+        output  wire     [BITS_SIZE-1:0]            o_pc,
+        output  wire     [BITS_SIZE-1:0]            o_data_reg_file
     );
 
 // ---------IF-----------------------------------------------
@@ -404,7 +402,7 @@ module TOP_MIPS
         .o_jal                      (mux_ctl_unit_jal),
         .o_lui                      (mux_ctl_unit_lui),
         .o_jalR                     (mux_ctl_unit_jalR),
-        .o_halt                     (mux_ctl_unit_halt)
+        .o_halt                     (mux_ctl_unit_halt),
         .o_branch                   (mux_ctl_unit_branch),
         .o_new_branch               (mux_ctl_unit_new_branch),
         .o_mem_read                 (mux_ctl_unit_mem_read),
@@ -416,7 +414,7 @@ module TOP_MIPS
         .o_extension_mode           (mux_ctl_unit_extend_mode),
         .o_size_filter              (mux_ctl_unit_size_filter),
         .o_size_filterL             (mux_ctl_unit_size_filterL),
-        .o_zero_extend              (mux_ctl_unit_zero_extend),
+        .o_zero_extend              (mux_ctl_unit_zero_extend)
         
     );  
 
@@ -538,7 +536,7 @@ module TOP_MIPS
     #(
         .BITS_ALU                   (BITS_ALU ),
         .BITS_ALU_CTL               (BITS_ALU_CTL),
-        .ALU_OP                     (ALU_OP)
+        .ALU_OP                     (BITS_OP)
     )
     module_ctl_alu
     (
