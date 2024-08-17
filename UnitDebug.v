@@ -8,10 +8,9 @@ module UnitDebug
         parameter       MEM_DATA_SIZE               = 16,
         parameter       MEM_INST_SIZE_BITS          = 8,
         parameter       SIZE_TRAMA                  = 8,  
-        parameter       SIZE_INSTRUC                = 32,
         parameter       MEM_REGISTER_SIZE           = 32,
-        parameter       BITS_REGS                   = 5
-
+        parameter       BITS_REGS                   = 5,
+        parameter       BITS_SIZE                   = 32
         
     )
     (
@@ -20,20 +19,26 @@ module UnitDebug
         input                                       i_uart_rx_flag_ready,  //o_rx_done  FROM UART.V  Tengo un flag para indicar que tengo datos de la recepcion
         input           [SIZE_TRAMA-1:0]            i_uart_rx_data,        // o_rx_data  Dato de 8 bits receptado. 
         input                                       i_uart_tx_done,        // o_tx_done Flag para indicar que termino la transmicion
-        input           [SIZE_INSTRUC-1 :0]         i_clk_wiz_count,   
         
+        input           [BITS_SIZE-1 :0]            i_clk_wiz_count,   
         input                                       i_halt,
+        input           [BITS_SIZE-1:0]             i_mips_pc,
+        input           [BITS_SIZE-1:0]             i_data_reg_file,
+        input           [BITS_SIZE-1:0]             i_data_mem,
 
-        
+
         
         output                                      o_uart_rx_reset,   // ESTE PARA RESET RX? CANCELA LA RECEPCION? DONDE LO USA EN EL TOP
         output                                      o_ctl_clk_wiz,
         output          [MEM_INST_SIZE_BITS-1:0]    o_select_mem_ins_dir,  //Este output tiene la posicion de memoria donde escribir la instruccion
-        output          [SIZE_INSTRUC-1:0]          o_dato_mem_ins,
+        output          [BITS_SIZE-1:0]             o_dato_mem_ins,
         output                                      o_flag_instr_write,
         output          [3:0]                       o_debug_state
-
         output          [BITS_REGS-1:0]             o_select_register_dir,
+        output                                      o_flag_tx_ready,
+        output          [SIZE_TRAMA-1:0]            o_uart_tx_data,
+        output          [BITS_SIZE-1:0]             o_select_mem_dir,
+
     );
 
     localparam IDLE                 =   4'b0000; //Estado inicial
@@ -54,12 +59,12 @@ module UnitDebug
     localparam   SIZE_COUNTER_DIR   = $clog2(MEM_INST_TOTAL_SIZE);
     localparam   REG_COUNTER_SIZE   = $clog2(MEM_REGISTER_SIZE);
     localparam   MEM_COUNTER_SIZE   = $clog2(MEM_DATA_SIZE);
-   
+
     reg                                                reg_ctl_clk_wiz;
     reg               [4:0]                            state, state_next;
     reg               [3:0]                            debug_state, debug_state_next; //Satate para debuggear en tb
     reg                                                reg_uart_rx_reset, reg_uart_rx_reset_next;
-    reg               [SIZE_INSTRUC-1:0]               reg_instruccion, reg_instruccion_next;
+    reg               [BITS_SIZE-1:0]                  reg_instruccion, reg_instruccion_next;
     reg                                                reg_rx_instr_write, reg_rx_instr_write_next;
     reg               [SIZE_COUNTER_DIR-1:0]           reg_counter_dir_mem_instr=0, reg_counter_dir_mem_instr_next=0;  //Contador para direccionar las ubicaciones de memoria de instr disponible
     reg               [1:0]                            reg_rx_counter_bytes=0, reg_rx_counter_bytes_next=0;
@@ -68,6 +73,13 @@ module UnitDebug
     reg               [1:0]                            reg_tx_counter_bytes=0, reg_tx_counter_bytes_next=0;
     reg               [2:0]                            reg_tx_selector_data, reg_tx_selector_data_next
     reg               [REG_COUNTER_SIZE-1:0]           reg_tx_register_counter, reg_tx_register_counter_next;
+    reg                                                reg_flag_tx_ready, reg_flag_tx_ready_next;
+    reg               [SIZE_TRAMA-1:0]                 uart_tx_data, uart_tx_data_next;
+    reg               [BITS_SIZE-1:0]                  tx_data_32, tx_data_32_next;
+    reg               [MEM_COUNT_SIZE-1:0]             reg_tx_counter_mem, reg_tx_counter_mem_next;
+
+
+
 
     
 
@@ -83,7 +95,13 @@ module UnitDebug
 
                 reg_tx_counter_bytes        <= 0;
                 reg_tx_selector_data        <= 0;
-                reg_tx_register_counter               <= 0;
+                reg_tx_register_counter     <= 0;
+                tx_data_32                  <= 0;
+                reg_flag_tx_ready           <= 0;
+                reg_tx_counter_mem           <= 0;
+
+
+
                 
                 
                 mips_step                   <= 0;
@@ -101,7 +119,15 @@ module UnitDebug
 
                 reg_tx_counter_bytes        <= reg_tx_counter_bytes_next;
                 reg_tx_selector_data        <= reg_tx_selector_data_next;
-                reg_tx_register_counter               <= reg_tx_register_counter_next;
+                reg_tx_register_counter     <= reg_tx_register_counter_next;
+                uart_tx_data                <= uart_tx_data_next;
+                tx_data_32                  <= tx_data_32_next;
+                reg_flag_tx_ready           <= reg_flag_tx_ready_next;
+                reg_tx_counter_mem           <= reg_tx_counter_mem_next;
+
+
+                
+
 
                 reg_counter_dir_mem_instr   <= reg_counter_dir_mem_instr_next;
                 reg_rx_instr_write          <= reg_rx_instr_write_next;
@@ -117,11 +143,13 @@ module UnitDebug
             reg_uart_rx_reset_next          <= reg_uart_rx_reset;
             reg_instruccion_next            <= reg_instruccion;
             reg_rx_counter_bytes_next       <= reg_rx_counter_bytes;
-
             reg_tx_counter_bytes_next       <= reg_tx_counter_bytes;
             reg_tx_selector_data_next       <= reg_tx_selector_data;
             reg_tx_register_counter_next    <= reg_tx_register_counter;
-
+            uart_tx_data_next               <= uart_tx_data;
+            tx_data_32_next                 <= tx_data_32;
+            reg_flag_tx_ready_next          <= reg_flag_tx_ready;
+            reg_tx_counter_mem_next         <= reg_tx_counter_mem;            
             reg_counter_dir_mem_instr_next  <= reg_counter_dir_mem_instr;
             reg_rx_instr_write_next         <= reg_rx_instr_write;
             
@@ -154,7 +182,6 @@ module UnitDebug
                 end
             end
 
-
             STEP:
             begin
                 debug_state_next <= 2;
@@ -179,8 +206,6 @@ module UnitDebug
                     end
                 end
             end
-
-
             
             DATA_RX_LOAD: //Puedo cargar instrucciones
             begin
@@ -223,22 +248,14 @@ module UnitDebug
                 end
             end
 
-
-
-
-
-
-
-
             WAIT_TX:
             begin
                 debug_state_next <= 8;
-                if(i_uart_tx_done) begin           //Se completo la transmicion en UART Tx
+                if(i_uart_tx_done) begin    //Se completo la transmicion en UART Tx
                     if(reg_tx_counter_bytes == 0) begin  //Desborda el contador tx
                         state_next <= LOAD_DATA_TX;
                     end 
-                    else 
-                    begin
+                    else  begin
                         tx_data_32_next        <= tx_data_32 << 8;
                         state_next             <= SEND_DATA_TX;
                     end
@@ -277,9 +294,9 @@ module UnitDebug
                     3: //Envio el contenido del reg de data memory
                     begin
                         tx_data_32_next        <= i_data_mem;
-                        uart_tx_mem_count_next <= uart_tx_mem_count + 1;
+                        reg_tx_counter_mem_next <= reg_tx_counter_mem + 1;
 
-                        if(uart_tx_mem_count == MEM_COUNTER_SIZE-1) begin
+                        if(reg_tx_counter_mem == MEM_COUNTER_SIZE-1) begin
                             reg_tx_selector_data_next <= reg_tx_selector_data + 1;
                         end
                         state_next  <= SEND_DATA_TX;
@@ -304,13 +321,18 @@ module UnitDebug
                 endcase
             end
 
+            SEND_DATA_TX:
+            begin
+                debug_state_next <= 7;
+                uart_tx_data_next           <= tx_data_32[ BITS_SIZE-1: BITS_SIZE - SIZE_TRAMA];
+                reg_flag_tx_ready_next      <= 1;
 
-
-
-
-
-
-
+                if(~i_uart_tx_done) begin
+                   reg_flag_tx_ready_next   <= 0;
+                   tx_count_bytes_next      <= tx_count_bytes +1;
+                   state_next               <= WAIT_TX;
+                end
+            end
             default:
                 state_next <= IDLE; //default idle
         endcase
@@ -322,7 +344,7 @@ module UnitDebug
             //Tenedriamos que definir mode continuo y step para modificar el paso del clock
             MGMT_STEP:              reg_ctl_clk_wiz <= mips_step;
             MGMT_CONTINUO:          reg_ctl_clk_wiz <= 1'b1;
-            MGMT_STOP:     reg_ctl_clk_wiz <= 1'b0;
+            MGMT_STOP:              reg_ctl_clk_wiz <= 1'b0;
             default:                reg_ctl_clk_wiz <= 1'b0;
         endcase
     end
@@ -333,7 +355,9 @@ module UnitDebug
     assign o_flag_instr_write       = reg_rx_instr_write;
     assign o_select_mem_ins_dir     = reg_counter_dir_mem_instr;   //Ubicacion en memoria de intrucciones
     assign o_dato_mem_ins           = reg_instruccion;             //Intruccion a escribir.
-
+    assign o_flag_tx_ready          = reg_flag_tx_ready;
+    assign o_uart_tx_data           = uart_tx_data;
+    assign o_select_mem_dir         = reg_tx_counter_mem;
     assign o_select_register_dir    = reg_tx_register_counter;
 
         

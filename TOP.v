@@ -12,27 +12,30 @@ module TOP
 
     )  
     (
-        input   wire                i_clk,
-        input   wire                i_reset,
-        input   wire                i_uart_rx,
-        output  wire                o_uart_tx,
-        output  wire        [3:0]   o_debug_state  //conozco el estado en el que esta el debug
+        input   wire                    i_clk,
+        input   wire                    i_reset,
+        input   wire                    i_uart_rx,
+        output  wire                    o_uart_tx,
+        output  wire        [3:0]       o_debug_state  //conozco el estado en el que esta el debug
     );
 
         localparam  MEM_INSTR_SIZE      = $clog2(SIZE_MEM_INSTRUC);
         localparam  MEM_REGISTERS_SIZE  = $clog2(BITS_SIZE);
 
 
-        wire    [BITS_SIZE-1:0]         select_mem_dir;
-        wire    [MEM_INSTR_SIZE-1:0]    select_mem_ins_dir;  //Sirve para contar cada posicion de la memoria de instrucciones. Es decir cada posicion donde se va alojar una instr
-        wire    [MEM_REGISTERS_SIZE-1:0]     select_reg_dir; //se incrementa en 1 para que mips manda a la salida el valor de ese reg_file
+        wire    [BITS_SIZE-1:0]          select_mem_dir;
+        wire    [MEM_INSTR_SIZE-1:0]     select_mem_ins_dir;  //Sirve para contar cada posicion de la memoria de instrucciones. Es decir cada posicion donde se va alojar una instr
+        wire    [MEM_REGISTERS_SIZE-1:0] select_register_dir; //se incrementa en 1 para que mips manda a la salida el valor de ese reg_file
         
-        wire                            i_ctl_clk_wiz;  //segun el modo o si esta en stop,(1,0) con 1 se incrementa el clock, es control
+        wire                            ctl_clk_wiz;  //segun el modo o si esta en stop,(1,0) con 1 se incrementa el clock, es control
         wire    [BITS_SIZE-1:0]         dato_mem_ins;
         wire                            flag_write_mem_instr;   //cuando recibi el dato(rx) se pone a 1 para escribir mem instruc
         wire    [BITS_SIZE-1:0]         pc;
         wire    [BITS_SIZE-1:0]         data_mem;
         wire                            halt;
+        wire    [BITS_SIZE-1:0]         data_reg_file; //valor del reg_file enviado desde mips
+
+
 
 
         wire                            uart_rx_reset;
@@ -50,7 +53,7 @@ module TOP
 
     clk_wiz_0 clk_wiz
    (
-    .clk_out1(wire_clk_wz),      // output clk_out50MHz
+    .clk_out1(wire_clk_wz), // output clk_out50MHz
     .reset(i_reset),        // input reset
     .locked(locked),        // output locked
     .clk_in1(i_clk)
@@ -59,19 +62,20 @@ module TOP
 
     TOP_MIPS #(
         .BITS_SIZE          (BITS_SIZE),
-        .SIZE_MEM_INSTRUC       (SIZE_MEM_INSTRUC),
+        .SIZE_MEM_INSTRUC   (SIZE_MEM_INSTRUC),
         .SIZE_INSTRUC_DEBUG (SIZE_INSTRUC_DEBUG)
     )
     module_TOP_MIPS
     (
         .i_clk                          (wire_clk_wz),
         .i_reset                        (i_reset),
-        .i_ctl_clk_wiz                  (i_ctl_clk_wiz),
+        .i_ctl_clk_wiz                  (ctl_clk_wiz),
         .i_select_address_mem_instr     (select_mem_ins_dir),
         .i_select_address_register      (select_register_dir),
         .i_dato_mem_ins                 (dato_mem_ins),
         .i_flag_write_mem_ins           (flag_write_mem_instr),
-        .o_pc                           (pc)
+        .o_pc                           (pc),
+        .o_data_reg_file                (data_reg_file)
     );
 
 
@@ -100,14 +104,20 @@ module TOP
     module_Debug
     (
         .i_clk                  (wire_clk_wz),
-        .i_reset                (i_reset),
-        .i_halt                 (halt),
+        .i_reset                (i_reset),        
         .i_uart_rx_flag_ready   (uart_rx_done),
         .i_uart_rx_data         (uart_rx_data),
         .i_uart_tx_done         (uart_tx_done),
         .i_clk_wiz_count        (clk_wiz_count),
+        .i_halt                 (halt),
+        .i_mips_pc              (pc),
+        .i_data_reg_file        (data_reg_file),
+        .i_data_mem             (data_mem),
         .o_uart_rx_reset        (uart_rx_reset),
-        .o_ctl_clk_wiz          (o_ctl_clk_wiz),
+        .o_ctl_clk_wiz          (ctl_clk_wiz),
+        .o_uart_tx_data         (uart_tx_data),
+        .o_flag_tx_ready        (uart_tx_start),
+        .o_select_mem_dir       (select_mem_dir) 
         .o_select_mem_ins_dir   (select_mem_ins_dir),
         .o_select_register_dir  (select_register_dir),
         .o_dato_mem_ins         (dato_mem_ins),
@@ -119,7 +129,7 @@ module TOP
         begin
             if(i_reset) begin
                 reg_clk_wiz_count = 0;
-            end else if (o_ctl_clk_wiz) begin
+            end else if (ctl_clk_wiz) begin
                 reg_clk_wiz_count = reg_clk_wiz_count + 1;
             end
         end
