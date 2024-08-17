@@ -83,7 +83,7 @@ module TOP_MIPS
     wire                            ctl_unit_register_rd;
     wire                            ctl_unit_jump;
     wire                            ctl_unit_jal;
-    wire                            ctl_unit_new_branch;
+    wire                            ctl_unit_neq_branch;
     wire                            ctl_unit_branch;
     wire                            ctl_unit_mem_read;
     wire                            ctl_unit_mem_write;
@@ -104,7 +104,7 @@ module TOP_MIPS
     wire                            mux_ctl_unit_register_rd;
     wire                            mux_ctl_unit_jump;
     wire                            mux_ctl_unit_jal;
-    wire                            mux_ctl_unit_new_branch;
+    wire                            mux_ctl_unit_neq_branch;
     wire                            mux_ctl_unit_branch;
     wire                            mux_ctl_unit_mem_read;
     wire                            mux_ctl_unit_mem_write;
@@ -129,7 +129,7 @@ module TOP_MIPS
     wire                            IDEX_ctl_jal;
     wire                            IDEX_ctl_halt;
     wire                            IDEX_ctl_register_rd;
-    wire                            IDEX_ctl_new_branch;
+    wire                            IDEX_ctl_neq_branch;
     wire                            IDEX_ctl_branch;
     wire                            IDEX_ctl_mem_write;
     wire                            IDEX_ctl_zero_extend;
@@ -184,7 +184,7 @@ module TOP_MIPS
     wire    [BITS_REGS-1:0]         EXMEM_register_dst;
     wire    [BITS_SIZE-1:0]         EXMEM_extension;
     wire                            EXMEM_branch;
-    wire                            EXMEM_new_branch;
+    wire                            EXMEM_neq_branch;
     wire                            EXMEM_mem_write;
     wire                            EXMEM_mem_read;
     wire                            EXMEM_mem_to_reg;
@@ -334,8 +334,8 @@ module TOP_MIPS
         .o_lui                      (ctl_unit_lui),
         .o_jalR                     (ctl_unit_jal_R),
         .o_halt                     (ctl_unit_halt),
-        .o_branch                   (ctl_unit_new_branch),
-        .o_new_branch               (ctl_unit_branch),
+        .o_branch                   (ctl_unit_branch),
+        .o_neq_branch               (ctl_unit_neq_branch),
         .o_mem_read                 (ctl_unit_mem_read),
         .o_mem_write                (ctl_unit_mem_write),
         .o_alu_src                  (ctl_unit_alu_src),
@@ -381,7 +381,7 @@ module TOP_MIPS
         .i_jump                     (ctl_unit_jump),
         .i_jal                      (ctl_unit_jal),
         .i_branch                   (ctl_unit_branch),
-        .i_new_branch               (ctl_unit_new_branch),
+        .i_neq_branch               (ctl_unit_neq_branch),
         .i_mem_read                 (ctl_unit_mem_read),
         .i_mem_to_reg               (ctl_unit_mem_to_reg),
         .i_alu_op                   (ctl_unit_alu_op),
@@ -404,7 +404,7 @@ module TOP_MIPS
         .o_jalR                     (mux_ctl_unit_jalR),
         .o_halt                     (mux_ctl_unit_halt),
         .o_branch                   (mux_ctl_unit_branch),
-        .o_new_branch               (mux_ctl_unit_new_branch),
+        .o_neq_branch               (mux_ctl_unit_neq_branch),
         .o_mem_read                 (mux_ctl_unit_mem_read),
         .o_mem_to_reg               (mux_ctl_unit_mem_to_reg),
         .o_alu_op                   (mux_ctl_unit_alu_op),
@@ -443,7 +443,7 @@ module TOP_MIPS
         .i_reg_dst_rd               (mux_ctl_unit_register_rd),
         //ControlM
         .i_branch                   (mux_ctl_unit_branch),
-        .i_new_branch               (mux_ctl_unit_new_branch),
+        .i_neq_branch               (mux_ctl_unit_neq_branch),
         .i_mem_write                (mux_ctl_unit_mem_write),
         .i_mem_read                 (mux_ctl_unit_mem_read),
         .i_size_filter              (mux_ctl_unit_size_filter),
@@ -484,7 +484,7 @@ module TOP_MIPS
         .o_register_rd_dst         (IDEX_ctl_register_rd),
         //ControlM
         .o_branch                  (IDEX_ctl_branch),
-        .o_new_branch              (IDEX_ctl_new_branch),
+        .o_neq_branch              (IDEX_ctl_neq_branch),
         .o_mem_write               (IDEX_ctl_mem_write),
         .o_mem_read                (IDEX_ctl_mem_read),
         .o_size_filter             (IDEX_ctl_size_filter),
@@ -593,7 +593,7 @@ module TOP_MIPS
         //ControlIM
         .i_jal                      (IDEX_ctl_jal),
         .i_branch                   (IDEX_ctl_branch),
-        .i_new_branch               (IDEX_ctl_new_branch),
+        .i_neq_branch               (IDEX_ctl_neq_branch),
         .i_mem_write                (IDEX_ctl_mem_write),
         .i_mem_read                 (IDEX_ctl_mem_read),
         .i_size_filter              (IDEX_ctl_size_filter),
@@ -619,7 +619,7 @@ module TOP_MIPS
         //ControlM
         .o_jal                      (EXMEM_jal),
         .o_branch                   (EXMEM_branch),
-        .o_new_branch               (EXMEM_new_branch),
+        .o_neq_branch               (EXMEM_neq_branch),
         .o_mem_write                (EXMEM_mem_write),
         .o_mem_read                 (EXMEM_mem_read),
         .o_size_filter              (EXMEM_size_filter),
@@ -633,5 +633,14 @@ module TOP_MIPS
         .o_halt                     (EXMEM_halt)
     );    
 
-
+    and_branch
+    #(
+    )
+    module_and_branch
+    (
+        .i_branch       (EXMEM_branch  ),
+        .i_neq_branch   (EXMEM_neq_branch ),
+        .i_zero         (EXMEM_zero_alu    ),
+        .o_pc_source    (MEM_PC_src_o    )
+    );
 endmodule

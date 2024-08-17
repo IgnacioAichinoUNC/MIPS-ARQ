@@ -21,7 +21,7 @@ module EXMEM
         input   wire    [BITS_SIZE-1:0]     i_idex_extension,
         // ControlM
         input   wire                        i_branch,
-        input   wire                        i_new_branch,
+        input   wire                        i_neq_branch,
         input   wire                        i_mem_write,
         input   wire                        i_mem_read, 
         input   wire    [1:0]               i_size_filter, 
@@ -46,7 +46,7 @@ module EXMEM
         output  wire    [BITS_SIZE-1:0]     o_extension,
         // OControlM
         output  wire                        o_branch,
-        output  wire                        o_new_branch,
+        output  wire                        o_neq_branch,
         output  wire                        o_mem_write,
         output  wire                        o_mem_read,
         output  wire   [1:0]                o_size_filter,
@@ -72,7 +72,7 @@ module EXMEM
 
     // RegM
     reg                         reg_branch;
-    reg                         reg_new_branch;
+    reg                         reg_neq_branch;
     reg                         reg_mem_write;
     reg                         reg_mem_read;
     reg     [1:0]               reg_size_filter;
@@ -100,7 +100,7 @@ module EXMEM
                 
                 // M
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_write       <=  1'b0;
                 reg_mem_read        <=  1'b0;
                 reg_size_filter     <=  2'b00;
@@ -128,7 +128,7 @@ module EXMEM
                 
                 // M
                 reg_branch          <=  i_branch;
-                reg_new_branch      <=  i_new_branch;
+                reg_neq_branch      <=  i_neq_branch;
                 reg_mem_write       <=  i_mem_write;
                 reg_mem_read        <=  i_mem_read;
                 reg_size_filter     <=  i_size_filter;
@@ -156,7 +156,7 @@ module EXMEM
     
     // AssignM
     assign o_branch             =   reg_branch;
-    assign o_new_branch         =   reg_new_branch;
+    assign o_neq_branch         =   reg_neq_branch;
     assign o_mem_write          =   reg_mem_write;
     assign o_mem_read           =   reg_mem_read;
     assign o_size_filter        =   reg_size_filter;

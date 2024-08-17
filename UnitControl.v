@@ -40,7 +40,7 @@ module UnitControl
         output  wire                            o_jump          ,
         output  wire                            o_jal           ,
         output  wire                            o_branch        ,
-        output  wire                            o_new_branch       ,
+        output  wire                            o_neq_branch       ,
 
         output  wire                            o_mem_to_reg      ,
         output  wire    [1:0]                   o_alu_op         ,
@@ -85,7 +85,7 @@ localparam HALT   = 6'b111111;
     reg         reg_jump            ;   //vale 1 en caso de que sea una instrucción Jump (J) o JAL
     reg         reg_jal             ;   //vale 1 en caso de que sea una instrucción JALR o JAL
     reg         reg_branch          ;   //vale 1 en caso de que sea una instrucción branch equal (BEQ)
-    reg         reg_new_branch         ;   //vale 1 en caso de que sea una instrucción branch con not equal (BNE)
+    reg         reg_neq_branch         ;   //vale 1 en caso de que sea una instrucción branch con not equal (BNE)
     reg         reg_mem_read         ;   //vale 1 en caso de que sea una instrucción LW (Load Word), LWU (Load Word Unsigned), LB (Load Byte), LBU (Load Byte Unsigned), LH (Load Halfword), LHU (Load Halfword Unsigned), LUI (Load Upper Inmediate)
                                         //para todas las instrucciones load
     reg         reg_mem_to_reg        ;   //vale 1 en caso de que sea una instrucción LW (Load Word), LWU (Load Word Unsigned), LB (Load Byte), LBU (Load Byte Unsigned), LH (Load Halfword), LHU (Load Halfword Unsigned), LUI (Load Upper Inmediate)
@@ -124,7 +124,7 @@ localparam HALT   = 6'b111111;
             BAS:
             if(i_ctl_instr_funct == JALR) // los bits [5:0] de la instrucción (funct)
             begin
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b0;
                 reg_mem_to_reg      <=  1'b0;
                 reg_alu_op          <=  2'b00;
@@ -152,7 +152,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_write       <=  1'b0;
                 reg_alu_src         <=  1'b0;
                 reg_register_write  <=  1'b0;
@@ -166,7 +166,7 @@ localparam HALT   = 6'b111111;
             end
             else
             begin
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b0;
                 reg_mem_to_reg      <=  1'b0;
                 reg_alu_op          <=  2'b10;
@@ -188,7 +188,7 @@ localparam HALT   = 6'b111111;
 
             ADDI:
             begin
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b0;
                 reg_mem_to_reg      <=  1'b0;
                 reg_alu_op          <=  2'b00;
@@ -214,7 +214,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b0;
                 reg_mem_to_reg      <=  1'b0;
                 reg_alu_op          <=  2'b11;
@@ -236,7 +236,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b0;
                 reg_mem_to_reg      <=  1'b0;
                 reg_alu_op          <=  2'b11;
@@ -258,7 +258,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b0;
                 reg_mem_to_reg      <=  1'b0;
                 reg_alu_op          <=  2'b11;
@@ -280,7 +280,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b0;
                 reg_mem_to_reg      <=  1'b0;
                 reg_alu_op          <=  2'b11;
@@ -302,7 +302,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b1;
                 reg_mem_to_reg      <=  1'b1;
                 reg_alu_op          <=  2'b00;
@@ -324,7 +324,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b1;
                 reg_mem_to_reg      <=  1'b1;
                 reg_alu_op          <=  2'b00;
@@ -346,7 +346,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b1;
                 reg_mem_to_reg      <=  1'b1;
                 reg_alu_op          <=  2'b00;
@@ -368,7 +368,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b1;
                 reg_mem_to_reg      <=  1'b1;
                 reg_alu_op          <=  2'b00;
@@ -390,7 +390,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b1;
                 reg_mem_to_reg      <=  1'b1;
                 reg_alu_op          <=  2'b00;
@@ -412,7 +412,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b1;
                 reg_mem_to_reg      <=  1'b1;
                 reg_alu_op          <=  2'b00;
@@ -434,7 +434,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0;
                 reg_jal             <=  1'b0;
                 reg_branch          <=  1'b0;
-                reg_new_branch      <=  1'b0;
+                reg_neq_branch      <=  1'b0;
                 reg_mem_read        <=  1'b1;
                 reg_mem_to_reg      <=  1'b1;
                 reg_alu_op          <=  2'b00;
@@ -457,7 +457,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0    ;
                 reg_jal             <=  1'b0    ;
                 reg_branch          <=  1'b0    ;
-                reg_new_branch      <=  1'b0    ;
+                reg_neq_branch      <=  1'b0    ;
                 reg_mem_read        <=  1'b0    ;
                 reg_mem_to_reg      <=  1'b0    ;
                 reg_alu_op          <=  2'b00   ;
@@ -479,7 +479,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0    ;
                 reg_jal             <=  1'b0    ;
                 reg_branch          <=  1'b0    ;
-                reg_new_branch      <=  1'b0    ;
+                reg_neq_branch      <=  1'b0    ;
                 reg_mem_read        <=  1'b0    ;
                 reg_mem_to_reg      <=  1'b0    ;
                 reg_alu_op          <=  2'b00   ;
@@ -501,7 +501,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0    ;
                 reg_jal             <=  1'b0    ;
                 reg_branch          <=  1'b0    ;
-                reg_new_branch      <=  1'b0    ;
+                reg_neq_branch      <=  1'b0    ;
                 reg_mem_read        <=  1'b0    ;
                 reg_mem_to_reg      <=  1'b0    ;
                 reg_alu_op          <=  2'b00   ;
@@ -523,7 +523,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0    ;
                 reg_jal             <=  1'b0    ;
                 reg_branch          <=  1'b1    ;
-                reg_new_branch      <=  1'b0    ;
+                reg_neq_branch      <=  1'b0    ;
                 reg_mem_read        <=  1'b0    ;
                 reg_mem_to_reg      <=  1'b0    ;
                 reg_alu_op          <=  2'b01   ;
@@ -545,7 +545,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0    ;
                 reg_jal             <=  1'b0    ;
                 reg_branch          <=  1'b0    ;
-                reg_new_branch      <=  1'b1    ;
+                reg_neq_branch      <=  1'b1    ;
                 reg_mem_read        <=  1'b0    ;
                 reg_mem_to_reg      <=  1'b0    ;
                 reg_alu_op          <=  2'b01   ;
@@ -567,7 +567,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b1    ;
                 reg_jal             <=  1'b0    ;
                 reg_branch          <=  1'b0    ;
-                reg_new_branch      <=  1'b0    ;
+                reg_neq_branch      <=  1'b0    ;
                 reg_mem_read        <=  1'b0    ;
                 reg_mem_to_reg      <=  1'b0    ;
                 reg_alu_op          <=  2'b00   ;
@@ -589,7 +589,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b1    ;
                 reg_jal             <=  1'b1    ;
                 reg_branch          <=  1'b0    ;
-                reg_new_branch      <=  1'b0    ;
+                reg_neq_branch      <=  1'b0    ;
                 reg_mem_read        <=  1'b0    ;
                 reg_mem_to_reg      <=  1'b0    ;
                 reg_alu_op          <=  2'b00   ;
@@ -611,7 +611,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0    ;
                 reg_jal             <=  1'b0    ;
                 reg_branch          <=  1'b0    ;
-                reg_new_branch      <=  1'b0    ;
+                reg_neq_branch      <=  1'b0    ;
                 reg_mem_read        <=  1'b0    ;
                 reg_mem_to_reg      <=  1'b0    ;
                 reg_alu_op          <=  2'b00   ;
@@ -633,7 +633,7 @@ localparam HALT   = 6'b111111;
                 reg_jump            <=  1'b0    ;
                 reg_jal             <=  1'b0    ;
                 reg_branch          <=  1'b0    ;
-                reg_new_branch      <=  1'b0    ;
+                reg_neq_branch      <=  1'b0    ;
                 reg_mem_read        <=  1'b0    ;
                 reg_mem_to_reg      <=  1'b0    ;
                 reg_alu_op          <=  2'b11   ;
@@ -655,7 +655,7 @@ localparam HALT   = 6'b111111;
     assign  o_jump              =   reg_jump;
     assign  o_jal               =   reg_jal;
     assign  o_branch            =   reg_branch;
-    assign  o_new_branch        =   reg_new_branch;
+    assign  o_neq_branch        =   reg_neq_branch;
     assign  o_mem_read          =   reg_mem_read;
     assign  o_mem_to_reg        =   reg_mem_to_reg;
     assign  o_alu_op            =   reg_alu_op;
