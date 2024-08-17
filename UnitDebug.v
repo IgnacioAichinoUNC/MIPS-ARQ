@@ -33,11 +33,11 @@ module UnitDebug
         output          [MEM_INST_SIZE_BITS-1:0]    o_select_mem_ins_dir,  //Este output tiene la posicion de memoria donde escribir la instruccion
         output          [BITS_SIZE-1:0]             o_dato_mem_ins,
         output                                      o_flag_instr_write,
-        output          [3:0]                       o_debug_state
+        output          [3:0]                       o_debug_state,
         output          [BITS_REGS-1:0]             o_select_register_dir,
         output                                      o_flag_tx_ready,
         output          [SIZE_TRAMA-1:0]            o_uart_tx_data,
-        output          [BITS_SIZE-1:0]             o_select_mem_dir,
+        output          [BITS_SIZE-1:0]             o_select_mem_dir
 
     );
 
@@ -48,7 +48,7 @@ module UnitDebug
     localparam DATA_RX_LOAD         =   4'b0011; //'d' estado donde se habilita la escritura de la instruc, porque ya se armaron los 32 bits
     localparam SEND_DATA_TX         =   4'b0100; //  envio 8 btis
     localparam WAIT_TX              =   4'b0110; // si en contador es 0 pasa a DATA_RX_LOAD sino voy al estado para cargar otro dato, deplazo de a 8 para de los 32 solo enviar los 8 que quiero
-      
+    localparam LOAD_DATA_TX         =   4'b0111; //segun el contador se carga la data para enviar (pc, registros y ciclos)  
     localparam PREPARE_INSTRUCT     =   4'b1000; //ARMO instruccion de 32 bits
     localparam DATA_INSTR           =   4'b1001; //Espero hatl o vuelvo a data init
    
@@ -71,12 +71,12 @@ module UnitDebug
     reg               [1:0]                            mode, mode_next;
     reg                                                mips_step, mips_step_next;
     reg               [1:0]                            reg_tx_counter_bytes=0, reg_tx_counter_bytes_next=0;
-    reg               [2:0]                            reg_tx_selector_data, reg_tx_selector_data_next
+    reg               [2:0]                            reg_tx_selector_data, reg_tx_selector_data_next;
     reg               [REG_COUNTER_SIZE-1:0]           reg_tx_register_counter, reg_tx_register_counter_next;
     reg                                                reg_flag_tx_ready, reg_flag_tx_ready_next;
     reg               [SIZE_TRAMA-1:0]                 uart_tx_data, uart_tx_data_next;
     reg               [BITS_SIZE-1:0]                  tx_data_32, tx_data_32_next;
-    reg               [MEM_COUNT_SIZE-1:0]             reg_tx_counter_mem, reg_tx_counter_mem_next;
+    reg               [MEM_COUNTER_SIZE-1:0]           reg_tx_counter_mem, reg_tx_counter_mem_next;
 
 
 
@@ -195,11 +195,11 @@ module UnitDebug
                     state_next     <= LOAD_DATA_TX;
                 end 
                 else begin
-                    if (~i_uart_rx_ready) begin// Verifica si recibo un dato de avanzar step por UART RX
-                        uart_rx_reset_next  <= 0;
+                    if (~i_uart_rx_flag_ready) begin// Verifica si recibo un dato de avanzar step por UART RX
+                        reg_uart_rx_reset_next  <= 0;
                     end 
                     else begin // Verifica si el char recibido es "N" (next)
-                        uart_rx_reset_next  <= 1;
+                        reg_uart_rx_reset_next  <= 1;
                         if( i_uart_rx_data == 8'b01101110) begin 
                             mips_step_next <= 1;
                         end
@@ -329,7 +329,7 @@ module UnitDebug
 
                 if(~i_uart_tx_done) begin
                    reg_flag_tx_ready_next   <= 0;
-                   tx_count_bytes_next      <= tx_count_bytes +1;
+                   reg_tx_counter_bytes_next <= reg_tx_counter_bytes +1;
                    state_next               <= WAIT_TX;
                 end
             end

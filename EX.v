@@ -3,9 +3,9 @@
 module EX
     #(
         parameter   BITS_SIZE           = 32,
-        parameter   BITS_OP           = 6,
-        parameter   BITS_REGS            = 5,
-        parameter   BITS_CORTOCIRCUITO   = 3
+        parameter   BITS_OP             = 6,
+        parameter   BITS_REGS           = 5,
+        parameter   BITS_CORTOCIRCUITO  = 3
     )
     (
         input  wire      [BITS_SIZE-1:0]           i_id_extension,
@@ -55,16 +55,16 @@ module EX
     alu
     #(
         .BITS_SIZE                    (BITS_SIZE),
-        .BITS_REGS                    (BITS_REGS),
+        .BITS_SHAMT                   (BITS_REGS),
         .BITS_OP                      (BITS_OP )
     )
     alu
     (
-        .i_data_1                     (mux_data_a),
-        .i_data_2                     (o_mux_data_b),
+        .i_data_a                     (mux_data_a),
+        .i_data_b                     (o_mux_data_b),
         .i_alu_shamt                  (i_alu_shamt),
         .i_flag_shamt                 (i_flag_shamt),
-        .i_alu_op                     (i_alu_op),
+        .i_op                         (i_alu_op),
         .o_alu_zero                   (o_alu_zero),
         .o_result                     (o_alu_result)
     );
