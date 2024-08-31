@@ -15,7 +15,7 @@ module TOP_MIPS
         parameter   BITS_SIZE_CTL       = 6,
         parameter   BITS_ALU_CTL        = 2,
         parameter   BITS_ALU            = 6,
-        parameter   BITS_OP             = 6,
+        parameter   BITS_OP             = 4,
         parameter   BITS_CORTOCIRCUITO  = 3,
         parameter   SIZE_MEM_DATA       = 10
     )

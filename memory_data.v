@@ -25,7 +25,7 @@ module memory_data
     always @(negedge i_clk)
     begin
         if(i_flag_mem_write & i_step) begin
-            reg_memory[i_alu_address]  <=  i_data_reg;
+            reg_memory[i_alu_address]  <=  i_data_register;
         end
     end
 

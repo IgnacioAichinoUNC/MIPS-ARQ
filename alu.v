@@ -5,7 +5,7 @@ module alu
     //parameter
     parameter          BITS_SIZE     =   32,
     parameter          BITS_SHAMT    =   5,
-    parameter          BITS_OP       =   6    
+    parameter          BITS_OP       =   4    
     )
     (
     //inputs
@@ -20,16 +20,16 @@ module alu
     output wire        [BITS_SIZE - 1:0]                      o_result
     );
     
-    localparam ADD = 6'b100000;
-    localparam SUB = 6'b100010;
-    localparam AND = 6'b100100;
-    localparam OR  = 6'b100101;
-    localparam XOR = 6'b100110;
-    localparam SRA = 6'b000011;
-    localparam SRL = 6'b000010;
-    localparam NOR = 6'b100111;
-    localparam SLL = 6'b000000; // A<<B(shamt)
-    localparam SLT = 6'b101010; // A es menor que B
+    localparam ADD = 4'b0000;
+    localparam SUB = 4'b0001;
+    localparam AND = 4'b0010;
+    localparam OR  = 4'b0011;
+    localparam XOR = 4'b0101;
+    localparam SRA = 4'b1011;
+    localparam SRL = 4'b1001; 
+    localparam NOR = 4'b0100;
+    localparam SLL = 4'b1000; // A<<B(shamt)
+    localparam SLT = 4'b0111; // A es menor que B
 
     reg [BITS_SIZE : 0] reg_result;
     

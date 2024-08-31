@@ -50,7 +50,7 @@ module MEM
         .i_flag_mem_read    (i_exmem_mem_read),
         .i_flag_mem_write   (i_exmem_mem_write),
         .o_data_read        (o_mem_dato),
-        .o_data_debug       (o_mem_dato_debug)
+        .o_debug_data       (o_mem_dato_debug)
     );
   
 

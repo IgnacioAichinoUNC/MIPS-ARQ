@@ -4,7 +4,7 @@ module Control_ALU
     #(
         parameter   BITS_ALU        = 6,
         parameter   BITS_ALU_CTL    = 2,
-        parameter   ALU_OP          = 6   
+        parameter   ALU_OP          = 4   
     )
     (
         input   wire    [BITS_ALU-1:0]      i_funct ,
@@ -46,34 +46,34 @@ reg [ALU_OP-1    :0] reg_alu_op   ;
     begin : ALUOp
             case(i_alu_op)
                 CERO :       
-                                    reg_alu_op   <=   ADD_C;
+                                    reg_alu_op   <=   4'b0000;
                 CEROUNO :        
-                                    reg_alu_op   <=   SUB_C;
+                                    reg_alu_op   <=   4'b0001;
                 UNOCERO :
                     case(i_funct)
-                        ADD_C    :   reg_alu_op   <=   ADD_C;
-                        SUB_C    :   reg_alu_op   <=   SUB_C;
-                        SUBU_C   :   reg_alu_op   <=   SUBU_C;
-                        AND_C    :   reg_alu_op   <=   AND_C;
-                        OR_C     :   reg_alu_op   <=   OR_C;
-                        NOR_C    :   reg_alu_op   <=   NOR_C;
-                        XOR_C    :   reg_alu_op   <=   XOR_C;
-                        SLT_C    :   reg_alu_op   <=   SLT_C;
-                        ADDU_C   :   reg_alu_op   <=   ADDU_C;
-                        SLL_C    :   reg_alu_op   <=   SLL_C;
-                        SRL_C    :   reg_alu_op   <=   SRL_C;  
-                        SLLV_C   :   reg_alu_op   <=   SLLV_C;
-                        SRLV_C   :   reg_alu_op   <=   SRLV_C;  
-                        SRA_C    :   reg_alu_op   <=   SRA_C;
-                        SRAV_C   :   reg_alu_op   <=   SRAV_C;                         
+                        ADD_C    :   reg_alu_op   <=   4'b0000;
+                        SUB_C    :   reg_alu_op   <=   4'b0001;
+                        SUBU_C   :   reg_alu_op   <=   4'b0001;
+                        AND_C    :   reg_alu_op   <=   4'b0010;
+                        OR_C     :   reg_alu_op   <=   4'b0011;
+                        NOR_C    :   reg_alu_op   <=   4'b0100;
+                        XOR_C    :   reg_alu_op   <=   4'b0101;
+                        SLT_C    :   reg_alu_op   <=   4'b0111;
+                        ADDU_C   :   reg_alu_op   <=   4'b0000;
+                        SLL_C    :   reg_alu_op   <=   4'b1000;
+                        SRL_C    :   reg_alu_op   <=   4'b1001; 
+                        SLLV_C   :   reg_alu_op   <=   4'b1000;
+                        SRLV_C   :   reg_alu_op   <=   4'b1001; 
+                        SRA_C    :   reg_alu_op   <=   4'b1011;
+                        SRAV_C   :   reg_alu_op   <=   4'b1011;                        
                         default :    reg_alu_op   <=   -2;
                     endcase       
                 UNOUNO :
                     case(i_opcode)
-                        SLTI_C   :   reg_alu_op   <=   SLTI_C;
-                        ANDI_C   :   reg_alu_op   <=   ANDI_C;
-                        ORI_C    :   reg_alu_op   <=   ORI_C;   
-                        XORI_C   :   reg_alu_op   <=   XORI_C;                           
+                        SLTI_C   :   reg_alu_op   <=   4'b0111;
+                        ANDI_C   :   reg_alu_op   <=   4'b0010;
+                        ORI_C    :   reg_alu_op   <=   4'b0011;   
+                        XORI_C   :   reg_alu_op   <=   4'b0101;                          
                         default :    reg_alu_op   <=   -3;
                     endcase       
                 default:            reg_alu_op   <=   -1;

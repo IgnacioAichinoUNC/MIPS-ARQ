@@ -6,7 +6,7 @@ module TB_alu();
 
     localparam   BITS_SIZE   =   32;
     localparam   BITS_SHAMT  =   5;
-    localparam   BITS_OP     =   6; 
+    localparam   BITS_OP     =   4; 
 
     reg                             i_clk;
     reg    [BITS_SIZE-1    :0]      i_data_a;
@@ -36,26 +36,26 @@ alu u_alu(
         i_data_a = 32'b10;
         i_data_b = 32'b01;
         #20
-        i_op = 6'b100000;//ADD
+        i_op = 4'b0000;//ADD
         #20
-        i_op = 6'b100010;//SUB
+        i_op = 4'b0001;//SUB
         #20 
-        i_op = 6'b100100;//AND
+        i_op =4'b0010;//AND
         #20
-        i_op  = 6'b100101;//OR
+        i_op  =4'b0011;//OR
         #20
-        i_op = 6'b100110;//XOR
+        i_op = 4'b0101;//XOR
         i_flag_shamt= 1'b1;
         i_alu_shamt= 5'b11111;
         #20
-        i_op = 6'b000010;//SRL A>>B(shamt)
+        i_op =4'b1001;//SRL A>>B(shamt)
         i_flag_shamt= 1'b0;
         #20
-        i_op = 6'b000010;//SRL A>>B(shamt)
+        i_op =4'b1001;//SRL A>>B(shamt)
         #20
-        i_op = 6'b100111;//NOR
+        i_op =4'b0100;//NOR
         #20
-        i_op = 6'b101010;//SLT A es menor que B
+        i_op =  4'b0111;//SLT A es menor que B
         
         #100
         $display("############# Test OK ############");

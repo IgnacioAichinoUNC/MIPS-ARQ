@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module MEM_WB
+module MEMWB
     #(
         parameter BITS_SIZE     =   32  ,
         parameter BITS_REGS    =   5   
