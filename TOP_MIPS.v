@@ -15,13 +15,15 @@ module TOP_MIPS
         parameter   BITS_SIZE_CTL       = 6,
         parameter   BITS_ALU_CTL        = 2,
         parameter   BITS_ALU            = 6,
-        parameter   BITS_OP             = 6,
-        parameter   BITS_CORTOCIRCUITO  = 3
+        parameter   BITS_OP             = 4,
+        parameter   BITS_CORTOCIRCUITO  = 3,
+        parameter   SIZE_MEM_DATA       = 10
     )
     (   
         input   wire                                i_clk,
         input   wire                                i_reset,
         input   wire                                i_ctl_clk_wiz,
+        input   wire                                i_select_address_mem_data
         input   wire     [SIZE_INSTRUC_DEBUG-1:0]   i_select_address_mem_instr,
         input   wire     [BITS_REGS-1:0]            i_select_address_register,
         input   wire     [BITS_SIZE-1:0]            i_dato_mem_ins,
@@ -45,16 +47,11 @@ module TOP_MIPS
     wire    [BITS_SIZE-1:0]        IFID_Instr;
 
 
-
-
-
- // ---------ID-----------------------------------------------    //Implementar en modulo, solo sirve ahora en debug  
-    //Unidad Riesgos
+ // ---------ID-----------------------------------------------   
     wire                            if_risk_pc_write;       //Unidad de riesgo para write en PC
     wire                            ifid_unit_risk_write;  //Riesgo de escritura
     wire                            id_unit_risk_mux;
     wire                            id_unit_risk_latch;
-
 
     //Banco de registros
     wire     [BITS_REGS-1:0]        ID_register_rs;
@@ -114,9 +111,7 @@ module TOP_MIPS
     wire                            mux_ctl_unit_jalR;
     wire                            mux_ctl_unit_halt;
     
-
-// ---------IDEX------------------------------------------------
-    //CONTROL
+    //IDEX
     wire                            IDEX_ctl_alu_src;
     wire                            IDEX_ctl_jump;
     wire                            IDEX_ctl_JALR;
@@ -148,9 +143,7 @@ module TOP_MIPS
     wire    [BITS_SIZE-1:0]         IDEX_register2;
 
 
-
 //--------EX--------------------------------------------
-   
     //ALU
     wire     [BITS_SIZE-1:0]        EX_alu_result;
     wire                            EX_flag_alu_zero;
@@ -170,10 +163,7 @@ module TOP_MIPS
     wire     [BITS_ALU-1:0]         EX_ctl_alu_opcode;
     //Mux Registers
     wire     [BITS_REGS-1:0]        EX_mux_register_rd;    
-
-//--------EXMEM--------------------------------------------
-
-//   EX_MEM
+    //EXMEM
     wire    [BITS_SIZE-1:0]         EXMEM_PC4;
     wire    [BITS_SIZE-1:0]         EXMEM_PC8;
     wire    [BITS_SIZE-1:0]         EXMEM_PC_Branch;
@@ -195,8 +185,12 @@ module TOP_MIPS
     wire                            EXMEM_lui;
     wire                            EXMEM_halt;
 
-    //MEM
+//--------MEM--------------------------------------------
     wire                            MEM_PC_src_o; 
+    wire    [BITS_SIZE-1:0]         MEM_dato_mem;
+    wire    [BITS_SIZE-1:0]         MEM_dato_mem_Debug;
+
+
 
 
 //-------WB--------------------------------------------
@@ -614,7 +608,7 @@ module TOP_MIPS
         .o_alu                      (EXMEM_alu),
         .o_register_2               (EXMEM_register2),
         .o_register_rd_dst          (EXMEM_register_dst),
-        .o_extension                (EXMEM_extension       ),
+        .o_extension                (EXMEM_extension),
 
         //ControlM
         .o_jal                      (EXMEM_jal),
@@ -638,9 +632,79 @@ module TOP_MIPS
     )
     module_and_branch
     (
-        .i_branch       (EXMEM_branch  ),
-        .i_neq_branch   (EXMEM_neq_branch ),
-        .i_zero         (EXMEM_zero_alu    ),
-        .o_pc_source    (MEM_PC_src_o    )
+        .i_branch       (EXMEM_branch),
+        .i_neq_branch   (EXMEM_neq_branch),
+        .i_zero         (EXMEM_zero_alu),
+        .o_pc_source    (MEM_PC_src_o)
     );
+
+
+//ETAPA MEM
+    MEM
+    #(
+        .BITS_SIZE          (BITS_SIZE),
+        .BITS_EXTENSION     (BITS_EXTENSION),
+        .SIZE_MEM_DATA      (SIZE_MEM_DATA)
+    )
+    module_MEM
+    (
+        .i_clk                  (i_clk),
+        .i_reset                (i_reset),
+        .i_step                 (i_ctl_clk_wiz),
+        .i_exmem_alu            (EXMEM_alu),
+        .i_addr_mem_debug       (i_select_address_mem_data),
+        .i_exmem_mem_read       (EXMEM_mem_read),
+        .i_exmem_mem_write      (EXMEM_mem_write),
+        .i_exmem_mem_register2  (EXMEM_register2),
+        .i_exmem_size_filter    (EXMEM_size_filter),
+        .o_mem_dato             (MEM_dato_mem),
+        .o_mem_dato_debug       (MEM_dato_mem_Debug)
+    );
+
+    //LATCH MEMWB
+    MEMWB
+    #(
+        .BITS_SIZE             (BITS_SIZE),
+        .BITS_REGS             (BITS_REGS)
+    )
+    module_memwb
+    (
+        .i_clk              (i_clk),
+        .i_reset            (i_reset),
+        .i_step             (i_ctl_clk_wiz),
+        .i_pc4              (EXMEM_PC4),
+        .i_pc8              (EXMEM_PC8),
+        .i_instruction      (EXMEM_Instr),
+        .i_alu              (EXMEM_alu),
+        .i_dato_mem         (MEM_dato_mem),
+        .i_register_dst     (EXMEM_register_dst),
+        .i_idex_extension   (EXMEM_extension),
+
+        //ControlWB
+        .i_mem_to_reg       (EXMEM_mem_to_reg),
+        .i_reg_write        (EXMEM_register_write),
+        .i_size_filterL     (EXMEM_size_filterL),
+        .i_zero_extend      (EXMEM_zero_extend),
+        .i_lui              (EXMEM_lui),
+        .i_jal              (EXMEM_jal),
+        .i_halt             (EXMEM_halt),
+
+        .o_pc4              (MEMWB_PC4),
+        .o_pc8              (MEMWB_PC8),
+        .o_instruction      (MEMWB_instruction),
+        .o_alu              (MEMWB_alu),
+        .o_dato_mem         (MEMWB_dato_mem),
+        .o_register_rd_dst  (MEMWB_register_dst),
+        .o_extension        (MEMWB_extension),
+
+        //ControlWB
+        .o_mem_to_reg       (MEMWB_mem_to_reg),
+        .o_register_write   (MEMWB_register_write),
+        .o_size_filterL     (MEMWB_size_filterL),
+        .o_zero_extend      (MEMWB_zero_extend),
+        .o_lui              (MEMWB_lui),
+        .o_jal              (MEMWB_jal),
+        .o_halt             (MEMWB_halt)
+    );
+
 endmodule

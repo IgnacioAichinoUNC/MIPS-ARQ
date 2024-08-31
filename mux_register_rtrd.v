@@ -17,8 +17,8 @@ module mux_register_rtrd
     always @(*)
     begin
         case(i_reg_dst_rd)
-            1'b0:   reg_register_result  <=  i_rt    ;   
-            1'b1:   reg_register_result  <=  i_rd    ;
+            1'b0:   reg_register_result  <=  i_rt;   
+            1'b1:   reg_register_result  <=  i_rd;
         endcase
     end
 

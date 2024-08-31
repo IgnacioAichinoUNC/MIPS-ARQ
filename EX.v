@@ -3,7 +3,7 @@
 module EX
     #(
         parameter   BITS_SIZE           = 32,
-        parameter   BITS_OP             = 6,
+        parameter   BITS_OP             = 4,
         parameter   BITS_REGS           = 5,
         parameter   BITS_CORTOCIRCUITO  = 3
     )
