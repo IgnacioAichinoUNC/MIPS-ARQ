@@ -15,7 +15,7 @@ module IDEX
         input   wire    [BITS_SIZE-1:0]     i_pc8,
         input   wire    [BITS_SIZE-1:0]     i_instruction,
 
-        input   wire    [BITS_SIZE-1:0]     i_data_rs, // dato leido 1
+        input   wire    [BITS_SIZE-1:0]     i_data_rs,          // dato leido 1
         input   wire    [BITS_SIZE-1:0]     i_register_data_2, // dato leido 2
         input   wire    [BITS_SIZE-1:0]     i_extension,
         input   wire    [BITS_REGS-1:0]     i_rt,
@@ -28,8 +28,8 @@ module IDEX
         input   wire                        i_jump,
         input   wire                        i_jal,
         input   wire                        i_alu_src,
-        input   wire    [1:0]               i_alu_op,
-        ///ControlM
+        input   wire    [1:0]               i_unit_alu_op,
+        ///ControlMEM
         input   wire                        i_branch,
         input   wire                        i_neq_branch,
         input   wire                        i_mem_write,
@@ -54,13 +54,13 @@ module IDEX
         output  wire    [BITS_REGS-1:0]     o_rt,
         output  wire    [BITS_REGS-1:0]     o_rd,
         output  wire    [BITS_SIZE-1:0]     o_DJump,
-        ///Control
+        ///ControlEX
         output  wire                        o_jump,
         output  wire                        o_jal,
         output  wire                        o_alu_src,
-        output  wire    [1:0]               o_alu_op,
+        output  wire    [1:0]               o_unit_alu_op,
         output  wire                        o_register_rd_dst,
-        ///ControlM
+        ///ControlMEM
         output  wire                        o_branch,
         output  wire                        o_neq_branch,
         output  wire                        o_mem_write,
@@ -91,10 +91,10 @@ module IDEX
     reg                     reg_jump;
     reg                     reg_jal ;
     reg                     reg_alu_src;
-    reg     [1:0]           reg_alu_op;
+    reg     [1:0]           reg_unit_alu_op;
     reg                     reg_register_rd;
 
-    //RegM
+    //RegMEM
     reg                     reg_branch;
     reg                     reg_neq_branch;
     reg                     reg_mem_write ;
@@ -117,72 +117,72 @@ module IDEX
             reg_PC4             <=  {BITS_SIZE{1'b0}};
             reg_PC8             <=  {BITS_SIZE{1'b0}};
             reg_instruction     <=  {BITS_SIZE{1'b0}};
-            reg_data_reg1       <=  {BITS_SIZE{1'b0}} ;
+            reg_data_reg1       <=  {BITS_SIZE{1'b0}};
             reg_data_reg2       <=  {BITS_SIZE{1'b0}};
             reg_extension       <=  {BITS_SIZE{1'b0}};
-            reg_rs              <=  {BITS_REGS{1'b0}} ;
-            reg_rt              <=  {BITS_REGS{1'b0}} ;
+            reg_rs              <=  {BITS_REGS{1'b0}};
+            reg_rt              <=  {BITS_REGS{1'b0}};
             reg_rd              <=  {BITS_REGS{1'b0}};
-            reg_DJump           <=  {BITS_SIZE{1'b0}} ;
+            reg_DJump           <=  {BITS_SIZE{1'b0}};
 
             //EX
             reg_jump            <=  1'b0;
             reg_jalR            <=  1'b0;
             reg_jal             <=  1'b0;
-            reg_alu_src         <=  1'b0 ;
-            reg_alu_op          <=  2'b00 ;
-            reg_register_rd     <=  1'b0 ;
+            reg_alu_src         <=  1'b0;
+            reg_unit_alu_op     <=  2'b00;
+            reg_register_rd     <=  1'b0;
 
             //M
             reg_branch          <=  1'b0;
             reg_neq_branch      <=  1'b0;
             reg_mem_write       <=  1'b0;
             reg_mem_read        <=  1'b0;
-            reg_size_filter     <=  2'b00 ;
+            reg_size_filter     <=  2'b00;
 
             //WB
-            reg_mem_to_register <=  1'b0 ;
-            reg_register_write  <=  1'b0 ;
+            reg_mem_to_register <=  1'b0;
+            reg_register_write  <=  1'b0;
             reg_size_filterL    <=  2'b00;
-            reg_zero_extend     <=  1'b0 ;
-            reg_lui             <=  1'b0 ;
-            reg_halt            <=  1'b0 ;
+            reg_zero_extend     <=  1'b0;
+            reg_lui             <=  1'b0;
+            reg_halt            <=  1'b0;
         end
         else if (i_step)
         begin
             reg_PC4             <=  i_pc4;
             reg_PC8             <=  i_pc8 ;
-            reg_instruction     <=  i_instruction  ;
+            reg_instruction     <=  i_instruction;
             reg_data_reg1       <=  i_data_rs;
             reg_data_reg2       <=  i_register_data_2;
             reg_extension       <=  i_extension;
-            reg_rs              <=  i_rs ;
+            reg_rs              <=  i_rs:
             reg_rt              <=  i_rt;
-            reg_rd              <=  i_rd ;
-            reg_DJump           <=  i_DJump  ;
+            reg_rd              <=  i_rd;
+            reg_DJump           <=  i_DJump;
 
             //EX
             reg_jump            <=  i_jump;
-            reg_jalR            <=  i_jalR ;
+            reg_jalR            <=  i_jalR;
             reg_jal             <=  i_jal;
-            reg_alu_src         <=  i_alu_src  ;
-            reg_alu_op          <=  i_alu_op   ;
-            reg_register_rd     <=  i_reg_dst_rd  ;
+            reg_alu_src         <=  i_alu_src;
+            reg_unit_alu_op     <=  i_unit_alu_op;
+            reg_register_rd     <=  i_reg_dst_rd;
 
-            //M
-            reg_branch          <=  i_branch ;
-            reg_neq_branch      <=  i_neq_branch ;
-            reg_mem_write       <=  i_mem_write ;
+            //MEM
+            reg_branch          <=  i_branch;
+            reg_neq_branch      <=  i_neq_branch;
+            reg_mem_write       <=  i_mem_write;
             reg_mem_read        <=  i_mem_read;
-            reg_size_filter     <=  i_size_filter ;
+            reg_size_filter     <=  i_size_filter;
 
             //WB
-            reg_mem_to_register <=  i_mem_to_reg ;
-            reg_register_write  <=  i_reg_write  ;
-            reg_size_filterL    <=  i_size_filterL ;
-            reg_zero_extend     <=  i_zero_extend ;
-            reg_lui             <=  i_lui  ;
-            reg_halt            <=  i_halt  ;
+            reg_mem_to_register <=  i_mem_to_reg;
+            reg_register_write  <=  i_reg_write;
+            reg_size_filterL    <=  i_size_filterL;
+            reg_zero_extend     <=  i_zero_extend;
+            reg_lui             <=  i_lui;
+            reg_halt            <=  i_halt;
         end
 
 
@@ -197,26 +197,26 @@ module IDEX
     assign o_rd             =   reg_rd;
     assign o_DJump          =   reg_DJump;
 
-    //AssignEX
+    //ControlEX
     assign o_jump            =   reg_jump;
     assign o_jalR            =   reg_jalR;
     assign o_jal             =   reg_jal;
     assign o_alu_src         =   reg_alu_src;
-    assign o_alu_op          =   reg_alu_op;
+    assign o_unit_alu_op     =   reg_unit_alu_op;
     assign o_register_rd_dst =   reg_register_rd ;
 
-    //AssignM
+    //ControlMEM
     assign o_branch          =   reg_branch;
     assign o_neq_branch      =   reg_neq_branch;
     assign o_mem_write       =   reg_mem_write;
     assign o_mem_read        =   reg_mem_read;
     assign o_size_filter     =   reg_size_filter;
 
-    //AssignWB
+    //ControlWB
     assign o_mem_to_reg      =   reg_mem_to_register;
-    assign o_register_write       =   reg_register_write ;
-    assign o_size_filterL    =   reg_size_filterL ;
-    assign o_zero_extend     =   reg_zero_extend ;
+    assign o_register_write  =   reg_register_write;
+    assign o_size_filterL    =   reg_size_filterL;
+    assign o_zero_extend     =   reg_zero_extend;
     assign o_lui             =   reg_lui;
     assign o_halt            =   reg_halt;
     
