@@ -16,7 +16,7 @@ module mux_lui
     
     always @(*)
     begin
-        case(i_LUI)
+        case(i_lui)
             1'b0:   reg_mux_memory   <=  i_filterL; // entrada proveniente del filtro load   
             1'b1:   reg_mux_memory   <=  i_extension;   // entrada proveniente del extensor de signo
         endcase
