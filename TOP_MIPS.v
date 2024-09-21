@@ -17,7 +17,9 @@ module TOP_MIPS
         parameter   BITS_ALU            = 6,
         parameter   BITS_OP             = 4,
         parameter   BITS_CORTOCIRCUITO  = 3,
-        parameter   SIZE_MEM_DATA       = 10
+        parameter   SIZE_MEM_DATA       = 10,
+        parameter   HW_BITS             = 16,
+        parameter   BYTE_BITS_SIZE      = 8
     )
     (   
         input   wire                                i_clk,
@@ -721,6 +723,31 @@ module TOP_MIPS
         .o_lui              (MEMWB_ctl_lui),
         .o_jal              (MEMWB_ctl_jal),
         .o_halt             (MEMWB_ctl_halt)
+    );
+
+    WB 
+    #(
+        .BITS_SIZE          (BITS_SIZE),       
+        .HW_BITS            (HW_BITS),
+        .BYTE_BITS_SIZE     (BYTE_BITS_SIZE),
+        .BITS_REGS          (BITS_REGS),      
+        .BITS_EXTENSION     (BITS_EXTENSION)
+    )
+    module_WB   
+    (
+        .i_memwb_lui(MEMWB_ctl_lui),
+        .i_memwb_extension(MEMWB_extension),
+        .i_memwb_dato_mem(MEMWB_dato_mem),
+        .i_memwb_size_filterL(MEMWB_ctl_size_filterL),
+        .i_memwb_zero_extend(MEMWB_ctl_zero_extend),
+        .i_memwb_mem_to_reg(MEMWB_ctl_mem_to_reg),
+        .i_memwb_alu(MEMWB_alu),
+        .i_memwb_jal(MEMWB_ctl_jal),
+        .i_memwb_pc8(MEMWB_PC8),
+        .i_memwb_register_dst(MEMWB_register_dst),
+        .o_wb_data_write_ex(WB_data_write_EX),
+        .o_wb_data_write(WB_data_write),
+        .o_wb_register_adrr_result(WB_register_adrr_result)
     );
 
 endmodule
