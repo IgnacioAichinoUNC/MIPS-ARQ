@@ -15,31 +15,31 @@ module filter_load
         output  wire    [BITS_SIZE-1        :0]     o_dato_filterL
     );
     
-    reg [BITS_SIZE-1    :0] reg_dato_filterL;
+    reg [BITS_SIZE-1:0] reg_dato_filterL;
 
     
     always @(*)
     begin : Tamano
             case(i_size_filterL)
-                2'b00       :       
-                                    reg_dato_filterL   <=   i_dato_mem;
-                2'b01   :
+                2'b00:       
+                        reg_dato_filterL   <=   i_dato_mem;
+                2'b01 :
                     case(i_zero)
-                        1'b0:       reg_dato_filterL   <=   {{HW_BITS+BYTE_BITS_SIZE{i_dato_mem[BYTE_BITS_SIZE-1]}}, i_dato_mem[BYTE_BITS_SIZE-1:0]};
-                        1'b1:       reg_dato_filterL   <=   i_dato_mem & 32'b00000000_00000000_00000000_11111111;      
+                        1'b0:   reg_dato_filterL   <=   {{HW_BITS+BYTE_BITS_SIZE{i_dato_mem[BYTE_BITS_SIZE-1]}}, i_dato_mem[BYTE_BITS_SIZE-1:0]};
+                        1'b1:   reg_dato_filterL   <=   i_dato_mem & 32'b00000000_00000000_00000000_11111111;      
                     endcase
                 2'b10    :
                     case(i_zero)
-                        1'b0:       reg_dato_filterL   <=   {{HW_BITS{i_dato_mem[HW_BITS-1]}}, i_dato_mem[HW_BITS-1:0]};
-                        1'b1:       reg_dato_filterL   <=   i_dato_mem & 32'b00000000_00000000_11111111_11111111; 
+                        1'b0:   reg_dato_filterL   <=   {{HW_BITS{i_dato_mem[HW_BITS-1]}}, i_dato_mem[HW_BITS-1:0]};
+                        1'b1:   reg_dato_filterL   <=   i_dato_mem & 32'b00000000_00000000_11111111_11111111; 
                     endcase
-                default     :   
-                                    reg_dato_filterL   <=   -1;
+                default:   
+                        reg_dato_filterL   <=   -1;
             endcase
     end
     
 
-    assign o_dato_filterL =    reg_dato_filterL;
+    assign o_dato_filterL=  reg_dato_filterL;
 
 
 endmodule

@@ -5,13 +5,13 @@ module mux_write_data
         parameter BITS_SIZE = 32
     )
     (
-        input   wire                                i_jal,
-        input   wire     [BITS_SIZE-1      :0]      i_data_write,
-        input   wire     [BITS_SIZE-1      :0]      i_pc8,
-        output  wire     [BITS_SIZE-1      :0]      o_data_write                 
+        input   wire                          i_jal,
+        input   wire     [BITS_SIZE-1:0]      i_data_write,
+        input   wire     [BITS_SIZE-1:0]      i_pc8,
+        output  wire     [BITS_SIZE-1:0]      o_data_write                 
     );
 
-    reg [BITS_SIZE-1  :0]   reg_data_write;
+    reg [BITS_SIZE-1:0]   reg_data_write;
 
 
     always @(*)
@@ -22,6 +22,6 @@ module mux_write_data
         endcase
     end
 
-    assign  o_data_write   =   reg_data_write;
+    assign  o_data_write=   reg_data_write;
 
 endmodule

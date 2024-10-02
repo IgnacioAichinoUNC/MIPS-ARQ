@@ -9,25 +9,25 @@ module WB
         parameter   BITS_EXTENSION  = 2
     )
     (
-        input   wire                                i_memwb_lui,
-        input   wire    [BITS_SIZE-1        :0]     i_memwb_extension,
-        input   wire    [BITS_SIZE-1        :0]     i_memwb_dato_mem,
-        input   wire    [1                  :0]     i_memwb_size_filterL,
-        input   wire                                i_memwb_zero_extend,
-        input   wire                                i_memwb_mem_to_reg,
-        input   wire    [BITS_SIZE-1        :0]     i_memwb_alu,
-        input   wire                                i_memwb_jal,
-        input   wire    [BITS_SIZE-1        :0]     i_memwb_pc8,
-        input   wire    [BITS_REGS-1        :0]     i_memwb_register_dst,
-        output  wire    [BITS_SIZE-1        :0]     o_wb_data_write_ex,
-        output  wire    [BITS_SIZE-1        :0]     o_wb_data_write,
-        output  wire    [BITS_REGS-1        :0]     o_wb_register_adrr_result
+        input   wire                        i_memwb_lui,
+        input   wire    [BITS_SIZE-1:0]     i_memwb_extension,
+        input   wire    [BITS_SIZE-1:0]     i_memwb_dato_mem,
+        input   wire    [1:0]               i_memwb_size_filterL,
+        input   wire                        i_memwb_zero_extend,
+        input   wire                        i_memwb_mem_to_reg,
+        input   wire    [BITS_SIZE-1:0]     i_memwb_alu,
+        input   wire                        i_memwb_jal,
+        input   wire    [BITS_SIZE-1:0]     i_memwb_pc8,
+        input   wire    [BITS_REGS-1:0]     i_memwb_register_dst,
+        output  wire    [BITS_SIZE-1:0]     o_wb_data_write_ex,
+        output  wire    [BITS_SIZE-1:0]     o_wb_data_write,
+        output  wire    [BITS_REGS-1:0]     o_wb_register_adrr_result
     );
 
 
-    wire    [BITS_SIZE-1        :0]     wire_wb_filterL;
-    wire    [BITS_SIZE-1        :0]     wire_wb_data_to_reg;
-    wire    [BITS_SIZE-1        :0]     wire_wb_data_write;
+    wire    [BITS_SIZE-1:0]     wire_wb_filterL;
+    wire    [BITS_SIZE-1:0]     wire_wb_data_to_reg;
+    wire    [BITS_SIZE-1:0]     wire_wb_data_write;
 
 
     mux_lui

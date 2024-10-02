@@ -72,10 +72,13 @@ module TOP
         .i_ctl_clk_wiz                  (ctl_clk_wiz),
         .i_select_address_mem_instr     (select_mem_ins_dir),
         .i_select_address_register      (select_register_dir),
+        .i_select_mem_dir               (select_mem_dir),
         .i_dato_mem_ins                 (dato_mem_ins),
         .i_flag_write_mem_ins           (flag_write_mem_instr),
         .o_pc                           (pc),
         .o_data_reg_file                (data_reg_file)
+        .o_data_mem                     (data_mem),
+        .o_mips_halt                    (halt)
     );
 
 

@@ -735,18 +735,18 @@ module TOP_MIPS
     )
     module_WB   
     (
-        .i_memwb_lui(MEMWB_ctl_lui),
-        .i_memwb_extension(MEMWB_extension),
-        .i_memwb_dato_mem(MEMWB_dato_mem),
-        .i_memwb_size_filterL(MEMWB_ctl_size_filterL),
-        .i_memwb_zero_extend(MEMWB_ctl_zero_extend),
-        .i_memwb_mem_to_reg(MEMWB_ctl_mem_to_reg),
-        .i_memwb_alu(MEMWB_alu),
-        .i_memwb_jal(MEMWB_ctl_jal),
-        .i_memwb_pc8(MEMWB_PC8),
-        .i_memwb_register_dst(MEMWB_register_dst),
-        .o_wb_data_write_ex(WB_data_write_EX),
-        .o_wb_data_write(WB_data_write),
+        .i_memwb_lui            (MEMWB_ctl_lui),
+        .i_memwb_extension      (MEMWB_extension),
+        .i_memwb_dato_mem       (MEMWB_dato_mem),
+        .i_memwb_size_filterL   (MEMWB_ctl_size_filterL),
+        .i_memwb_zero_extend    (MEMWB_ctl_zero_extend),
+        .i_memwb_mem_to_reg     (MEMWB_ctl_mem_to_reg),
+        .i_memwb_alu            (MEMWB_alu),
+        .i_memwb_jal            (MEMWB_ctl_jal),
+        .i_memwb_pc8            (MEMWB_PC8),
+        .i_memwb_register_dst   (MEMWB_register_dst),
+        .o_wb_data_write_ex     (WB_data_write_EX),
+        .o_wb_data_write        (WB_data_write),
         .o_wb_register_adrr_result(WB_register_adrr_result)
     );
 
