@@ -5,13 +5,13 @@ module mux_register_rtrd
         parameter BITS_REGS = 5
     )
     (
-        input   wire                                i_reg_dst_rd,
-        input   wire     [BITS_REGS-1      :0]      i_rd,
-        input   wire     [BITS_REGS-1      :0]      i_rt,
-        output  wire     [BITS_REGS-1      :0]      o_mux_register_rd                 
+        input   wire                          i_reg_dst_rd,
+        input   wire     [BITS_REGS-1:0]      i_rd,
+        input   wire     [BITS_REGS-1:0]      i_rt,
+        output  wire     [BITS_REGS-1:0]      o_mux_register_rd                 
     );
     
-    reg [BITS_REGS-1  :0]   reg_register_result;
+    reg [BITS_REGS-1:0]   reg_register_result;
 
     
     always @(*)
@@ -22,6 +22,6 @@ module mux_register_rtrd
         endcase
     end
 
-    assign  o_mux_register_rd   =   reg_register_result;
+    assign  o_mux_register_rd=   reg_register_result;
 
 endmodule

@@ -138,7 +138,7 @@ def type_I(instruction, args):
 
 
 def type_R(instruction, args):   
-    opcode = INSTRUCTION_DICTIONARY[instruction][1]
+    funct = INSTRUCTION_DICTIONARY[instruction][1]
     syntax = INSTRUCTION_DICTIONARY[instruction][2]
 
     if (syntax == 'shiftv'):
@@ -146,31 +146,31 @@ def type_R(instruction, args):
         rs = REGISTERS[rs]
         rt = REGISTERS[rt]
         rd = REGISTERS[rd]
-        instruction_bin = f"000000{rs}{rt}{rd}00000{opcode}"
+        instruction_bin = f"000000{rs}{rt}{rd}00000{funct}"
     elif (syntax == 'shift'):
         rd, rt, shift = map(str.strip, args.split(','))
         rt = REGISTERS[rt]
         rd = REGISTERS[rd]
         shift = bin(int(shift) & 0b11111)[2:].zfill(5)
-        instruction_bin = f"00000000000{rt}{rd}{shift}{opcode}"
+        instruction_bin = f"00000000000{rt}{rd}{shift}{funct}"
     else:
         rd, rs, rt = map(str.strip, args.split(','))  
         rs = REGISTERS[rs]
         rt = REGISTERS[rt]
         rd = REGISTERS[rd]
-        instruction_bin = f"000000{rs}{rt}{rd}00000{opcode}"
+        instruction_bin = f"000000{rs}{rt}{rd}00000{funct}"
     return instruction_bin
 
 
 def type_J(instruction, args):
-    opcode = INSTRUCTION_DICTIONARY[instruction][1]
+    funct = INSTRUCTION_DICTIONARY[instruction][1]
 
-    if opcode == INSTRUCTION_DICTIONARY['jalr'][1]:
+    if funct == INSTRUCTION_DICTIONARY['jalr'][1]:
         rs = REGISTERS[args]
-        instruction_bin = f"000000{rs}000001111100000{opcode}"
+        instruction_bin = f"000000{rs}000001111100000{funct}"
     else:
         rs = REGISTERS[args]
-        instruction_bin = f"000000{rs}000000000000000{opcode}"
+        instruction_bin = f"000000{rs}000000000000000{funct}"
     return instruction_bin
 
 def create_bin(file_asm, file_bin):

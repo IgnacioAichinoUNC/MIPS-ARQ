@@ -2,7 +2,7 @@
 
 module MEMWB
     #(
-        parameter BITS_SIZE     =   32  ,
+        parameter BITS_SIZE    =   32,
         parameter BITS_REGS    =   5   
     )
     (   
