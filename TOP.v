@@ -76,7 +76,7 @@ module TOP
         .i_dato_mem_ins                 (dato_mem_ins),
         .i_flag_write_mem_ins           (flag_write_mem_instr),
         .o_pc                           (pc),
-        .o_data_reg_file                (data_reg_file)
+        .o_data_reg_file                (data_reg_file),
         .o_data_mem                     (data_mem),
         .o_mips_halt                    (halt)
     );
@@ -111,7 +111,7 @@ module TOP
         .i_uart_rx_flag_ready   (uart_rx_done),
         .i_uart_rx_data         (uart_rx_data),
         .i_uart_tx_done         (uart_tx_done),
-        .i_clk_wiz_count        (clk_wiz_count),
+        .i_clk_wiz_count        (reg_clk_wiz_count),
         .i_halt                 (halt),
         .i_mips_pc              (pc),
         .i_data_reg_file        (data_reg_file),
