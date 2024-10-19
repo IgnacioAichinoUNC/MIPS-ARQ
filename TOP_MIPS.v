@@ -130,7 +130,6 @@ module TOP_MIPS
     wire                            IDEX_ctl_mem_write;
     wire                            IDEX_ctl_zero_extend;
     wire                            IDEX_ctl_lui;
-    wire                            IDEX_ctl_halt;
 
     wire    [BITS_SIZE-1:0]         IDEX_extension;
     wire    [BITS_SIZE-1:0]         IDEX_instruction;
@@ -210,7 +209,6 @@ module TOP_MIPS
     wire    [BITS_SIZE-1:0]        WB_data_write_EX;
     //Multiplexor Memoria
     wire    [BITS_SIZE-1:0]        WB_data_write;
-
     wire    [BITS_REGS-1:0]        WB_register_adrr_result;
 
 
@@ -670,7 +668,7 @@ module TOP_MIPS
         .i_reset                (i_reset),
         .i_step                 (i_ctl_clk_wiz),
         .i_exmem_alu            (EXMEM_alu),
-        .i_addr_mem_debug       (i_select_address_mem_data),
+        .i_addr_mem_debug       (i_select_mem_dir),
         .i_exmem_mem_read       (EXMEM_ctl_mem_read),
         .i_exmem_mem_write      (EXMEM_ctl_mem_write),
         .i_exmem_mem_register2  (EXMEM_register2),

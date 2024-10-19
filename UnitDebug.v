@@ -92,21 +92,16 @@ module UnitDebug
                 reg_rx_counter_bytes        <= 0;
                 reg_counter_dir_mem_instr   <= 0;
                 reg_rx_instr_write          <= 0;
-
                 reg_tx_counter_bytes        <= 0;
                 reg_tx_selector_data        <= 0;
                 reg_tx_register_counter     <= 0;
+                uart_tx_data                <= 0;
                 tx_data_32                  <= 0;
                 reg_flag_tx_ready           <= 0;
-                reg_tx_counter_mem           <= 0;
-
-
-
-                
-                
+                reg_tx_counter_mem          <= 0;
                 mips_step                   <= 0;
                 debug_state                 <= 0;
-                mode                        <= 2'b00;    
+                mode                        <= MGMT_STOP;    
             end 
             else begin
                 mode                        <= mode_next;
@@ -116,19 +111,13 @@ module UnitDebug
                 reg_uart_rx_reset           <= reg_uart_rx_reset_next;
                 reg_instruccion             <= reg_instruccion_next;
                 reg_rx_counter_bytes        <= reg_rx_counter_bytes_next;
-
                 reg_tx_counter_bytes        <= reg_tx_counter_bytes_next;
                 reg_tx_selector_data        <= reg_tx_selector_data_next;
                 reg_tx_register_counter     <= reg_tx_register_counter_next;
                 uart_tx_data                <= uart_tx_data_next;
                 tx_data_32                  <= tx_data_32_next;
                 reg_flag_tx_ready           <= reg_flag_tx_ready_next;
-                reg_tx_counter_mem           <= reg_tx_counter_mem_next;
-
-
-                
-
-
+                reg_tx_counter_mem          <= reg_tx_counter_mem_next;
                 reg_counter_dir_mem_instr   <= reg_counter_dir_mem_instr_next;
                 reg_rx_instr_write          <= reg_rx_instr_write_next;
                 
@@ -138,6 +127,7 @@ module UnitDebug
     always @*
         begin
             state_next                      <= state;
+            mode_next                       <= mode;
             debug_state_next                <= debug_state;
             mips_step_next                  <= mips_step;
             reg_uart_rx_reset_next          <= reg_uart_rx_reset;
@@ -152,6 +142,7 @@ module UnitDebug
             reg_tx_counter_mem_next         <= reg_tx_counter_mem;            
             reg_counter_dir_mem_instr_next  <= reg_counter_dir_mem_instr;
             reg_rx_instr_write_next         <= reg_rx_instr_write;
+           
             
 
         case (state)

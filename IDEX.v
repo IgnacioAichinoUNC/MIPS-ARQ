@@ -156,7 +156,7 @@ module IDEX
             reg_data_reg1       <=  i_data_rs;
             reg_data_reg2       <=  i_register_data_2;
             reg_extension       <=  i_extension;
-            reg_rs              <=  i_rs:
+            reg_rs              <=  i_rs;
             reg_rt              <=  i_rt;
             reg_rd              <=  i_rd;
             reg_DJump           <=  i_DJump;
