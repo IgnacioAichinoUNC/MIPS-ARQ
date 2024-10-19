@@ -25,14 +25,16 @@ module TOP_MIPS
         input   wire                                i_clk,
         input   wire                                i_reset,
         input   wire                                i_ctl_clk_wiz,
-        input   wire                                i_select_address_mem_data
+        input   wire     [BITS_SIZE-1:0]            i_select_address_mem_data
         input   wire     [SIZE_INSTRUC_DEBUG-1:0]   i_select_address_mem_instr,
         input   wire     [BITS_REGS-1:0]            i_select_address_register,
         input   wire     [BITS_SIZE-1:0]            i_dato_mem_ins,
         input   wire                                i_flag_write_mem_ins,
 
         output  wire     [BITS_SIZE-1:0]            o_pc,
-        output  wire     [BITS_SIZE-1:0]            o_data_reg_file
+        output  wire     [BITS_SIZE-1:0]            o_data_reg_file,
+        output  wire     [BITS_SIZE-1:0]            o_data_MEM_debug,
+        output  wire                                o_mips_halt
     );
 
 // ---------IF-----------------------------------------------
@@ -89,8 +91,7 @@ module TOP_MIPS
     wire                            ctl_unit_alu_src;
     wire                            ctl_unit_zero_extend;
     wire                            ctl_unit_lui;
-    wire                            ctl_unit_jalR;
-    wire                            ctl_unit_halt;
+
     //Mux Unidad de riesgos
     wire     [BITS_ALU_CTL-1:0]     mux_ctl_unit_alu_op;
     wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_extend_mode;
@@ -98,7 +99,6 @@ module TOP_MIPS
     wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_size_filterL;
     wire                            mux_ctl_unit_mem_to_reg;
     wire                            mux_ctl_unit_register_write;
-    wire                            mux_ctl_unit_jal_R;
     wire                            mux_ctl_unit_halt;
     wire                            mux_ctl_unit_register_rd;
     wire                            mux_ctl_unit_jump;
@@ -110,8 +110,8 @@ module TOP_MIPS
     wire                            mux_ctl_unit_alu_src;
     wire                            mux_ctl_unit_zero_extend;
     wire                            mux_ctl_unit_lui;
-    wire                            mux_ctl_unit_jalR;
-    wire                            mux_ctl_unit_halt;
+    wire                            mux_ctl_unit_jal_R;
+ 
     
     //IDEX
     wire                            IDEX_ctl_alu_src;
@@ -124,7 +124,6 @@ module TOP_MIPS
     wire                            IDEX_ctl_mem_to_reg;
     wire                            IDEX_ctl_register_write;
     wire                            IDEX_ctl_jal;
-    wire                            IDEX_ctl_halt;
     wire                            IDEX_ctl_register_rd;
     wire                            IDEX_ctl_neq_branch;
     wire                            IDEX_ctl_branch;
@@ -211,9 +210,6 @@ module TOP_MIPS
     wire    [BITS_SIZE-1:0]        WB_data_write_EX;
     //Multiplexor Memoria
     wire    [BITS_SIZE-1:0]        WB_data_write;
-    //MEMWB
-    wire                           MEMWB_ctl_register_write;
-    wire    [BITS_REGS-1:0]        MEMWB_register_dst;
 
     wire    [BITS_REGS-1:0]        WB_register_adrr_result;
 
@@ -249,6 +245,10 @@ module TOP_MIPS
         assign EX_ctl_alu_instruction     =   IDEX_extension[BITS_ALU-1:0];
         assign EX_ctl_alu_opcode          =   IDEX_instruction[BITS_SIZE-1:BITS_REGS+BITS_REGS+BITS_INMEDIATE];
 
+//MEM
+        assign o_data_MEM_debug           =   MEM_dato_mem_Debug;    
+
+        assign o_mips_halt                =   MEMWB_ctl_halt;
 
 //ETAPA IF
     IF
@@ -357,7 +357,7 @@ module TOP_MIPS
         .o_unit_alu_op              (ctl_unit_alu_op),
         .o_register_write           (ctl_unit_register_write),
         .o_size_filter              (ctl_unit_size_filter),
-        .o_size_filterL             (ctl_unit_size_filter_L)  
+        .o_size_filterL             (ctl_unit_size_filterL)  
     );
 
     //Unidad de Riegos
@@ -405,7 +405,7 @@ module TOP_MIPS
         .i_size_filterL             (ctl_unit_size_filterL),
         .i_zero_extend              (ctl_unit_zero_extend),
         .i_lui                      (ctl_unit_lui),
-        .i_jalR                     (ctl_unit_jalR),
+        .i_jalR                     (ctl_unit_jal_R),
         .i_halt                     (ctl_unit_halt),
 
 
@@ -413,7 +413,7 @@ module TOP_MIPS
         .o_jump                     (mux_ctl_unit_jump),
         .o_jal                      (mux_ctl_unit_jal),
         .o_lui                      (mux_ctl_unit_lui),
-        .o_jalR                     (mux_ctl_unit_jalR),
+        .o_jalR                     (mux_ctl_unit_jal_R),
         .o_halt                     (mux_ctl_unit_halt),
         .o_branch                   (mux_ctl_unit_branch),
         .o_neq_branch               (mux_ctl_unit_neq_branch),
@@ -465,7 +465,7 @@ module TOP_MIPS
         .i_size_filterL             (mux_ctl_unit_size_filterL),
         .i_zero_extend              (mux_ctl_unit_zero_extend),
         .i_lui                      (mux_ctl_unit_lui),
-        .i_jalR                     (mux_ctl_unit_jalR),
+        .i_jalR                     (mux_ctl_unit_jal_R),
         .i_halt                     (mux_ctl_unit_halt),
 
         //idex
