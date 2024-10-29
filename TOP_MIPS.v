@@ -668,7 +668,7 @@ module TOP_MIPS
         .i_reset                (i_reset),
         .i_step                 (i_ctl_clk_wiz),
         .i_exmem_alu            (EXMEM_alu),
-        .i_addr_mem_debug       (i_select_mem_dir),
+        .i_addr_mem_debug       (i_select_address_mem_data),
         .i_exmem_mem_read       (EXMEM_ctl_mem_read),
         .i_exmem_mem_write      (EXMEM_ctl_mem_write),
         .i_exmem_mem_register2  (EXMEM_register2),
