@@ -25,7 +25,7 @@ module TOP_MIPS
         input   wire                                i_clk,
         input   wire                                i_reset,
         input   wire                                i_ctl_clk_wiz,
-        input   wire     [BITS_SIZE-1:0]            i_select_address_mem_data
+        input   wire     [BITS_SIZE-1:0]            i_select_address_mem_data,
         input   wire     [SIZE_INSTRUC_DEBUG-1:0]   i_select_address_mem_instr,
         input   wire     [BITS_REGS-1:0]            i_select_address_register,
         input   wire     [BITS_SIZE-1:0]            i_dato_mem_ins,
