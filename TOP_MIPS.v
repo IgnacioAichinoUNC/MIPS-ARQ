@@ -32,7 +32,7 @@ module TOP_MIPS
         input   wire                                i_flag_write_mem_ins,
 
         output  wire     [BITS_SIZE-1:0]            o_pc,
-        output  wire     [BITS_SIZE-1:0]            o_data_reg_file,
+        output  wire     [BITS_SIZE-1:0]            o_data_register,
         output  wire     [BITS_SIZE-1:0]            o_data_MEM_debug,
         output  wire                                o_mips_halt
     );
@@ -234,7 +234,7 @@ module TOP_MIPS
         assign ID_register_rs             =   IFID_Instr[BITS_INMEDIATE+BITS_REGS+BITS_REGS-1:BITS_INMEDIATE+BITS_REGS];//BITS_INMEDIATE+RT+RS-1=16+5+5-1=25; BITS_INMEDIATE+RT=16+5=21; [25-21]
         assign ID_register_rt             =   IFID_Instr[BITS_INMEDIATE+BITS_REGS-1:BITS_INMEDIATE];//BITS_INMEDIATE+BITS_REGS-1=16+5-1=20; BITS_INMEDIATE=16; [20-16]
         assign ID_register_rd             =   IFID_Instr [BITS_INMEDIATE-1:BITS_INMEDIATE-BITS_REGS]; //BITS_INMEDIATE-1=16-1=15; BITS_INMEDIATE-RD=16-5=11; [15-11]
-        assign o_data_reg_file            =   ID_data_register_Debug;
+        assign o_data_register            =   ID_data_register_Debug;
         //Extensor
         assign ID_intruct_16              =   IFID_Instr[BITS_INMEDIATE-1:0];
 
