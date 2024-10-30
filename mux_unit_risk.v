@@ -11,7 +11,7 @@ module mux_unit_risk
         input  wire                            i_neq_branch,
         input  wire                            i_mem_read,
         input  wire                            i_mem_to_reg,
-        input  wire    [1:0]                   i_alu_op,
+        input  wire    [1:0]                   i_unit_alu_op,
         input  wire                            i_mem_write,
         input  wire                            i_alu_src,
         input  wire                            i_reg_write,
@@ -23,24 +23,24 @@ module mux_unit_risk
         input  wire                            i_jalR,
         input  wire                            i_halt,
 
-        output  wire                            o_reg_dst_rd,
-        output  wire                            o_jump,
-        output  wire                            o_jal,
-        output  wire                            o_branch,
-        output  wire                            o_neq_branch,
-        output  wire                            o_mem_read,
-        output  wire                            o_mem_to_reg,
-        output  wire    [1:0]                   o_alu_op,
-        output  wire                            o_mem_write,
-        output  wire                            o_alu_src ,
-        output  wire                            o_register_write,
-        output  wire    [1:0]                   o_extension_mode,
-        output  wire    [1:0]                   o_size_filter,
-        output  wire    [1:0]                   o_size_filterL,
-        output  wire                            o_zero_extend,
-        output  wire                            o_lui,
-        output  wire                            o_jalR,
-        output  wire                            o_halt
+        output  wire                           o_reg_dst_rd,
+        output  wire                           o_jump,
+        output  wire                           o_jal,
+        output  wire                           o_branch,
+        output  wire                           o_neq_branch,
+        output  wire                           o_mem_read,
+        output  wire                           o_mem_to_reg,
+        output  wire    [1:0]                  o_unit_alu_op,
+        output  wire                           o_mem_write,
+        output  wire                           o_alu_src ,
+        output  wire                           o_register_write,
+        output  wire    [1:0]                  o_extension_mode,
+        output  wire    [1:0]                  o_size_filter,
+        output  wire    [1:0]                  o_size_filterL,
+        output  wire                           o_zero_extend,
+        output  wire                           o_lui,
+        output  wire                           o_jalR,
+        output  wire                           o_halt
     );
 
         reg           reg_dst_rd;
@@ -50,7 +50,7 @@ module mux_unit_risk
         reg           reg_neq_branch;
         reg           reg_mem_read;
         reg           reg_mem_to_reg;
-        reg    [1:0]  reg_alu_op;
+        reg    [1:0]  reg_unit_alu_op;
         reg           reg_mem_write;
         reg           reg_alu_src;
         reg           reg_register_write;
@@ -73,7 +73,7 @@ module mux_unit_risk
                     reg_neq_branch          <=      1'b0;
                     reg_mem_read            <=      1'b0;
                     reg_mem_to_reg          <=      1'b0;
-                    reg_alu_op              <=      1'b0;
+                    reg_unit_alu_op         <=      1'b0;
                     reg_mem_write           <=      1'b0;
                     reg_alu_src             <=      1'b0;
                     reg_register_write      <=      1'b0;
@@ -93,7 +93,7 @@ module mux_unit_risk
                     reg_neq_branch          <=      i_neq_branch;
                     reg_mem_read            <=      i_mem_read;
                     reg_mem_to_reg          <=      i_mem_to_reg;
-                    reg_alu_op              <=      i_alu_op;
+                    reg_unit_alu_op         <=      i_unit_alu_op;
                     reg_mem_write           <=      i_mem_write;
                     reg_alu_src             <=      i_alu_src;
                     reg_register_write      <=      i_reg_write;
@@ -113,7 +113,7 @@ module mux_unit_risk
         assign o_neq_branch     = reg_neq_branch;
         assign o_mem_read       = reg_mem_read;
         assign o_mem_to_reg     = reg_mem_to_reg;
-        assign o_alu_op         = reg_alu_op;
+        assign o_unit_alu_op    = reg_unit_alu_op;
         assign o_mem_write      = reg_mem_write;
         assign o_alu_src        = reg_alu_src;
         assign o_register_write = reg_register_write;

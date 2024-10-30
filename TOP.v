@@ -6,6 +6,7 @@ module TOP
         parameter SIZE_MEM_INSTRUC      = 256,
         parameter SIZE_INSTRUC_DEBUG    = 8,
         parameter SIZE_TRAMA            = 8,
+        parameter SIZE_MEM_DATA        = 16,
         parameter BAUD_RATE             = 9600,
         parameter CLK_FREQ              = 50000000,
         parameter RX_TICK_BAUD          = 16 //16 veces la tasa de baudio,una frecuencia de muestreo más alta que la tasa de baudios para recuperar los datos
@@ -63,6 +64,7 @@ module TOP
     TOP_MIPS #(
         .BITS_SIZE          (BITS_SIZE),
         .SIZE_MEM_INSTRUC   (SIZE_MEM_INSTRUC),
+        .SIZE_MEM_DATA      (SIZE_MEM_DATA),
         .SIZE_INSTRUC_DEBUG (SIZE_INSTRUC_DEBUG)
     )
     module_TOP_MIPS
@@ -72,10 +74,13 @@ module TOP
         .i_ctl_clk_wiz                  (ctl_clk_wiz),
         .i_select_address_mem_instr     (select_mem_ins_dir),
         .i_select_address_register      (select_register_dir),
+        .i_select_address_mem_data      (select_mem_dir),
         .i_dato_mem_ins                 (dato_mem_ins),
         .i_flag_write_mem_ins           (flag_write_mem_instr),
         .o_pc                           (pc),
-        .o_data_reg_file                (data_reg_file)
+        .o_data_reg_file                (data_reg_file),
+        .o_data_MEM_debug                     (data_mem),
+        .o_mips_halt                    (halt)
     );
 
 
@@ -108,7 +113,7 @@ module TOP
         .i_uart_rx_flag_ready   (uart_rx_done),
         .i_uart_rx_data         (uart_rx_data),
         .i_uart_tx_done         (uart_tx_done),
-        .i_clk_wiz_count        (clk_wiz_count),
+        .i_clk_wiz_count        (reg_clk_wiz_count),
         .i_halt                 (halt),
         .i_mips_pc              (pc),
         .i_data_reg_file        (data_reg_file),

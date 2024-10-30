@@ -7,10 +7,10 @@ module Control_ALU
         parameter   ALU_OP          = 4   
     )
     (
-        input   wire    [BITS_ALU-1:0]      i_funct ,
+        input   wire    [BITS_ALU-1:0]      i_funct,
         input   wire    [BITS_ALU-1:0]      i_opcode,
-        input   wire    [BITS_ALU_CTL-1:0]  i_alu_op ,    
-        output  wire    [ALU_OP-1:0]        o_alu_op ,
+        input   wire    [BITS_ALU_CTL-1:0]  i_unit_alu_op,    
+        output  wire    [ALU_OP-1:0]        o_alu_op,
         output  wire                        o_shamt            
     );
 
@@ -39,12 +39,12 @@ localparam	CEROUNO= 2'b01;
 localparam	UNOCERO= 2'b10;
 localparam	UNOUNO = 2'b11;
 
-reg [ALU_OP-1    :0] reg_alu_op   ;
+reg [ALU_OP-1    :0] reg_alu_op;
    
     
     always @(*)
     begin : ALUOp
-            case(i_alu_op)
+            case(i_unit_alu_op)
                 CERO :       
                                     reg_alu_op   <=   4'b0000;
                 CEROUNO :        
@@ -80,6 +80,6 @@ reg [ALU_OP-1    :0] reg_alu_op   ;
             endcase
     end
     
-    assign o_alu_op  =   reg_alu_op   ;
-    assign o_shamt   =   (i_funct == SRA_C | i_funct == SRL_C | i_funct == SLL_C) ? 1 : 0 ;
+    assign o_alu_op    =   reg_alu_op;
+    assign o_shamt     =   (i_funct == SRA_C | i_funct == SRL_C | i_funct == SLL_C) ? 1 : 0 ;
 endmodule
