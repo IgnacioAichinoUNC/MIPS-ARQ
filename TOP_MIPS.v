@@ -405,8 +405,6 @@ module TOP_MIPS
         .i_lui                      (ctl_unit_lui),
         .i_jalR                     (ctl_unit_jal_R),
         .i_halt                     (ctl_unit_halt),
-
-
         .o_reg_dst_rd               (mux_ctl_unit_register_rd),
         .o_jump                     (mux_ctl_unit_jump),
         .o_jal                      (mux_ctl_unit_jal),

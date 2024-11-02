@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+
 //LW:   100011   base         RT     OFFSET
 //LWU:  100111   base         RT     OFFSET
 //LB:   100000   base         RT     OFFSET
@@ -31,32 +32,33 @@
 
 module UnitControl
     #(
-        parameter   BITS_SIZE       =   6
+        parameter   BITS_SIZE =   6
     )
     (
-        input   wire    [BITS_SIZE-1:0]         i_ctl_instruction_op,
-        input   wire    [BITS_SIZE-1:0]         i_ctl_instr_funct,
-        output  wire                            o_register_rd,
-        output  wire                            o_jump,
-        output  wire                            o_jal,
-        output  wire                            o_branch,
-        output  wire                            o_neq_branch,
-
-        output  wire                            o_mem_to_reg,
-        output  wire    [1:0]                   o_unit_alu_op,
-        output  wire                            o_mem_write,
-        output  wire                            o_alu_src,
-        output  wire                            o_register_write,
-        output  wire    [1:0]                   o_extension_mode,
-
-        output  wire                            o_mem_read,
-        output  wire    [1:0]                   o_size_filter,
-        output  wire    [1:0]                   o_size_filterL,
-        output  wire                            o_zero_extend,
-        output  wire                            o_lui,
-        output  wire                            o_jalR,
-        output  wire                            o_halt
+        input   wire    [BITS_SIZE-1:0] i_ctl_instruction_op,
+        input   wire    [BITS_SIZE-1:0] i_ctl_instr_funct,
+        output  wire                    o_register_rd,
+        output  wire                    o_jump,
+        output  wire                    o_jal,
+        output  wire                    o_branch,
+        output  wire                    o_neq_branch,
+        output  wire                    o_mem_to_reg,
+        output  wire    [1:0]           o_unit_alu_op,
+        output  wire                    o_mem_write,
+        output  wire                    o_alu_src,
+        output  wire                    o_register_write,
+        output  wire    [1:0]           o_extension_mode,
+        output  wire                    o_mem_read,
+        output  wire    [1:0]           o_size_filter,
+        output  wire    [1:0]           o_size_filterL,
+        output  wire                    o_zero_extend,
+        output  wire                    o_lui,
+        output  wire                    o_jalR,
+        output  wire                    o_halt
     );
+
+
+ // OP local param   
 localparam LW     = 6'b100011;
 localparam LWU    = 6'b100111;
 localparam LB     = 6'b100000;
@@ -81,13 +83,13 @@ localparam JALR   = 6'b001001;
 localparam JR     = 6'b001000;
 localparam HALT   = 6'b111111;
 
-    reg         reg_rd;             // 1 en caso de que sea una instrucción JALR y todas las de tipo R menos JR
-    reg         reg_jump;           // 1 en caso de que sea una instrucción Jump (J) o JAL
-    reg         reg_jal;            // 1 en caso de que sea una instrucción JALR o JAL
-    reg         reg_branch;         // 1 en caso de que sea una instrucción branch equal (BEQ)
-    reg         reg_neq_branch;     // 1 en caso de que sea una instrucción branch con not equal (BNE)
-    reg         reg_mem_read;       // 1 en caso de que sea una instrucción LW (Load Word), LWU (Load Word Unsigned), LB (Load Byte), LBU (Load Byte Unsigned), LH (Load Halfword), LHU (Load Halfword Unsigned), LUI (Load Upper Inmediate)
-    reg         reg_mem_to_reg;     // 1 en caso de que sea una instrucción LW (Load Word), LWU (Load Word Unsigned), LB (Load Byte), LBU (Load Byte Unsigned), LH (Load Halfword), LHU (Load Halfword Unsigned), LUI (Load Upper Inmediate)
+    reg         reg_rd;             // 1 en JALR y todas las de tipo R menos JR
+    reg         reg_jump;           // 1 en Jump (J) o JAL
+    reg         reg_jal;            // 1 en JALR o JAL
+    reg         reg_branch;         // 1 en (BEQ)
+    reg         reg_neq_branch;     // 1 en (BNE)
+    reg         reg_mem_read;       // 1 en LW (Load Word), LWU (Load Word Unsigned), LB (Load Byte), LBU (Load Byte Unsigned), LH (Load Halfword), LHU (Load Halfword Unsigned), LUI (Load Upper Inmediate)
+    reg         reg_mem_to_reg;     // 1 en LW (Load Word), LWU (Load Word Unsigned), LB (Load Byte), LBU (Load Byte Unsigned), LH (Load Halfword), LHU (Load Halfword Unsigned), LUI (Load Upper Inmediate)
    
     reg [1:0]   reg_unit_alu_op;    //00 -> suma, 01 -> resta, 10 -> depende del funct de la instrucción, 11 -> depende del op de la instrucción
                                         //00 -> JALR, JR, ADDI, LW, LWU, LB, LBU, LH, LHU, LUI, SW, SB, SH, J, JAL, HALT
@@ -95,9 +97,9 @@ localparam HALT   = 6'b111111;
                                         //10 -> tipo R (que no sean JALR ni JR)
                                         //11 -> ANDI, ORI, SLTI, XORI, caso default
    
-    reg         reg_mem_write;      // 1 en caso de que sea una instrucción SW (Store Word), SB (Store Byte), SH (Store Halfword)
-    reg         reg_alu_src;        // 1 en caso de que sea una instrucción ADDI, ANDI, ORI, SLTI, XORI, LW, LWU, LB, LBU, LH, LHU, SW, SB, SH
-    reg         reg_register_write;  // 1 en caso de que sea una instrucción JALR, tipo R (menos JR), ADDI, ANDI, ORI, SLTI, XORI, LW, LWU, LB, LBU, LH, LHU, LUI, JAL
+    reg         reg_mem_write;      // 1 en SW (Store Word), SB (Store Byte), SH (Store Halfword)
+    reg         reg_alu_src;        // 1 en ADDI, ANDI, ORI, SLTI, XORI, LW, LWU, LB, LBU, LH, LHU, SW, SB, SH
+    reg         reg_register_write;  //1 en JALR, tipo R (menos JR), ADDI, ANDI, ORI, SLTI, XORI, LW, LWU, LB, LBU, LH, LHU, LUI, JAL
     
     reg [1:0]   reg_extend_mode;    //00 -> coloca los 16 bits inmediatos en la parte baja y la parte alta la completa repitiendo el bit más significativo del inmediato
                                         //   -> JALR, JR, todas las demás de tipo R, ADDI, SLTI, LW, LWU, LB, LBU, LH, LHU, SW, SB, SH, BEQ, BNE, J, JAL, HALT, default
@@ -106,18 +108,18 @@ localparam HALT   = 6'b111111;
                                     //10 -> coloca 0 en la parte baja  y en la parte alta coloca los 16 bits inmediatos
                                         //   -> LUI
 
-    reg [1:0]   reg_size_filter;   //DATO QUE SE UTILIZA LUEGO EN LA ETAPA MEM PARA EL STORE
+    reg [1:0]   reg_size_filter;   //DATO STORE
                                         //00 -> JALR, JR, todas las demás de tipo R, ADDI, ANDI, ORI, SLTI, XORI, LW, LWU, LB, LBU, LH, LHU, LUI, SW, BEQ, BNE, J, JAL, HALT, default
                                         //01 -> SB
                                         //10 -> SH
-    reg [1:0]   reg_size_filter_L;   //DATO QUE SE UTILIZA LUEGO EN LA ETAPA WB PARA EL LOAD
+    reg [1:0]   reg_size_filter_L;   //DATO WB PARA EL LOAD
                                         //00 -> JALR, JR, todas las demás de tipo R, ADDI, ANDI, ORI, SLTI, XORI, LW, LWU, LUI, SW, SB, SH, BEQ, BNE, J, JAL, HALT, default
                                         //01 -> LB, LBU
                                         //10 -> LH, LHU
-    reg         reg_zero_extend;    // 1 en caso de que sea una instrucción LBU, LHU
-    reg         reg_lui;            // 1 en caso de que sea una instrucción LUI
-    reg         reg_jalR;           // 1 en caso de que sea una instrucción JALR o JR
-    reg         reg_halt;           // 1 en caso de que sea una instrucción HALT
+    reg         reg_zero_extend;    // 1 en LBU, LHU
+    reg         reg_lui;            // 1 en LUI
+    reg         reg_jalR;           // 1 en JALR o JR
+    reg         reg_halt;           // 1 en HALT
 
     always @(*)
     begin : Decoder
@@ -454,200 +456,201 @@ localparam HALT   = 6'b111111;
 
             SW:
             begin
-                reg_rd              <=  1'b0    ;
-                reg_jump            <=  1'b0    ;
-                reg_jal             <=  1'b0    ;
-                reg_branch          <=  1'b0    ;
-                reg_neq_branch      <=  1'b0    ;
-                reg_mem_read        <=  1'b0    ;
-                reg_mem_to_reg      <=  1'b0    ;
-                reg_unit_alu_op     <=  2'b00   ;
-                reg_mem_write       <=  1'b1    ;
-                reg_alu_src         <=  1'b1    ;
-                reg_register_write  <=  1'b0    ;
-                reg_extend_mode     <=  2'b00   ;
-                reg_size_filter     <=  2'b00   ;
-                reg_size_filter_L   <=  2'b00   ;
-                reg_zero_extend     <=  1'b0    ;
-                reg_lui             <=  1'b0    ;
-                reg_jalR            <=  1'b0    ;
-                reg_halt            <=  1'b0    ;
+                reg_rd              <=  1'b0;
+                reg_jump            <=  1'b0;
+                reg_jal             <=  1'b0;
+                reg_branch          <=  1'b0;
+                reg_neq_branch      <=  1'b0;
+                reg_mem_read        <=  1'b0;
+                reg_mem_to_reg      <=  1'b0;
+                reg_unit_alu_op     <=  2'b00;
+                reg_mem_write       <=  1'b1;
+                reg_alu_src         <=  1'b1;
+                reg_register_write  <=  1'b0;
+                reg_extend_mode     <=  2'b00;
+                reg_size_filter     <=  2'b00;
+                reg_size_filter_L   <=  2'b00;
+                reg_zero_extend     <=  1'b0;
+                reg_lui             <=  1'b0;
+                reg_jalR            <=  1'b0;
+                reg_halt            <=  1'b0;
+
             end
 
             SB:
             begin
-                reg_rd              <=  1'b0    ;
-                reg_jump            <=  1'b0    ;
-                reg_jal             <=  1'b0    ;
-                reg_branch          <=  1'b0    ;
-                reg_neq_branch      <=  1'b0    ;
-                reg_mem_read        <=  1'b0    ;
-                reg_mem_to_reg      <=  1'b0    ;
-                reg_unit_alu_op     <=  2'b00   ;
-                reg_mem_write       <=  1'b1    ;
-                reg_alu_src         <=  1'b1    ;
-                reg_register_write  <=  1'b0    ;
-                reg_extend_mode     <=  2'b00   ;
-                reg_size_filter     <=  2'b01   ;
-                reg_size_filter_L   <=  2'b00   ;
-                reg_zero_extend     <=  1'b0    ;
-                reg_lui             <=  1'b0    ;
-                reg_jalR            <=  1'b0    ;
-                reg_halt            <=  1'b0    ;
-            end
+                reg_rd              <=  1'b0;
+                reg_jump            <=  1'b0;
+                reg_jal             <=  1'b0;
+                reg_branch          <=  1'b0;
+                reg_neq_branch      <=  1'b0;
+                reg_mem_read        <=  1'b0;
+                reg_mem_to_reg      <=  1'b0;
+                reg_unit_alu_op     <=  2'b00;
+                reg_mem_write       <=  1'b1;
+                reg_alu_src         <=  1'b1;
+                reg_register_write  <=  1'b0;
+                reg_extend_mode     <=  2'b00;
+                reg_size_filter     <=  2'b01;
+                reg_size_filter_L   <=  2'b00;
+                reg_zero_extend     <=  1'b0;
+                reg_lui             <=  1'b0;
+                reg_jalR            <=  1'b0;
+                reg_halt            <=  1'b0;
 
+            end
             SH:
             begin
-                reg_rd              <=  1'b0    ;
-                reg_jump            <=  1'b0    ;
-                reg_jal             <=  1'b0    ;
-                reg_branch          <=  1'b0    ;
-                reg_neq_branch      <=  1'b0    ;
-                reg_mem_read        <=  1'b0    ;
-                reg_mem_to_reg      <=  1'b0    ;
-                reg_unit_alu_op     <=  2'b00   ;
-                reg_mem_write       <=  1'b1    ;
-                reg_alu_src         <=  1'b1    ;
-                reg_register_write  <=  1'b0    ;
-                reg_extend_mode     <=  2'b00   ;
-                reg_size_filter     <=  2'b10   ;
-                reg_size_filter_L   <=  2'b00   ;
-                reg_zero_extend     <=  1'b0    ;
-                reg_lui             <=  1'b0    ;
-                reg_jalR            <=  1'b0    ;
-                reg_halt            <=  1'b0    ;
+                reg_rd              <=  1'b0;
+                reg_jump            <=  1'b0;
+                reg_jal             <=  1'b0;
+                reg_branch          <=  1'b0;
+                reg_neq_branch      <=  1'b0;
+                reg_mem_read        <=  1'b0;
+                reg_mem_to_reg      <=  1'b0;
+                reg_unit_alu_op     <=  2'b00;
+                reg_mem_write       <=  1'b1;
+                reg_alu_src         <=  1'b1;
+                reg_register_write  <=  1'b0;
+                reg_extend_mode     <=  2'b00;
+                reg_size_filter     <=  2'b10;
+                reg_size_filter_L   <=  2'b00;
+                reg_zero_extend     <=  1'b0;
+                reg_lui             <=  1'b0;
+                reg_jalR            <=  1'b0;
+                reg_halt            <=  1'b0;
             end
 
             BEQ:
             begin
-                reg_rd              <=  1'b0    ;
-                reg_jump            <=  1'b0    ;
-                reg_jal             <=  1'b0    ;
-                reg_branch          <=  1'b1    ;
-                reg_neq_branch      <=  1'b0    ;
-                reg_mem_read        <=  1'b0    ;
-                reg_mem_to_reg      <=  1'b0    ;
-                reg_unit_alu_op     <=  2'b01   ;
-                reg_mem_write       <=  1'b0    ;
-                reg_alu_src         <=  1'b0    ;
-                reg_register_write  <=  1'b0    ;
-                reg_extend_mode     <=  2'b00   ;
-                reg_size_filter     <=  2'b00   ;
-                reg_size_filter_L   <=  2'b00   ;
-                reg_zero_extend     <=  1'b0    ;
-                reg_lui             <=  1'b0    ;
-                reg_jalR            <=  1'b0    ;
-                reg_halt            <=  1'b0    ;
+                reg_rd              <=  1'b0;
+                reg_jump            <=  1'b0;
+                reg_jal             <=  1'b0;
+                reg_branch          <=  1'b1;
+                reg_neq_branch      <=  1'b0;
+                reg_mem_read        <=  1'b0;
+                reg_mem_to_reg      <=  1'b0;
+                reg_unit_alu_op     <=  2'b01;
+                reg_mem_write       <=  1'b0;
+                reg_alu_src         <=  1'b0;
+                reg_register_write  <=  1'b0;
+                reg_extend_mode     <=  2'b00;
+                reg_size_filter     <=  2'b00;
+                reg_size_filter_L   <=  2'b00;
+                reg_zero_extend     <=  1'b0;
+                reg_lui             <=  1'b0;
+                reg_jalR            <=  1'b0;
+                reg_halt            <=  1'b0;
             end
 
             BNE:
             begin
-                reg_rd              <=  1'b0    ;
-                reg_jump            <=  1'b0    ;
-                reg_jal             <=  1'b0    ;
-                reg_branch          <=  1'b0    ;
-                reg_neq_branch      <=  1'b1    ;
-                reg_mem_read        <=  1'b0    ;
-                reg_mem_to_reg      <=  1'b0    ;
-                reg_unit_alu_op     <=  2'b01   ;
-                reg_mem_write       <=  1'b0    ;
-                reg_alu_src         <=  1'b0    ;
-                reg_register_write  <=  1'b0    ;
-                reg_extend_mode     <=  2'b00   ;
-                reg_size_filter     <=  2'b00   ;
-                reg_size_filter_L   <=  2'b00   ;
-                reg_zero_extend     <=  1'b0    ;
-                reg_lui             <=  1'b0    ;
-                reg_jalR            <=  1'b0    ;
-                reg_halt            <=  1'b0    ;
+                reg_rd              <=  1'b0;
+                reg_jump            <=  1'b0;
+                reg_jal             <=  1'b0;
+                reg_branch          <=  1'b0;
+                reg_neq_branch      <=  1'b1;
+                reg_mem_read        <=  1'b0;
+                reg_mem_to_reg      <=  1'b0;
+                reg_unit_alu_op     <=  2'b01;
+                reg_mem_write       <=  1'b0;
+                reg_alu_src         <=  1'b0;
+                reg_register_write  <=  1'b0;
+                reg_extend_mode     <=  2'b00;
+                reg_size_filter     <=  2'b00;
+                reg_size_filter_L   <=  2'b00;
+                reg_zero_extend     <=  1'b0;
+                reg_lui             <=  1'b0;
+                reg_jalR            <=  1'b0;
+                reg_halt            <=  1'b0;
             end
 
             J:
             begin
-                reg_rd              <=  1'b0    ;
-                reg_jump            <=  1'b1    ;
-                reg_jal             <=  1'b0    ;
-                reg_branch          <=  1'b0    ;
-                reg_neq_branch      <=  1'b0    ;
-                reg_mem_read        <=  1'b0    ;
-                reg_mem_to_reg      <=  1'b0    ;
-                reg_unit_alu_op     <=  2'b00   ;
-                reg_mem_write       <=  1'b0    ;
-                reg_alu_src         <=  1'b0    ;
-                reg_register_write  <=  1'b0    ;
-                reg_extend_mode     <=  2'b00   ;
-                reg_size_filter     <=  2'b00   ;
-                reg_size_filter_L   <=  2'b00   ;
-                reg_zero_extend     <=  1'b0    ;
-                reg_lui             <=  1'b0    ;
-                reg_jalR            <=  1'b0    ;
-                reg_halt            <=  1'b0    ;
+                reg_rd              <=  1'b0;
+                reg_jump            <=  1'b1;
+                reg_jal             <=  1'b0;
+                reg_branch          <=  1'b0;
+                reg_neq_branch      <=  1'b0;
+                reg_mem_read        <=  1'b0;
+                reg_mem_to_reg      <=  1'b0;
+                reg_unit_alu_op     <=  2'b00;
+                reg_mem_write       <=  1'b0;
+                reg_alu_src         <=  1'b0;
+                reg_register_write  <=  1'b0;
+                reg_extend_mode     <=  2'b00;
+                reg_size_filter     <=  2'b00;
+                reg_size_filter_L   <=  2'b00;
+                reg_zero_extend     <=  1'b0;
+                reg_lui             <=  1'b0;
+                reg_jalR            <=  1'b0;
+                reg_halt            <=  1'b0;
             end
 
            JAL:
             begin
-                reg_rd              <=  1'b0    ;
-                reg_jump            <=  1'b1    ;
-                reg_jal             <=  1'b1    ;
-                reg_branch          <=  1'b0    ;
-                reg_neq_branch      <=  1'b0    ;
-                reg_mem_read        <=  1'b0    ;
-                reg_mem_to_reg      <=  1'b0    ;
-                reg_unit_alu_op     <=  2'b00   ;
-                reg_mem_write       <=  1'b0    ;
-                reg_alu_src         <=  1'b0    ;
-                reg_register_write  <=  1'b1    ;
-                reg_extend_mode     <=  2'b00   ;
-                reg_size_filter     <=  2'b00   ;
-                reg_size_filter_L   <=  2'b00   ;
-                reg_zero_extend     <=  1'b0    ;
-                reg_lui             <=  1'b0    ;
-                reg_jalR            <=  1'b0    ;
-                reg_halt            <=  1'b0    ;
+                reg_rd              <=  1'b0;
+                reg_jump            <=  1'b1;
+                reg_jal             <=  1'b1;
+                reg_branch          <=  1'b0;
+                reg_neq_branch      <=  1'b0;
+                reg_mem_read        <=  1'b0;
+                reg_mem_to_reg      <=  1'b0;
+                reg_unit_alu_op     <=  2'b00;
+                reg_mem_write       <=  1'b0;
+                reg_alu_src         <=  1'b0;
+                reg_register_write  <=  1'b1;
+                reg_extend_mode     <=  2'b00;
+                reg_size_filter     <=  2'b00;
+                reg_size_filter_L   <=  2'b00;
+                reg_zero_extend     <=  1'b0;
+                reg_lui             <=  1'b0;
+                reg_jalR            <=  1'b0;
+                reg_halt            <=  1'b0;
             end
 
             HALT:
             begin
-                reg_rd              <=  1'b0    ;
-                reg_jump            <=  1'b0    ;
-                reg_jal             <=  1'b0    ;
-                reg_branch          <=  1'b0    ;
-                reg_neq_branch      <=  1'b0    ;
-                reg_mem_read        <=  1'b0    ;
-                reg_mem_to_reg      <=  1'b0    ;
-                reg_unit_alu_op     <=  2'b00   ;
-                reg_mem_write       <=  1'b0    ;
-                reg_alu_src         <=  1'b0    ;
-                reg_register_write  <=  1'b0    ;
-                reg_extend_mode     <=  2'b00   ;
-                reg_size_filter     <=  2'b00   ;
-                reg_size_filter_L   <=  2'b00   ;
-                reg_zero_extend     <=  1'b0    ;
-                reg_lui             <=  1'b0    ;
-                reg_jalR            <=  1'b0    ;
-                reg_halt            <=  1'b1    ;
+                reg_rd              <=  1'b0;
+                reg_jump            <=  1'b0;
+                reg_jal             <=  1'b0;
+                reg_branch          <=  1'b0;
+                reg_neq_branch      <=  1'b0;
+                reg_mem_read        <=  1'b0;
+                reg_mem_to_reg      <=  1'b0;
+                reg_unit_alu_op     <=  2'b00;
+                reg_mem_write       <=  1'b0;
+                reg_alu_src         <=  1'b0;
+                reg_register_write  <=  1'b0;
+                reg_extend_mode     <=  2'b00;
+                reg_size_filter     <=  2'b00;
+                reg_size_filter_L   <=  2'b00;
+                reg_zero_extend     <=  1'b0;
+                reg_lui             <=  1'b0;
+                reg_jalR            <=  1'b0;
+                reg_halt            <=  1'b1;
             end
 
             default:
             begin
-                reg_rd              <=  1'b0    ;
-                reg_jump            <=  1'b0    ;
-                reg_jal             <=  1'b0    ;
-                reg_branch          <=  1'b0    ;
-                reg_neq_branch      <=  1'b0    ;
-                reg_mem_read        <=  1'b0    ;
-                reg_mem_to_reg      <=  1'b0    ;
-                reg_unit_alu_op     <=  2'b11   ;
-                reg_mem_write       <=  1'b0    ;
-                reg_alu_src         <=  1'b0    ;
-                reg_register_write  <=  1'b0    ;
-                reg_extend_mode     <=  2'b00   ;
-                reg_size_filter     <=  2'b00   ;
-                reg_size_filter_L   <=  2'b00   ;
-                reg_zero_extend     <=  1'b0    ;
-                reg_lui             <=  1'b0    ;
-                reg_jalR            <=  1'b0    ;
-                reg_halt            <=  1'b0    ;
+                reg_rd              <=  1'b0;
+                reg_jump            <=  1'b0;
+                reg_jal             <=  1'b0;
+                reg_branch          <=  1'b0;
+                reg_neq_branch      <=  1'b0;
+                reg_mem_read        <=  1'b0;
+                reg_mem_to_reg      <=  1'b0;
+                reg_unit_alu_op     <=  2'b11;
+                reg_mem_write       <=  1'b0;
+                reg_alu_src         <=  1'b0;
+                reg_register_write  <=  1'b0;
+                reg_extend_mode     <=  2'b00;
+                reg_size_filter     <=  2'b00;
+                reg_size_filter_L   <=  2'b00;
+                reg_zero_extend     <=  1'b0;
+                reg_lui             <=  1'b0;
+                reg_jalR            <=  1'b0;
+                reg_halt            <=  1'b0;
             end
         endcase
     end
