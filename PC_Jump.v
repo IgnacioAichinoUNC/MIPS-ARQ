@@ -6,12 +6,12 @@ module pc_jump
         parameter BITS_JUMP     =  26
     )
     (
-        input   wire    [BITS_JUMP-1 :0]     i_ifid_jump, //[25:0] Instrucction IF
-        input   wire    [BITS_SIZE-1:0]      i_idex_pc4,
-        output  wire    [BITS_SIZE-1:0]      o_ID_JUMP                 
+        input   wire    [BITS_JUMP-1 :0]    i_ifid_jump, //[25:0] address en Instrucction IF
+        input   wire    [BITS_SIZE-1:0]     i_idex_pc4,
+        output  wire    [BITS_SIZE-1:0]     o_ID_JUMP                 
     );
     
-    reg [BITS_SIZE-1:0]   reg_jump   ;    
+    reg [BITS_SIZE-1:0] reg_jump;    
     
     always @(*)
     begin
@@ -20,5 +20,5 @@ module pc_jump
                                                              //calculo el salto
     end   
     
-   assign  o_ID_JUMP   = reg_jump   ;
+   assign  o_ID_JUMP  = reg_jump;
 endmodule
