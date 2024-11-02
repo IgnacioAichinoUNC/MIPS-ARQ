@@ -2,21 +2,21 @@
 
 module memory_instruc
     #(
-        parameter SIZE_ADDR_PC      = 32,
-        parameter TOTAL_SIZE        = 256
+        parameter SIZE_ADDR_PC  = 32,
+        parameter TOTAL_SIZE    = 256
     )
     (
-        input   wire                            i_clk,
-        input   wire                            i_reset,
-        input   wire                            i_step,
-        input   wire    [SIZE_ADDR_PC-1    :0]  i_pc,
-        input   wire    [SIZE_ADDR_PC-1    :0]  i_instruction_address,
-        input   wire    [SIZE_ADDR_PC-1    :0]  i_instruction,
-        input   wire                            i_flag_write_intruc,
-        output  reg     [SIZE_ADDR_PC-1    :0]  o_instruction   
+        input   wire                        i_clk,
+        input   wire                        i_reset,
+        input   wire                        i_step,
+        input   wire    [SIZE_ADDR_PC-1:0]  i_pc,
+        input   wire    [SIZE_ADDR_PC-1:0]  i_instruction_address,
+        input   wire    [SIZE_ADDR_PC-1:0]  i_instruction,
+        input   wire                        i_flag_write_intruc,
+        output  wire    [SIZE_ADDR_PC-1:0]  o_instruction   
     );
     
-    reg [SIZE_ADDR_PC-1  :0]  reg_memory[TOTAL_SIZE-1:0];
+    reg [SIZE_ADDR_PC-1 :0]  reg_memory[TOTAL_SIZE-1:0];
     integer index;
     
     initial 
