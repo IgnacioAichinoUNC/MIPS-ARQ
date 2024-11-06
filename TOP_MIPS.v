@@ -449,7 +449,7 @@ module TOP_MIPS
         .i_alu_src                  (mux_ctl_unit_alu_src),
         .i_unit_alu_op              (mux_ctl_unit_alu_op),
         .i_reg_dst_rd               (mux_ctl_unit_register_rd),
-        //ControlM
+        //ControlMEM
         .i_branch                   (mux_ctl_unit_branch),
         .i_neq_branch               (mux_ctl_unit_neq_branch),
         .i_mem_write                (mux_ctl_unit_mem_write),
@@ -490,7 +490,7 @@ module TOP_MIPS
         .o_alu_src                 (IDEX_ctl_alu_src),
         .o_unit_alu_op             (IDEX_ctl_unit_alu_op),
         .o_register_rd_dst         (IDEX_ctl_register_rd),
-        //ControlM
+        //ControlMEM
         .o_branch                  (IDEX_ctl_branch),
         .o_neq_branch              (IDEX_ctl_neq_branch),
         .o_mem_write               (IDEX_ctl_mem_write),
@@ -528,7 +528,7 @@ module TOP_MIPS
         .i_idex_ctl_alu_src         (IDEX_ctl_alu_src),
         .i_corto_register_B         (corto_register_B),
         .i_register2                (IDEX_register2),
-        .i_select_register          (IDEX_ctl_register_rd),
+        .i_ctl_select_reg_rd        (IDEX_ctl_register_rd),
         .i_rt                       (IDEX_RT),
         .i_rd                       (IDEX_RD),
         .o_alu_zero                 (EX_flag_alu_zero),
@@ -542,17 +542,17 @@ module TOP_MIPS
     //Control ALU
     Control_ALU
     #(
-        .BITS_ALU                   (BITS_ALU ),
-        .BITS_ALU_CTL               (BITS_ALU_CTL),
-        .ALU_OP                     (BITS_OP)
+        .BITS_ALU                (BITS_ALU ),
+        .BITS_ALU_CTL            (BITS_ALU_CTL),
+        .ALU_OP                  (BITS_OP)
     )
     module_ctl_alu
     (
-        .i_funct                  (EX_ctl_alu_instruction),
-        .i_opcode                 (EX_ctl_alu_opcode),
-        .i_unit_alu_op            (IDEX_ctl_unit_alu_op),
-        .o_alu_op                 (EX_ctl_alu_op),
-        .o_shamt                  (EX_flag_shamt)
+        .i_funct                 (EX_ctl_alu_instruction),
+        .i_opcode                (EX_ctl_alu_opcode),
+        .i_unit_alu_op           (IDEX_ctl_unit_alu_op),
+        .o_alu_op                (EX_ctl_alu_op),
+        .o_shamt                 (EX_flag_shamt)
     );
 
 
@@ -584,61 +584,61 @@ module TOP_MIPS
     module_EXMEM
     (
         //General
-        .i_clk                      (i_clk),
-        .i_reset                    (i_reset),
-        .i_step                     (i_ctl_clk_wiz),
-        .i_flush_latch              (id_unit_risk_latch),
-        .i_pc4                      (IDEX_PC4),
-        .i_pc8                      (IDEX_PC8),
-        .i_pc_branch                (EX_sum_pc_branch),
-        .i_idex_instruction         (IDEX_instruction),
-        .i_flag_alu_zero            (EX_flag_alu_zero),
-        .i_alu_result               (EX_alu_result),
-        .i_idex_register2           (IDEX_register2),
-        .i_register_dst             (EX_mux_register_rd),
-        .i_idex_extension           (IDEX_extension),
+        .i_clk                  (i_clk),
+        .i_reset                (i_reset),
+        .i_step                 (i_ctl_clk_wiz),
+        .i_flush_latch          (id_unit_risk_latch),
+        .i_pc4                  (IDEX_PC4),
+        .i_pc8                  (IDEX_PC8),
+        .i_pc_branch            (EX_sum_pc_branch),
+        .i_idex_instruction     (IDEX_instruction),
+        .i_flag_alu_zero        (EX_flag_alu_zero),
+        .i_alu_result           (EX_alu_result),
+        .i_idex_register2       (IDEX_register2),
+        .i_register_dst         (EX_mux_register_rd),
+        .i_idex_extension       (IDEX_extension),
 
         //ControlIM
-        .i_jal                      (IDEX_ctl_jal),
-        .i_branch                   (IDEX_ctl_branch),
-        .i_neq_branch               (IDEX_ctl_neq_branch),
-        .i_mem_write                (IDEX_ctl_mem_write),
-        .i_mem_read                 (IDEX_ctl_mem_read),
-        .i_size_filter              (IDEX_ctl_size_filter),
+        .i_jal                  (IDEX_ctl_jal),
+        .i_branch               (IDEX_ctl_branch),
+        .i_neq_branch           (IDEX_ctl_neq_branch),
+        .i_mem_write            (IDEX_ctl_mem_write),
+        .i_mem_read             (IDEX_ctl_mem_read),
+        .i_size_filter          (IDEX_ctl_size_filter),
         
         //ControlWB
-        .i_mem_to_reg               (IDEX_ctl_mem_to_reg),
-        .i_reg_write                (IDEX_ctl_register_write),
-        .i_size_filterL             (IDEX_ctL_size_filterL),
-        .i_zero_extend              (IDEX_ctl_zero_extend),
-        .i_lui                      (IDEX_ctl_lui),
-        .i_halt                     (IDEX_ctl_halt),
+        .i_mem_to_reg           (IDEX_ctl_mem_to_reg),
+        .i_reg_write            (IDEX_ctl_register_write),
+        .i_size_filterL         (IDEX_ctL_size_filterL),
+        .i_zero_extend          (IDEX_ctl_zero_extend),
+        .i_lui                  (IDEX_ctl_lui),
+        .i_halt                 (IDEX_ctl_halt),
 
-        .o_pc4                      (EXMEM_PC4),
-        .o_pc8                      (EXMEM_PC8),
-        .o_pc_branch                (EXMEM_PC_Branch),
-        .o_instruction              (EXMEM_Instr),
-        .o_zero                     (EXMEM_zero_alu),
-        .o_alu                      (EXMEM_alu),
-        .o_register_2               (EXMEM_register2),
-        .o_register_rd_dst          (EXMEM_register_dst),
-        .o_extension                (EXMEM_extension),
+        .o_pc4                  (EXMEM_PC4),
+        .o_pc8                  (EXMEM_PC8),
+        .o_pc_branch            (EXMEM_PC_Branch),
+        .o_instruction          (EXMEM_Instr),
+        .o_zero                 (EXMEM_zero_alu),
+        .o_alu                  (EXMEM_alu),
+        .o_register_2           (EXMEM_register2),
+        .o_register_rd_dst      (EXMEM_register_dst),
+        .o_extension            (EXMEM_extension),
 
-        //ControlM
-        .o_jal                      (EXMEM_ctl_jal),
-        .o_branch                   (EXMEM_ctl_branch),
-        .o_neq_branch               (EXMEM_ctl_neq_branch),
-        .o_mem_write                (EXMEM_ctl_mem_write),
-        .o_mem_read                 (EXMEM_ctl_mem_read),
-        .o_size_filter              (EXMEM_ctl_size_filter),
+        //ControlMEM
+        .o_jal                  (EXMEM_ctl_jal),
+        .o_branch               (EXMEM_ctl_branch),
+        .o_neq_branch           (EXMEM_ctl_neq_branch),
+        .o_mem_write            (EXMEM_ctl_mem_write),
+        .o_mem_read             (EXMEM_ctl_mem_read),
+        .o_size_filter          (EXMEM_ctl_size_filter),
 
         //ControlWB
-        .o_mem_to_reg               (EXMEM_ctl_mem_to_reg),
-        .o_register_write           (EXMEM_ctl_register_write),
-        .o_size_filterL             (EXMEM_ctl_size_filterL),
-        .o_zero_extend              (EXMEM_ctl_zero_extend),
-        .o_lui                      (EXMEM_ctl_lui),
-        .o_halt                     (EXMEM_ctl_halt)
+        .o_mem_to_reg           (EXMEM_ctl_mem_to_reg),
+        .o_register_write       (EXMEM_ctl_register_write),
+        .o_size_filterL         (EXMEM_ctl_size_filterL),
+        .o_zero_extend          (EXMEM_ctl_zero_extend),
+        .o_lui                  (EXMEM_ctl_lui),
+        .o_halt                 (EXMEM_ctl_halt)
     );    
 
     and_branch

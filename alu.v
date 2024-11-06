@@ -2,22 +2,18 @@
 
 module alu
     #(
-    //parameter
-    parameter          BITS_SIZE     =   32,
-    parameter          BITS_SHAMT    =   5,
-    parameter          BITS_OP       =   4    
+        parameter       BITS_SIZE    =   32,
+        parameter       BITS_SHAMT   =   5,
+        parameter       BITS_OP      =   4    
     )
     (
-    //inputs
-    input  wire        [BITS_SIZE - 1:0]                      i_data_a,
-    input  wire        [BITS_SIZE - 1:0]                      i_data_b,
-    input   wire       [BITS_SHAMT-1   :0]                    i_alu_shamt,
-    input   wire                                              i_flag_shamt,
-    input   wire       [BITS_OP - 1:0]                        i_op,
-    
-    //outputs
-    output  wire                                              o_alu_zero,
-    output wire        [BITS_SIZE - 1:0]                      o_result
+        input  wire         [BITS_SIZE - 1:0]   i_data_a,
+        input  wire         [BITS_SIZE - 1:0]   i_data_b,
+        input  wire         [BITS_SHAMT-1:0]    i_alu_shamt,
+        input  wire                             i_flag_shamt,
+        input  wire         [BITS_OP - 1:0]     i_op,
+        output wire                             o_alu_zero,
+        output wire         [BITS_SIZE - 1:0]   o_result
     );
     
     localparam ADD = 4'b0000;
@@ -51,6 +47,6 @@ module alu
   
     end
 
-    assign o_result = reg_result;
-    assign o_alu_zero = (reg_result==0);
+    assign o_result     =   reg_result;
+    assign o_alu_zero   =   (reg_result==0);
 endmodule
