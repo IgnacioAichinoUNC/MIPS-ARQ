@@ -2,12 +2,12 @@
 
 module mux_register_rd
     #(
-        parameter BITS_REGS        = 5
+        parameter BITS_REGS = 5
     )
     (
-        input   wire                                i_jal,
-        input   wire     [BITS_REGS-1       :0]     i_register_dst,
-        output  wire     [BITS_REGS-1       :0]     o_register_addr                 
+        input   wire                         i_jal,
+        input   wire     [BITS_REGS-1:0]     i_register_dst,
+        output  wire     [BITS_REGS-1:0]     o_register_addr                 
     );
 
     reg [BITS_REGS-1  :0]   reg_register_addr;
