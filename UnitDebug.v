@@ -29,14 +29,12 @@ module UnitDebug
         output                                  o_uart_rx_reset,
         output                                  o_flag_tx_ready,
         output          [SIZE_TRAMA-1:0]        o_uart_tx_data,
-        output          [BITS_SIZE-1:0]         o_select_addr_memdata
+        output          [BITS_SIZE-1:0]         o_select_addr_memdata,
         output          [BITS_REGS-1:0]         o_select_addr_registers,
         output                                  o_flag_instr_write,
         output          [MEM_INST_SIZE_BITS-1:0]o_select_addr_mem_instr,
         output          [BITS_SIZE-1:0]         o_dato_mem_instruction,
-        output          [3:0]                   o_debug_state,
-
-
+        output          [3:0]                   o_debug_state
     );
 
     localparam IDLE             =   4'b0000;      //estado default

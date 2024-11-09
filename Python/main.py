@@ -1,6 +1,7 @@
 import os
 import serial
 from funtions import sender
+from funtions import configprint
 from rich.console import Console
 
 
@@ -54,6 +55,9 @@ def main():
     ser = serial.Serial(serial_port, 9600)
     print("Envio de instrucciones...")
     sender.send(file_bin, ser)
+    memory_val = 16
+    register_val = 32
+    
 
     mode = 'IDLE'
 
@@ -64,14 +68,34 @@ def main():
             console.print("Ingrese el modo que desea ejecutar",style="bold red")
             console.print("s (STEP) c (CONTINUOUS) e (EXIT)" ,style="bold blue")
             input_char = input("Mode :")
+            previous_data = 0
             mode = cases.get(input_char, default)(ser,input_char)
 
         elif (mode == 'STEP'):
             console.print("---------MODO STEP---------",style="bold red")
+            while (input_char != 'e'):
+                console.print("##### presione n para el siguiente step #####",style="bold red")
+                input_char = input("Mode :")
+                if (input_char == 'n'):
+                    ser.write(input_char.encode())
+                    data_received, err = sender.receive_result(ser, 50)
+                if(err == 1):
+                    mode = 'IDLE'
+                    break
+                else:
+                    console.print("#############################################",style="bold red")
+                    configprint.print_data_dif( data_received, previous_data, register_val,memory_val)
+                    previous_data = data_received
             sys.exit()
+        
+        
         elif (mode == 'CONTINUOUS'):
             console.print("---------MODO CONTINUO---------",style="bold red")
-            sys.exit()
+            input_char == 'c'
+            ser.write(input_char.encode())
+            data_received, err = sender.receive_result(ser, 50)
+            configprint.print_data(data_received , register_val ,memory_val)
+            mode = 'IDLE'
 
 
 if __name__ == "__main__":

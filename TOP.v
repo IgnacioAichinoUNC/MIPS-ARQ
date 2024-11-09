@@ -122,7 +122,6 @@ module TOP
         .o_flag_tx_ready        (uart_tx_start),
         .o_uart_tx_data         (uart_tx_data),
         .o_select_addr_memdata  (select_addr_memdata),
-        .o_flag_instr_write     (flag_write_mem_instr),
         .o_select_addr_registers  (select_addr_registers),
         .o_flag_instr_write     (flag_write_mem_instr), 
         .o_select_addr_mem_instr (select_addr_mem_instr),

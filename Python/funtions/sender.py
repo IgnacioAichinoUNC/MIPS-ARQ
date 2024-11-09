@@ -1,3 +1,6 @@
+import time
+from rich.progress import track
+
 REGISTERS = {
     '$0': '00000',
     '$1': '00001',
@@ -72,6 +75,7 @@ INSTRUCTION_DICTIONARY = {
     'xori': ['i', '001110', 'null']
 }
 
+
 def send(file_bin, serial):
 
     #La D (data) se envia para indicar el estado a la unit debug para cargar
@@ -85,6 +89,23 @@ def send(file_bin, serial):
             num = int(data[i*8:(i+1)*8], 2).to_bytes(1, byteorder='big')
             serial.write(num)
             time.sleep(0.05)
+
+def receive_result(serial, n):
+    byte_counter = 0
+    error = 0
+    data = b''
+    # se que son 4 bytes los que forman los 32 bits
+    while byte_counter < n*4:
+        if serial.in_waiting != 0:
+            data += serial.read()
+            byte_counter += 1
+            error = 0
+        else:
+            time.sleep(0.1)  # tiempo para esperar datos
+            error += 1
+            if(error == 5):
+                return data, 1
+    return data, 0
 
 
 # Las intrucciones se crearan a partir de las siguientes funciones:
