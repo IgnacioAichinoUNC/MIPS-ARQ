@@ -4,7 +4,7 @@ module ID
     #(
         parameter   BITS_SIZE       = 32,
         parameter   BITS_JUMP       = 26,
-        parameter   BITS_REGS        = 5,
+        parameter   BITS_REGS       = 5,
         parameter   REG_SIZE        = 32,
         parameter   BITS_INMEDIATE  = 16,
         parameter   BITS_EXTENSION  = 2
@@ -14,7 +14,7 @@ module ID
         input   wire                            i_clk,
         input   wire                            i_reset,
         input   wire                            i_step,
-        input   wire                            i_wb_reg_write,
+        input   wire                            i_flag_wb_reg_write,
         input   wire     [BITS_REGS-1:0]        i_addr_rs,
         input   wire     [BITS_REGS-1:0]        i_addr_rt,
         input   wire     [BITS_REGS-1:0]        i_wb_addr_rd,
@@ -25,7 +25,7 @@ module ID
         input   wire     [BITS_SIZE-1:0]        i_IDEX_PC4,
 
         input   wire     [BITS_INMEDIATE-1:0]   i_id_inmediate,
-        input   wire     [BITS_EXTENSION-1:0]   i_rctrl_extensionmode,
+        input   wire     [BITS_EXTENSION-1:0]   i_ctl_extension_mode,
 
         output  wire     [BITS_SIZE-1:0]        o_rs,
         output  wire     [BITS_SIZE-1:0]        o_rt,
@@ -63,7 +63,7 @@ module ID
         .i_clk               (i_clk),
         .i_reset             (i_reset),
         .i_step              (i_step),
-        .i_flag_regWrite     (i_wb_reg_write),
+        .i_flag_regWrite     (i_flag_wb_reg_write),
         .i_addr_rs           (i_addr_rs),
         .i_addr_rt           (i_addr_rt),
         .i_addr_rd           (i_wb_addr_rd),
@@ -85,7 +85,7 @@ module ID
     sign_extensor
     (
         .i_id_inmediate      (i_id_inmediate), //16 bits de la instrucción recibida por etapa IF
-        .i_extension_mode    (i_rctrl_extensionmode), //
+        .i_extension_mode    (i_ctl_extension_mode), 
         .o_extension         (o_extension_result) //resultado de la extensión de signo
     );
 

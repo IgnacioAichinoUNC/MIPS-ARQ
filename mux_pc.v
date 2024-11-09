@@ -5,17 +5,17 @@ module mux_pc
         parameter SIZE_ADDR_PC  =  32
     )
     (
-        input   wire                            i_is_jump,
-        input   wire                            i_is_JALR,
-        input   wire    [SIZE_ADDR_PC-1    :0]  i_rs,
-        input   wire                            i_pc_source,
-        input   wire    [SIZE_ADDR_PC-1    :0]  i_suma_branch,
-        input   wire    [SIZE_ADDR_PC-1    :0]  i_suma_pc4,        
-        input   wire    [SIZE_ADDR_PC-1    :0]  i_suma_jump,
-        output  wire    [SIZE_ADDR_PC-1    :0]  o_pc          
+        input   wire                        i_is_jump,
+        input   wire                        i_is_JALR,
+        input   wire    [SIZE_ADDR_PC-1:0]  i_rs,
+        input   wire                        i_pc_source,
+        input   wire    [SIZE_ADDR_PC-1:0]  i_suma_branch,
+        input   wire    [SIZE_ADDR_PC-1:0]  i_suma_pc4,        
+        input   wire    [SIZE_ADDR_PC-1:0]  i_suma_jump,
+        output  wire    [SIZE_ADDR_PC-1:0]  o_pc          
     );
     
-    reg [SIZE_ADDR_PC-1    :0]  reg_pc;
+    reg [SIZE_ADDR_PC-1:0]  reg_pc;
    
     always @(*)
     begin

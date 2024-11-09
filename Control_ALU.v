@@ -34,41 +34,36 @@ localparam	SRLV_C  =  6'b000110;   //Shift Word Right Logical Variable
 localparam	SRA_C   =  6'b000011;   //Shift Word Right Arithmetic
 localparam	SRAV_C  =  6'b000111;   //Shift Word Right Arithmetic Variable
 
-localparam	CERO   = 2'b00;
-localparam	CEROUNO= 2'b01;
-localparam	UNOCERO= 2'b10;
-localparam	UNOUNO = 2'b11;
-
-reg [ALU_OP-1    :0] reg_alu_op;
+reg [ALU_OP-1:0] reg_alu_op;
    
     
     always @(*)
     begin : ALUOp
             case(i_unit_alu_op)
-                CERO :       
-                                    reg_alu_op   <=   4'b0000;
-                CEROUNO :        
-                                    reg_alu_op   <=   4'b0001;
-                UNOCERO :
+                2'b00:       
+                        reg_alu_op   <=   4'b0000;
+                2'b01:        
+                        reg_alu_op   <=   4'b0001;
+                2'b10:
                     case(i_funct)
-                        ADD_C    :   reg_alu_op   <=   4'b0000;
-                        SUB_C    :   reg_alu_op   <=   4'b0001;
-                        SUBU_C   :   reg_alu_op   <=   4'b0001;
-                        AND_C    :   reg_alu_op   <=   4'b0010;
-                        OR_C     :   reg_alu_op   <=   4'b0011;
-                        NOR_C    :   reg_alu_op   <=   4'b0100;
-                        XOR_C    :   reg_alu_op   <=   4'b0101;
-                        SLT_C    :   reg_alu_op   <=   4'b0111;
-                        ADDU_C   :   reg_alu_op   <=   4'b0000;
-                        SLL_C    :   reg_alu_op   <=   4'b1000;
-                        SRL_C    :   reg_alu_op   <=   4'b1001; 
-                        SLLV_C   :   reg_alu_op   <=   4'b1000;
-                        SRLV_C   :   reg_alu_op   <=   4'b1001; 
-                        SRA_C    :   reg_alu_op   <=   4'b1011;
-                        SRAV_C   :   reg_alu_op   <=   4'b1011;                        
-                        default :    reg_alu_op   <=   -2;
+                        ADD_C   :   reg_alu_op   <=   4'b0000;
+                        SUB_C   :   reg_alu_op   <=   4'b0001;
+                        SUBU_C  :   reg_alu_op   <=   4'b0001;
+                        AND_C   :   reg_alu_op   <=   4'b0010;
+                        OR_C    :   reg_alu_op   <=   4'b0011;
+                        NOR_C   :   reg_alu_op   <=   4'b0100;
+                        XOR_C   :   reg_alu_op   <=   4'b0101;
+                        SLT_C   :   reg_alu_op   <=   4'b0111;
+                        ADDU_C  :   reg_alu_op   <=   4'b0000;
+                        SLL_C   :   reg_alu_op   <=   4'b1000;
+                        SRL_C   :   reg_alu_op   <=   4'b1001; 
+                        SLLV_C  :   reg_alu_op   <=   4'b1000;
+                        SRLV_C  :   reg_alu_op   <=   4'b1001; 
+                        SRA_C   :   reg_alu_op   <=   4'b1011;
+                        SRAV_C  :   reg_alu_op   <=   4'b1011;                        
+                        default :   reg_alu_op   <=   -2;
                     endcase       
-                UNOUNO :
+                2'b11:
                     case(i_opcode)
                         SLTI_C   :   reg_alu_op   <=   4'b0111;
                         ANDI_C   :   reg_alu_op   <=   4'b0010;
@@ -76,7 +71,8 @@ reg [ALU_OP-1    :0] reg_alu_op;
                         XORI_C   :   reg_alu_op   <=   4'b0101;                          
                         default :    reg_alu_op   <=   -3;
                     endcase       
-                default:            reg_alu_op   <=   -1;
+                
+                default:    reg_alu_op   <=   -1;
             endcase
     end
     

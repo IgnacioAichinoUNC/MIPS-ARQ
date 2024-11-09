@@ -2,8 +2,8 @@
 
 module EXMEM
     #(
-        parameter BITS_SIZE         =   32,
-        parameter BITS_REGS         =   5       
+        parameter BITS_SIZE     =   32,
+        parameter BITS_REGS     =   5       
     )
     (  
         input   wire                        i_clk,
@@ -19,13 +19,13 @@ module EXMEM
         input   wire    [BITS_SIZE-1:0]     i_alu_result,
         input   wire    [BITS_SIZE-1:0]     i_idex_register2,
         input   wire    [BITS_SIZE-1:0]     i_idex_extension,
-        // ControlM
+        //ControlMEM
         input   wire                        i_branch,
         input   wire                        i_neq_branch,
         input   wire                        i_mem_write,
         input   wire                        i_mem_read, 
         input   wire    [1:0]               i_size_filter, 
-        // ControlWB
+        //ControlWB
         input   wire                        i_jal,      
         input   wire                        i_mem_to_reg,
         input   wire                        i_reg_write,
@@ -44,13 +44,13 @@ module EXMEM
         output  wire    [BITS_SIZE-1:0]     o_register_2,
         output  wire    [BITS_REGS-1:0]     o_register_rd_dst,
         output  wire    [BITS_SIZE-1:0]     o_extension,
-        // OControlM
+        //ControlMEM
         output  wire                        o_branch,
         output  wire                        o_neq_branch,
         output  wire                        o_mem_write,
         output  wire                        o_mem_read,
         output  wire   [1:0]                o_size_filter,
-        // OControlWB
+        //ControlWB
         output  wire                        o_mem_to_reg,
         output  wire                        o_register_write,
         output  wire   [1:0]                o_size_filterL,
@@ -59,31 +59,31 @@ module EXMEM
         output  wire                        o_halt
     );
 
-    reg     [BITS_SIZE-1    :0] reg_pc4;
-    reg     [BITS_SIZE-1    :0] reg_pc8;
-    reg     [BITS_SIZE-1    :0] reg_pc_branch;
-    reg     [BITS_SIZE-1    :0] reg_instruction;
-    reg                         reg_jal;
-    reg                         reg_zero;
-    reg     [BITS_SIZE-1    :0] reg_alu;
-    reg     [BITS_SIZE-1    :0] reg_register2;
-    reg     [BITS_REGS-1    :0] reg_register_dst;
-    reg     [BITS_SIZE-1    :0] reg_extension;
+    reg     [BITS_SIZE-1:0] reg_pc4;
+    reg     [BITS_SIZE-1:0] reg_pc8;
+    reg     [BITS_SIZE-1:0] reg_pc_branch;
+    reg     [BITS_SIZE-1:0] reg_instruction;
+    reg                     reg_jal;
+    reg                     reg_zero;
+    reg     [BITS_SIZE-1:0] reg_alu;
+    reg     [BITS_SIZE-1:0] reg_register2;
+    reg     [BITS_REGS-1:0] reg_register_dst;
+    reg     [BITS_SIZE-1:0] reg_extension;
 
-    // RegM
-    reg                         reg_branch;
-    reg                         reg_neq_branch;
-    reg                         reg_mem_write;
-    reg                         reg_mem_read;
-    reg     [1:0]               reg_size_filter;
+    //RegMEM
+    reg                     reg_branch;
+    reg                     reg_neq_branch;
+    reg                     reg_mem_write;
+    reg                     reg_mem_read;
+    reg     [1:0]           reg_size_filter;
 
     // RegWB
-    reg                         reg_mem_to_reg;
-    reg                         reg_register_write;
-    reg     [1:0]               reg_size_filterL;
-    reg                         reg_zero_extend;
-    reg                         reg_lui;
-    reg                         reg_halt;
+    reg                     reg_mem_to_reg;
+    reg                     reg_register_write;
+    reg     [1:0]           reg_size_filterL;
+    reg                     reg_zero_extend;
+    reg                     reg_lui;
+    reg                     reg_halt;
 
     always @(posedge i_clk)
         if(i_flush_latch | i_reset)
@@ -154,7 +154,7 @@ module EXMEM
     assign o_register_rd_dst    =   reg_register_dst;
     assign o_extension          =   reg_extension;
     
-    // AssignM
+    // AssignMEM
     assign o_branch             =   reg_branch;
     assign o_neq_branch         =   reg_neq_branch;
     assign o_mem_write          =   reg_mem_write;
