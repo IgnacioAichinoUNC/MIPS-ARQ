@@ -32,7 +32,7 @@ module UnitDebug
         output          [BITS_SIZE-1:0]         o_select_addr_memdata
         output          [BITS_REGS-1:0]         o_select_addr_registers,
         output                                  o_flag_instr_write,
-        output          [MEM_INST_SIZE_BITS-1:0]     o_select_addr_mem_instr,
+        output          [MEM_INST_SIZE_BITS-1:0]o_select_addr_mem_instr,
         output          [BITS_SIZE-1:0]         o_dato_mem_instruction,
         output          [3:0]                   o_debug_state,
 
@@ -51,9 +51,9 @@ module UnitDebug
     localparam MGMT_STOP        =   2'b00;           //para gestionar el modulo clock e i_step
     localparam MGMT_CONTINUO    =   2'b01;
     localparam MGMT_STEP        =   2'b11;
-    localparam SIZE_COUNTER_DIR = $clog2(MEM_INST_TOTAL_SIZE);
-    localparam MEM_COUNT_SIZE   = $clog2(MEM_DATA_SIZE);
-    localparam REG_COUNT_SIZE   = $clog2(BANK_REGISTERS_SIZE);
+    localparam SIZE_COUNTER_DIR =   $clog2(MEM_INST_TOTAL_SIZE);
+    localparam MEM_COUNT_SIZE   =   $clog2(MEM_DATA_SIZE);
+    localparam REG_COUNT_SIZE   =   $clog2(BANK_REGISTERS_SIZE);
 
 
     reg                             reg_ctl_clk_wiz;
@@ -84,7 +84,7 @@ module UnitDebug
                 uart_rx_reset           <= 1;
                 reg_instruccion         <= 0;
                 reg_rx_counter_bytes    <= 0;
-                reg_counter_mem_address   <= 0;
+                reg_counter_mem_address <= 0;
                 reg_rx_instr_write      <= 0;
                 uart_tx_data            <= 0;
                 reg_flag_tx_ready       <= 0;
@@ -102,7 +102,7 @@ module UnitDebug
                 uart_rx_reset           <= uart_rx_reset_next;
                 reg_instruccion         <= reg_instruccion_next;
                 reg_rx_counter_bytes    <= reg_rx_counter_bytes_next;
-                reg_counter_mem_address   <= reg_counter_mem_address_next;
+                reg_counter_mem_address <= reg_counter_mem_address_next;
                 reg_rx_instr_write      <= reg_rx_instr_write_next;
                 uart_tx_data            <= uart_tx_data_next;
                 reg_flag_tx_ready       <= reg_flag_tx_ready_next;
@@ -123,13 +123,13 @@ module UnitDebug
         uart_rx_reset_next          <= uart_rx_reset;
         reg_instruccion_next        <= reg_instruccion;
         reg_rx_counter_bytes_next   <= reg_rx_counter_bytes;
-        reg_counter_mem_address_next  <= reg_counter_mem_address;
+        reg_counter_mem_address_next<= reg_counter_mem_address;
         reg_rx_instr_write_next     <= reg_rx_instr_write;
         uart_tx_data_next           <= uart_tx_data;
         reg_flag_tx_ready_next      <= reg_flag_tx_ready;
         reg_tx_counter_bytes_next   <= reg_tx_counter_bytes;
         reg_tx_selector_data_next   <= reg_tx_selector_data;
-        reg_tx_register_counter_next    <= reg_tx_register_counter;
+        reg_tx_register_counter_next<= reg_tx_register_counter;
         reg_tx_counter_mem_next     <= reg_tx_counter_mem;
         tx_data_32_next             <= tx_data_32;
         mode_next                   <= mode;
@@ -146,10 +146,10 @@ module UnitDebug
                 else begin 
                     uart_rx_reset_next  <= 1;
                     case(i_uart_rx_data)
-                        8'b01100011:    state_next          <= CONTINUO; // c
-                        8'b01110011:    state_next          <= STEP;    // s
-                        8'b01100100:    state_next          <= PREPARE_INSTRUCT; //d
-                        default:        state_next          <= IDLE;      
+                        8'b01100011:    state_next  <= CONTINUO; // c
+                        8'b01110011:    state_next  <= STEP;    // s
+                        8'b01100100:    state_next  <= PREPARE_INSTRUCT; //d
+                        default:        state_next  <= IDLE;      
                     endcase
                 end
             end
@@ -209,13 +209,13 @@ module UnitDebug
                     state_next                  <= DATA_INSTR;
                 end 
                 else begin
-                    state_next                  <= PREPARE_INSTRUCT;
+                    state_next  <= PREPARE_INSTRUCT;
                 end
             end
             DATA_INSTR: 
             begin
-                debug_state_next                <= 5;
-                reg_rx_instr_write_next         <= 0; 
+                debug_state_next        <= 5;
+                reg_rx_instr_write_next <= 0; 
 
                 if(reg_instruccion == 32'b11111111111111111111111111111111) begin //instruccion armada HALT se vuelve al inicio
                     reg_counter_mem_address_next  <= 0;
@@ -336,7 +336,7 @@ module UnitDebug
     assign o_select_addr_registers  = reg_tx_register_counter;
     assign o_select_addr_memdata    = reg_tx_counter_mem;
     assign o_select_addr_mem_instr  = reg_counter_mem_address;
-    assign o_dato_mem_instruction    = reg_instruccion;
+    assign o_dato_mem_instruction   = reg_instruccion;
     assign o_flag_instr_write       = reg_rx_instr_write;
 
 endmodule
