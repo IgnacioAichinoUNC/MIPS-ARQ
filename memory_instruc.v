@@ -13,7 +13,7 @@ module memory_instruc
         input   wire    [SIZE_ADDR_PC-1:0]  i_instruction_address,
         input   wire    [SIZE_ADDR_PC-1:0]  i_instruction,
         input   wire                        i_flag_write_intruc,
-        output  wire    [SIZE_ADDR_PC-1:0]  o_instruction   
+        output  reg    [SIZE_ADDR_PC-1:0]   o_instruction   
     );
     
     reg [SIZE_ADDR_PC-1 :0]  reg_memory[TOTAL_SIZE-1:0];
