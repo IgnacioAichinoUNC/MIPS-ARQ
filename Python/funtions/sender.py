@@ -1,3 +1,6 @@
+import time
+from rich.progress import track
+
 REGISTERS = {
     '$0': '00000',
     '$1': '00001',
@@ -33,7 +36,7 @@ REGISTERS = {
     '$31': '11111'
 }
 
-INSTRUCTION_DICTIONARY = {
+RISC_DICTIONARY = {
     'add':  ['r', '100000', 'null'],
     'addi': ['i', '001000', 'null'],
     'addu': ['r', '100001', 'null'],
@@ -96,11 +99,9 @@ def send(file_bin, serial):
 #   -instruction=  PART[0] 
 #   -args=  PART[1] 
 
-
-
 def type_I(instruction, args):
-    opcode = INSTRUCTION_DICTIONARY[instruction][1]
-    syntax = INSTRUCTION_DICTIONARY[instruction][2]   
+    opcode = RISC_DICTIONARY[instruction][1]
+    syntax = RISC_DICTIONARY[instruction][2]   
 
     if (syntax == 'offset'):
         rt, iargs = map(str.strip, args.split(','))
@@ -138,8 +139,8 @@ def type_I(instruction, args):
 
 
 def type_R(instruction, args):   
-    funct = INSTRUCTION_DICTIONARY[instruction][1]
-    syntax = INSTRUCTION_DICTIONARY[instruction][2]
+    funct = RISC_DICTIONARY[instruction][1]
+    syntax = RISC_DICTIONARY[instruction][2]
 
     if (syntax == 'shiftv'):
         rd, rt, rs = map(str.strip, args.split(','))
@@ -163,9 +164,9 @@ def type_R(instruction, args):
 
 
 def type_J(instruction, args):
-    funct = INSTRUCTION_DICTIONARY[instruction][1]
+    funct = RISC_DICTIONARY[instruction][1]
 
-    if funct == INSTRUCTION_DICTIONARY['jalr'][1]:
+    if funct == RISC_DICTIONARY['jalr'][1]:
         rs = REGISTERS[args]
         instruction_bin = f"000000{rs}000001111100000{funct}"
     else:
@@ -174,23 +175,20 @@ def type_J(instruction, args):
     return instruction_bin
 
 def create_bin(file_asm, file_bin):
-    instruction_count = 1
     with open(file_asm, 'r') as f:
         with open(file_bin, 'w') as out:
             for line in f:
-
                 #Haremos lectura de cada linea separando las partes de las intruccion de la siguiente manera
                 #add $0,$1,$2
-                #PART[0] PART[1]
+                #PART[0] PART[1] (operacion y argumentos)
                 parts = line.strip().split(' ')
                 instruction_BIN = 0
                 if parts:
                     if (parts[0] == 'nop'):
                         instruction_BIN = f"00000000000000000000000000000000"
                         out.write( instruction_BIN + '\n' )
-                        instruction_count += 1
                     else:
-                        instruction_type = INSTRUCTION_DICTIONARY[parts[0]][0]
+                        instruction_type = RISC_DICTIONARY[parts[0]][0]
 
                         if (instruction_type == 'r'):
                             instruction_BIN = type_R(parts[0], parts[1])
@@ -206,7 +204,6 @@ def create_bin(file_asm, file_bin):
                             sys.exit(1)
 
                         out.write( instruction_BIN + '\n')
-                        instruction_count += 1
             out.write(f"11111111111111111111111111111111")  #Halt last instruction
-    return instruction_count
+    
 
