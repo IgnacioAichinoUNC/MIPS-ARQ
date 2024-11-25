@@ -189,21 +189,17 @@ def create_bin(file_asm, file_bin):
                         out.write( instruction_BIN + '\n' )
                     else:
                         instruction_type = RISC_DICTIONARY[parts[0]][0]
-
                         if (instruction_type == 'r'):
                             instruction_BIN = type_R(parts[0], parts[1])
-
                         elif (instruction_type == 'i'):
                             instruction_BIN = type_I(parts[0], parts[1])
-
                         elif (instruction_type == 'j'):
                             instruction_BIN = type_J(parts[0], parts[1])
-
                         else:
                             print("FAIL: El tipo de instruccion no pertenece al set disponible")
                             sys.exit(1)
-
                         out.write( instruction_BIN + '\n')
+            
             out.write(f"11111111111111111111111111111111")  #Halt last instruction
     
 

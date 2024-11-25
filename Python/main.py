@@ -81,9 +81,8 @@ def main():
                     ser.write(input_char.encode())
                     data_received, err = receiver.receive_result(ser, 50)
                     if(err == 1):
-                        print("[FAIL] Receiver no pudo obtener informacion de registros y memoria en ejecucion")
-                        print("[FAIL] Returno mode: IDLE")
                         mode = 'IDLE'
+                        console.print("Finish Program",style="bold green")
                         break
                     else:
                         console.print("-------------------------------------",style="bold red")
