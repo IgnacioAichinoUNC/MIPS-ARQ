@@ -3,7 +3,9 @@
 module memory_data
     #(
         parameter BITS_SIZE         = 32,
-        parameter SIZE_MEM_DATA     = 16
+        parameter SIZE_MEM_DATA     = 16,
+        parameter BITS_EXTENSION    = 2
+
     )
     (
         input   wire                        i_clk,
@@ -14,10 +16,12 @@ module memory_data
         input   wire    [BITS_SIZE-1:0]     i_data_register,
         input   wire                        i_flag_mem_read,
         input   wire                        i_flag_mem_write,
+        input   wire    [BITS_EXTENSION-1:0]    i_ctl_select,
         output  reg     [BITS_SIZE-1:0]     o_data_read,
         output  reg     [BITS_SIZE-1:0]     o_debug_data
     );
     
+    reg  [BITS_SIZE-1:0]    reg_dato_filtered;
     reg  [BITS_SIZE-1:0]    reg_memory[SIZE_MEM_DATA-1:0];
 
     integer i;
@@ -29,10 +33,28 @@ module memory_data
         o_debug_data  <=  0;
     end
     
+    //Filtro de dato a mem
+    always @(*) begin
+            //00: complete word
+            //01: SB -> para un byte
+            //10: SH -> para media palabra
+        case(i_ctl_select)
+            2'b00:       
+                    reg_dato_filtered   <=   i_data_register; //memory[base+offset] = rt 
+            2'b01:        
+                    reg_dato_filtered   <=   i_data_register & 32'b00000000_00000000_00000000_11111111;   // para instrucciones sb
+            2'b10:
+                    reg_dato_filtered   <=   i_data_register & 32'b00000000_00000000_11111111_11111111;   // para instrucciones sh
+            default :   
+                    reg_dato_filtered   <=   0;
+        endcase
+    end
+
+
     always @(negedge i_clk)
     begin
         if(i_flag_mem_write & i_step) begin
-            reg_memory[i_alu_address]  <=  i_data_register;
+            reg_memory[i_alu_address]  <=  reg_dato_filtered;
         end
     end
     

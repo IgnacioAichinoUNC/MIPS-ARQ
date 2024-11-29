@@ -20,19 +20,6 @@ module MEM
         output  wire    [BITS_SIZE-1:0]         o_mem_dato_debug
     );
 
-    wire    [BITS_SIZE-1:0]     wire_mem_dato_filter;
-  
-    filter_mem
-    #(
-        .BITS_SIZE          (BITS_SIZE),
-        .BITS_EXTENSION     (BITS_EXTENSION)
-    )
-    module_filter_mem
-    (
-        .i_dato_rt          (i_exmem_mem_register2),
-        .i_ctl_select       (i_exmem_size_filter),
-        .o_dato_to_write    (wire_mem_dato_filter)
-    );
     
     memory_data
     #(
@@ -46,9 +33,10 @@ module MEM
         .i_step             (i_step),
         .i_alu_address      (i_exmem_alu),
         .i_debug_address    (i_addr_mem_debug),
-        .i_data_register    (wire_mem_dato_filter),
+        .i_data_register    (i_exmem_mem_register2),
         .i_flag_mem_read    (i_exmem_mem_read),
         .i_flag_mem_write   (i_exmem_mem_write),
+        .i_ctl_select       (i_exmem_size_filter),
         .o_data_read        (o_mem_dato),
         .o_debug_data       (o_mem_dato_debug)
     );
