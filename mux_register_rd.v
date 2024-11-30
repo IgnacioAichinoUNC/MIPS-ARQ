@@ -12,7 +12,7 @@ module mux_register_rd
         input   wire                        i_memwb_lui,
         input   wire    [BITS_SIZE-1:0]     i_memwb_extension,
         input   wire    [BITS_SIZE-1:0]     i_memwb_dato_mem,
-        input   wire    [1:0]               i_memwb_size_filterL,
+        input   wire    [1:0]               i_ctl_dataload_size,
         input   wire                        i_memwb_zero_extend,
         input   wire                        i_memwb_mem_to_reg,
         input   wire    [BITS_SIZE-1:0]     i_memwb_alu,
@@ -27,7 +27,7 @@ module mux_register_rd
 
     //Filtro load
     always @(*) begin
-        case (i_memwb_size_filterL)
+        case (i_ctl_dataload_size)
             2'b00: reg_filtered_data = i_memwb_dato_mem;
             2'b01: reg_filtered_data = i_memwb_zero_extend ? 
                                        (i_memwb_dato_mem & 32'hFF) : {{HW_BITS+BYTE_BITS_SIZE{i_memwb_dato_mem[BYTE_BITS_SIZE-1]}}, i_memwb_dato_mem[BYTE_BITS_SIZE-1:0]};
@@ -37,17 +37,16 @@ module mux_register_rd
         endcase
     end
 
-    //Mux LUI
+    //Select Data
     always @(*) begin
         reg_data_to_reg = i_memwb_lui ? i_memwb_extension : reg_filtered_data;
     end
 
-    //Mux Memoria/ALU
+    //Select Dato to write
     always @(*) begin
         reg_data_write = i_memwb_mem_to_reg ? reg_data_to_reg : i_memwb_alu;
     end
 
-    // Salidas
     assign o_filtered_data = reg_filtered_data;
     assign o_data_to_reg = reg_data_to_reg;
     assign o_data_write = reg_data_write;

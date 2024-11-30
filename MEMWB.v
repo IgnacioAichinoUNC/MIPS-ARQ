@@ -21,7 +21,7 @@ module MEMWB
         input   wire                        i_halt,
         input   wire                        i_mem_to_reg,
         input   wire                        i_reg_write,
-        input   wire    [1:0]               i_size_filterL,
+        input   wire    [1:0]               i_data_load_size,
         input   wire                        i_zero_extend,
         output  wire    [BITS_SIZE-1:0]     o_pc4,
         output  wire    [BITS_SIZE-1:0]     o_pc8,     
@@ -33,7 +33,7 @@ module MEMWB
         output  wire                        o_jal,
         output  wire                        o_mem_to_reg,
         output  wire                        o_register_write,
-        output  wire    [1:0]               o_size_filterL,          
+        output  wire    [1:0]               o_data_load_size,          
         output  wire                        o_zero_extend,
         output  wire                        o_lui,
         output  wire                        o_halt
@@ -51,7 +51,7 @@ module MEMWB
     reg                     reg_jal;
     reg                     reg_mem_to_reg;
     reg                     reg_register_write;
-    reg     [1:0]           reg_size_filterL;
+    reg     [1:0]           reg_data_load_size;
     reg                     reg_zero_extend;
     reg                     reg_lui;
     reg                     reg_halt;
@@ -72,7 +72,7 @@ always @(posedge i_clk)
         reg_jal             <=  1'b0;         
         reg_mem_to_reg      <=  1'b0;
         reg_register_write  <=  1'b0;
-        reg_size_filterL    <=  2'b00;
+        reg_data_load_size  <=  2'b00;
         reg_zero_extend     <=  1'b0;
         reg_lui             <=  1'b0;
         reg_halt            <=  1'b0;   
@@ -91,7 +91,7 @@ always @(posedge i_clk)
         reg_jal             <=  i_jal;
         reg_mem_to_reg      <=  i_mem_to_reg;
         reg_register_write  <=  i_reg_write;
-        reg_size_filterL    <=  i_size_filterL;
+        reg_data_load_size  <=  i_data_load_size;
         reg_zero_extend     <=  i_zero_extend;
         reg_lui             <=  i_lui;
         reg_halt            <=  i_halt;
@@ -108,7 +108,7 @@ assign o_extension          =   reg_extension;
 assign o_jal                =   reg_jal;
 assign o_mem_to_reg         =   reg_mem_to_reg;
 assign o_register_write     =   reg_register_write;
-assign o_size_filterL       =   reg_size_filterL;
+assign o_data_load_size     =   reg_data_load_size;
 assign o_zero_extend        =   reg_zero_extend;
 assign o_lui                =   reg_lui;
 assign o_halt               =   reg_halt;

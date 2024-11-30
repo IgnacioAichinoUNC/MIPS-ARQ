@@ -17,7 +17,7 @@ module mux_unit_risk
     input   wire            i_reg_write,
     input   wire    [1:0]   i_extension_mode,
     input   wire    [1:0]   i_datomem_size,
-    input   wire    [1:0]   i_size_filterL,
+    input   wire    [1:0]   i_data_load_size,
     input   wire            i_zero_extend,
     input   wire            i_lui,
     input   wire            i_jalR,
@@ -36,7 +36,7 @@ module mux_unit_risk
     output  wire            o_register_write,
     output  wire    [1:0]   o_extension_mode,
     output  wire    [1:0]   o_datamem_size,
-    output  wire    [1:0]   o_size_filterL,
+    output  wire    [1:0]   o_data_load_size,
     output  wire            o_zero_extend,
     output  wire            o_lui,
     output  wire            o_jalR,
@@ -56,7 +56,7 @@ module mux_unit_risk
         reg           reg_register_write;
         reg    [1:0]  reg_extension_mode;
         reg    [1:0]  reg_datamem_size;
-        reg    [1:0]  reg_size_filterL;
+        reg    [1:0]  reg_data_load_size;
         reg           reg_zero_extend;
         reg           reg_lui;
         reg           reg_jalR;
@@ -78,8 +78,8 @@ module mux_unit_risk
                     reg_alu_src         <=  1'b0;
                     reg_register_write  <=  1'b0;
                     reg_extension_mode  <=  1'b0;
-                    reg_datamem_size     <=  1'b0;
-                    reg_size_filterL    <=  1'b0;
+                    reg_datamem_size    <=  1'b0;
+                    reg_data_load_size  <=  1'b0;
                     reg_zero_extend     <=  1'b0;
                     reg_lui             <=  1'b0;
                     reg_jalR            <=  1'b0;
@@ -98,8 +98,8 @@ module mux_unit_risk
                     reg_alu_src         <=  i_alu_src;
                     reg_register_write  <=  i_reg_write;
                     reg_extension_mode  <=  i_extension_mode;
-                    reg_datamem_size     <=  i_datomem_size;
-                    reg_size_filterL    <=  i_size_filterL;
+                    reg_datamem_size    <=  i_datomem_size;
+                    reg_data_load_size  <=  i_data_load_size;
                     reg_zero_extend     <=  i_zero_extend;
                     reg_lui             <=  i_lui;
                     reg_jalR            <=  i_jalR;
@@ -119,7 +119,7 @@ module mux_unit_risk
         assign o_register_write = reg_register_write;
         assign o_extension_mode = reg_extension_mode;
         assign o_datamem_size   = reg_datamem_size;
-        assign o_size_filterL   = reg_size_filterL;
+        assign o_data_load_size = reg_data_load_size;
         assign o_zero_extend    = reg_zero_extend;
         assign o_lui            = reg_lui;
         assign o_jalR           = reg_jalR;
