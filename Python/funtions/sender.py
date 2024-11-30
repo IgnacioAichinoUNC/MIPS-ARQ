@@ -179,7 +179,7 @@ def create_bin(file_asm, file_bin):
         with open(file_bin, 'w') as out:
             for line in f:
                 #Haremos lectura de cada linea separando las partes de las intruccion de la siguiente manera
-                #add $0,$1,$2
+                #add r0,r1,r2
                 #PART[0] PART[1] (operacion y argumentos)
                 parts = line.strip().split(' ')
                 instruction_BIN = 0
@@ -187,6 +187,8 @@ def create_bin(file_asm, file_bin):
                     if (parts[0] == 'nop'):
                         instruction_BIN = f"00000000000000000000000000000000"
                         out.write( instruction_BIN + '\n' )
+                    elif (parts[0] == 'halt'):
+                        out.write(f"11111111111111111111111111111111")                       
                     else:
                         instruction_type = RISC_DICTIONARY[parts[0]][0]
                         if (instruction_type == 'r'):
