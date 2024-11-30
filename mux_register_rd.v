@@ -16,8 +16,6 @@ module mux_register_rd
         input   wire                        i_memwb_zero_extend,
         input   wire                        i_memwb_mem_to_reg,
         input   wire    [BITS_SIZE-1:0]     i_memwb_alu,
-        output  wire    [BITS_SIZE-1:0]     o_filtered_data,
-        output  wire    [BITS_SIZE-1:0]     o_data_to_reg,
         output  wire    [BITS_SIZE-1:0]     o_data_write
     );
 
@@ -47,8 +45,6 @@ module mux_register_rd
         reg_data_write = i_memwb_mem_to_reg ? reg_data_to_reg : i_memwb_alu;
     end
 
-    assign o_filtered_data = reg_filtered_data;
-    assign o_data_to_reg = reg_data_to_reg;
     assign o_data_write = reg_data_write;
 
 endmodule

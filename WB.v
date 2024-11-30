@@ -24,9 +24,7 @@ module WB
         output  wire    [BITS_REGS-1:0]     o_wb_register_adrr_result
     );
 
-    //Señales internas
-    wire [BITS_SIZE-1:0] wire_filtered_data;
-    wire [BITS_SIZE-1:0] wire_data_to_reg;
+    //Señal interna
     wire [BITS_SIZE-1:0] wire_data_write;
 
     //Mux WB
@@ -47,8 +45,6 @@ module WB
         .i_memwb_zero_extend    (i_memwb_zero_extend),
         .i_memwb_mem_to_reg     (i_memwb_mem_to_reg),
         .i_memwb_alu            (i_memwb_alu),
-        .o_filtered_data        (wire_filtered_data),
-        .o_data_to_reg          (wire_data_to_reg),
         .o_data_write           (wire_data_write)
     );
 
