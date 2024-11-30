@@ -24,12 +24,12 @@ module EXMEM
         input   wire                        i_neq_branch,
         input   wire                        i_mem_write,
         input   wire                        i_mem_read, 
-        input   wire    [1:0]               i_size_filter, 
+        input   wire    [1:0]               i_datamem_size, 
         //ControlWB
         input   wire                        i_jal,      
         input   wire                        i_mem_to_reg,
         input   wire                        i_reg_write,
-        input   wire    [1:0]               i_size_filterL,
+        input   wire    [1:0]               i_data_load_size,
         input   wire                        i_zero_extend,
         input   wire                        i_lui,
         input   wire                        i_halt,
@@ -49,11 +49,11 @@ module EXMEM
         output  wire                        o_neq_branch,
         output  wire                        o_mem_write,
         output  wire                        o_mem_read,
-        output  wire   [1:0]                o_size_filter,
+        output  wire   [1:0]                o_datamem_size,
         //ControlWB
         output  wire                        o_mem_to_reg,
         output  wire                        o_register_write,
-        output  wire   [1:0]                o_size_filterL,
+        output  wire   [1:0]                o_data_load_size,
         output  wire                        o_zero_extend,
         output  wire                        o_lui,
         output  wire                        o_halt
@@ -75,12 +75,12 @@ module EXMEM
     reg                     reg_neq_branch;
     reg                     reg_mem_write;
     reg                     reg_mem_read;
-    reg     [1:0]           reg_size_filter;
+    reg     [1:0]           reg_datamem_size;
 
     // RegWB
     reg                     reg_mem_to_reg;
     reg                     reg_register_write;
-    reg     [1:0]           reg_size_filterL;
+    reg     [1:0]           reg_data_load_size;
     reg                     reg_zero_extend;
     reg                     reg_lui;
     reg                     reg_halt;
@@ -103,13 +103,13 @@ module EXMEM
                 reg_neq_branch      <=  1'b0;
                 reg_mem_write       <=  1'b0;
                 reg_mem_read        <=  1'b0;
-                reg_size_filter     <=  2'b00;
+                reg_datamem_size     <=  2'b00;
         
                 // WB
                 reg_jal             <=  1'b0;            
                 reg_mem_to_reg      <=  1'b0;
                 reg_register_write  <=  1'b0;
-                reg_size_filterL    <=  2'b00;
+                reg_data_load_size  <=  2'b00;
                 reg_zero_extend     <=  1'b0;
                 reg_lui             <=  1'b0;
                 reg_halt            <=  1'b0;
@@ -131,13 +131,13 @@ module EXMEM
                 reg_neq_branch      <=  i_neq_branch;
                 reg_mem_write       <=  i_mem_write;
                 reg_mem_read        <=  i_mem_read;
-                reg_size_filter     <=  i_size_filter;
+                reg_datamem_size    <=  i_datamem_size;
         
                 // WB
                 reg_jal             <=  i_jal;            
                 reg_mem_to_reg      <=  i_mem_to_reg;
                 reg_register_write  <=  i_reg_write;
-                reg_size_filterL    <=  i_size_filterL;
+                reg_data_load_size  <=  i_data_load_size;
                 reg_zero_extend     <=  i_zero_extend;
                 reg_lui             <=  i_lui;
                 reg_halt            <=  i_halt;
@@ -159,12 +159,12 @@ module EXMEM
     assign o_neq_branch         =   reg_neq_branch;
     assign o_mem_write          =   reg_mem_write;
     assign o_mem_read           =   reg_mem_read;
-    assign o_size_filter        =   reg_size_filter;
+    assign o_datamem_size       =   reg_datamem_size;
     
     // AssignWB
     assign o_mem_to_reg         =   reg_mem_to_reg;
     assign o_register_write     =   reg_register_write;
-    assign o_size_filterL       =   reg_size_filterL;
+    assign o_data_load_size     =   reg_data_load_size;
     assign o_zero_extend        =   reg_zero_extend;
     assign o_lui                =   reg_lui;
     assign o_halt               =   reg_halt;     
