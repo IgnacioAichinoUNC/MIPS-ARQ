@@ -15,7 +15,7 @@ module MEM
         input   wire                            i_exmem_mem_read,
         input   wire                            i_exmem_mem_write,
         input   wire    [BITS_SIZE-1:0]         i_exmem_mem_register2,
-        input   wire    [1:0]                   i_exmem_size_filter,
+        input   wire    [1:0]                   i_ctl_datomem_size,
         output  wire    [BITS_SIZE-1:0]         o_mem_dato,
         output  wire    [BITS_SIZE-1:0]         o_mem_dato_debug
     );
@@ -36,7 +36,7 @@ module MEM
         .i_data_register    (i_exmem_mem_register2),
         .i_flag_mem_read    (i_exmem_mem_read),
         .i_flag_mem_write   (i_exmem_mem_write),
-        .i_ctl_select       (i_exmem_size_filter),
+        .i_ctl_data_size_mem(i_ctl_datomem_size),
         .o_data_read        (o_mem_dato),
         .o_debug_data       (o_mem_dato_debug)
     );

@@ -16,7 +16,7 @@ module memory_data
         input   wire    [BITS_SIZE-1:0]     i_data_register,
         input   wire                        i_flag_mem_read,
         input   wire                        i_flag_mem_write,
-        input   wire    [BITS_EXTENSION-1:0]    i_ctl_select,
+        input   wire    [BITS_EXTENSION-1:0]i_ctl_data_size_mem,
         output  reg     [BITS_SIZE-1:0]     o_data_read,
         output  reg     [BITS_SIZE-1:0]     o_debug_data
     );
@@ -33,12 +33,24 @@ module memory_data
         o_debug_data  <=  0;
     end
     
-    //Filtro de dato a mem
+
+    //Default siempre
+    always @(*)
+    begin
+        if (i_flag_mem_read & i_step) begin
+            o_data_read    <=  reg_memory[i_alu_address];
+        end else begin
+            o_data_read    <=  0;
+        end
+    end
+
+
+    //Filtro size de dato a mem
     always @(*) begin
             //00: complete word
             //01: SB -> para un byte
             //10: SH -> para media palabra
-        case(i_ctl_select)
+        case(i_ctl_data_size_mem)
             2'b00:       
                     reg_dato_filtered   <=   i_data_register; //memory[base+offset] = rt 
             2'b01:        
@@ -61,17 +73,6 @@ module memory_data
     always @(i_debug_address)
     begin
         o_debug_data  <=  reg_memory[i_debug_address];
-    end
-
-
-    //Default siempre
-    always @(*)
-    begin
-        if (i_flag_mem_read & i_step) begin
-            o_data_read    <=  reg_memory[i_alu_address];
-        end else begin
-            o_data_read    <=  0;
-        end
     end
 
 
