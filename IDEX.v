@@ -34,7 +34,7 @@ module IDEX
         input   wire                        i_neq_branch,
         input   wire                        i_mem_write,
         input   wire                        i_mem_read ,
-        input   wire    [1:0]               i_size_filter,
+        input   wire    [1:0]               i_datomem_size,
         ///ControlWB
         input   wire                        i_mem_to_reg,
         input   wire                        i_reg_write,
@@ -65,7 +65,7 @@ module IDEX
         output  wire                        o_neq_branch,
         output  wire                        o_mem_write,
         output  wire                        o_mem_read ,
-        output  wire    [1:0]               o_size_filter,
+        output  wire    [1:0]               o_datamem_size,
         ///ControlWB
         output  wire                        o_mem_to_reg,
         output  wire                        o_register_write,
@@ -99,7 +99,7 @@ module IDEX
     reg                     reg_neq_branch;
     reg                     reg_mem_write ;
     reg                     reg_mem_read;
-    reg     [1:0]           reg_size_filter;
+    reg     [1:0]           reg_datamem_size;
 
     //RegWB
     reg                     reg_mem_to_register;
@@ -138,7 +138,7 @@ module IDEX
             reg_neq_branch      <=  1'b0;
             reg_mem_write       <=  1'b0;
             reg_mem_read        <=  1'b0;
-            reg_size_filter     <=  2'b00;
+            reg_datamem_size    <=  2'b00;
 
             //WB
             reg_mem_to_register <=  1'b0;
@@ -174,7 +174,7 @@ module IDEX
             reg_neq_branch      <=  i_neq_branch;
             reg_mem_write       <=  i_mem_write;
             reg_mem_read        <=  i_mem_read;
-            reg_size_filter     <=  i_size_filter;
+            reg_datamem_size     <=  i_datomem_size;
 
             //WB
             reg_mem_to_register <=  i_mem_to_reg;
@@ -210,7 +210,7 @@ module IDEX
     assign o_neq_branch      =   reg_neq_branch;
     assign o_mem_write       =   reg_mem_write;
     assign o_mem_read        =   reg_mem_read;
-    assign o_size_filter     =   reg_size_filter;
+    assign o_datamem_size    =   reg_datamem_size;
 
     //ControlWB
     assign o_mem_to_reg      =   reg_mem_to_register;

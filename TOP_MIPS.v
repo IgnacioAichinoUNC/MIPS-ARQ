@@ -86,13 +86,13 @@ module TOP_MIPS
     //Sumador PC Jump 
     wire     [BITS_JUMP-1:0]        ID_JUMP_i;
     wire     [BITS_SIZE-1:0]        ID_JUMP_o;
-    // Extensor de signo
+    //Extensor de signo
     wire     [BITS_INMEDIATE-1:0]   ID_intruct_16;
     wire     [BITS_SIZE-1:0]        ID_intruct_ext;
     //Mux Unidad Riesgos
     wire     [BITS_ALU_CTL-1:0]     mux_ctl_unit_alu_op;
     wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_extend_mode;
-    wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_size_filter;
+    wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_dato_mem_size;
     wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_size_filterL;
     wire                            mux_ctl_unit_register_write;
     wire                            mux_ctl_unit_mem_to_reg;
@@ -133,7 +133,7 @@ module TOP_MIPS
     wire                            IDEX_ctl_lui;
     wire                            IDEX_ctl_JALR;
     wire                            IDEX_ctl_halt;
-    wire    [1:0]                   IDEX_ctl_size_filter;
+    wire    [1:0]                   IDEX_ctl_datomem_size;
     wire    [1:0]                   IDEX_ctL_size_filterL;
     wire                            IDEX_ctl_zero_extend;
 
@@ -173,7 +173,7 @@ module TOP_MIPS
     wire                            EXMEM_ctl_mem_read;
     wire                            EXMEM_ctl_mem_to_reg;
     wire                            EXMEM_ctl_register_write;
-    wire    [1:0]                   EXMEM_ctl_size_filter;
+    wire    [1:0]                   EXMEM_ctl_datomem_size;
     wire    [1:0]                   EXMEM_ctl_size_filterL;
     wire                            EXMEM_ctl_zero_extend;
     wire                            EXMEM_ctl_lui;
@@ -336,7 +336,7 @@ module TOP_MIPS
         .o_alu_src                  (ctl_unit_alu_src),
         .o_register_write           (ctl_unit_register_write),
         .o_extension_mode           (ctl_unit_extend_mode),
-        .o_size_filter              (ctl_unit_size_filter),
+        .o_datamem_size             (ctl_unit_dato_mem_size),
         .o_size_filterL             (ctl_unit_size_filterL),
         .o_zero_extend              (ctl_unit_zero_extend),
         .o_halt                     (ctl_unit_halt)
@@ -381,7 +381,7 @@ module TOP_MIPS
         .i_alu_src                  (ctl_unit_alu_src),
         .i_reg_write                (ctl_unit_register_write),
         .i_extension_mode           (ctl_unit_extend_mode),
-        .i_size_filter              (ctl_unit_size_filter),
+        .i_datomem_size             (ctl_unit_dato_mem_size),
         .i_size_filterL             (ctl_unit_size_filterL),
         .i_zero_extend              (ctl_unit_zero_extend),
         .i_lui                      (ctl_unit_lui),
@@ -399,7 +399,7 @@ module TOP_MIPS
         .o_alu_src                  (mux_ctl_unit_alu_src),
         .o_register_write           (mux_ctl_unit_register_write),
         .o_extension_mode           (mux_ctl_unit_extend_mode),
-        .o_size_filter              (mux_ctl_unit_size_filter),
+        .o_datamem_size             (mux_ctl_unit_dato_mem_size),
         .o_size_filterL             (mux_ctl_unit_size_filterL),
         .o_zero_extend              (mux_ctl_unit_zero_extend),
         .o_lui                      (mux_ctl_unit_lui),
@@ -434,7 +434,7 @@ module TOP_MIPS
         .i_neq_branch               (mux_ctl_unit_neq_branch),
         .i_mem_write                (mux_ctl_unit_mem_write),
         .i_mem_read                 (mux_ctl_unit_mem_read),
-        .i_size_filter              (mux_ctl_unit_size_filter),
+        .i_datomem_size             (mux_ctl_unit_dato_mem_size),
         //ControlWB
         .i_mem_to_reg               (mux_ctl_unit_mem_to_reg),
         .i_reg_write                (mux_ctl_unit_register_write),
@@ -475,7 +475,7 @@ module TOP_MIPS
         .o_neq_branch              (IDEX_ctl_neq_branch),
         .o_mem_write               (IDEX_ctl_mem_write),
         .o_mem_read                (IDEX_ctl_mem_read),
-        .o_size_filter             (IDEX_ctl_size_filter),
+        .o_datamem_size            (IDEX_ctl_datomem_size),
         //ControlWB
         .o_mem_to_reg              (IDEX_ctl_mem_to_reg),
         .o_register_write          (IDEX_ctl_register_write),
@@ -577,13 +577,13 @@ module TOP_MIPS
         .i_register_dst         (EX_mux_register_rd),
         .i_idex_extension       (IDEX_extension),
 
-        //ControlIM
+        //ControlMEM
         .i_jal                  (IDEX_ctl_jal),
         .i_branch               (IDEX_ctl_branch),
         .i_neq_branch           (IDEX_ctl_neq_branch),
         .i_mem_write            (IDEX_ctl_mem_write),
         .i_mem_read             (IDEX_ctl_mem_read),
-        .i_size_filter          (IDEX_ctl_size_filter),
+        .i_datamem_size         (IDEX_ctl_datomem_size),
         
         //ControlWB
         .i_mem_to_reg           (IDEX_ctl_mem_to_reg),
@@ -609,7 +609,7 @@ module TOP_MIPS
         .o_neq_branch           (EXMEM_ctl_neq_branch),
         .o_mem_write            (EXMEM_ctl_mem_write),
         .o_mem_read             (EXMEM_ctl_mem_read),
-        .o_size_filter          (EXMEM_ctl_size_filter),
+        .o_datamem_size         (EXMEM_ctl_datomem_size),
 
         //ControlWB
         .o_mem_to_reg           (EXMEM_ctl_mem_to_reg),
@@ -646,7 +646,7 @@ module TOP_MIPS
         .i_exmem_mem_read       (EXMEM_ctl_mem_read),
         .i_exmem_mem_write      (EXMEM_ctl_mem_write),
         .i_exmem_mem_register2  (EXMEM_register2),
-        .i_exmem_size_filter    (EXMEM_ctl_size_filter),
+        .i_ctl_datomem_size     (EXMEM_ctl_datomem_size),
         .o_mem_dato             (MEM_dato_mem),
         .o_mem_dato_debug       (MEM_dato_mem_Debug)
     );
