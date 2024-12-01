@@ -1,0 +1,7 @@
+pip install pyserial rich
+pip install pyinstaller
+
+
+
+BUILD:
+pyinstaller --onefile --console main.py

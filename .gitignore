@@ -1,0 +1,7 @@
+#Ignore py files cache and build
+**/dist/
+**/build/
+**/*.spec
+**/__pycache__/
+**/*.pyc
+**/*.pyo
