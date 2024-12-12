@@ -93,7 +93,8 @@ def main():
             console.print("---------MODO CONTINUO---------",style="bold red")
             input_char == 'c'
             ser.write(input_char.encode())
-            data_received, err = receiver.receive_result(ser, 50)
+           # data_received, err = receiver.receive_result(ser, 50)
+            data_received, err = receiver.receive_result(ser, 65)
             printer.print_data_continuo(data_received , registers_bank_print ,memory_data_print)
             mode = 'IDLE'
 

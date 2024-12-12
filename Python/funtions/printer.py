@@ -53,6 +53,24 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
             for i in range(mem_data_to_show)
         ]
 
+        ifid_instruc = ' '.join(format(byte, '08b') for byte in data[50])
+        ifid_pc4 = ' '.join(format(byte, '08b') for byte in data[51])
+        idex_instruc = ' '.join(format(byte, '08b') for byte in data[52])
+        idex_dato_rs = ' '.join(format(byte, '08b') for byte in data[53])
+        idex_dato_rt = ' '.join(format(byte, '08b') for byte in data[54])
+        idex_extend = ' '.join(format(byte, '08b') for byte in data[55])
+        exmem_instruc = ' '.join(format(byte, '08b') for byte in data[56])
+        exmem_alu = ' '.join(format(byte, '08b') for byte in data[57])
+        exmem_pcbranch = ' '.join(format(byte, '08b') for byte in data[58])
+        exmem_dato_rt = ' '.join(format(byte, '08b') for byte in data[59])
+        exmem_extend = ' '.join(format(byte, '08b') for byte in data[60])
+        memwb_instruc = ' '.join(format(byte, '08b') for byte in data[61])
+        memwb_alu = ' '.join(format(byte, '08b') for byte in data[62])
+        memwb_extend = ' '.join(format(byte, '08b') for byte in data[63])
+        memwb_datamem = ' '.join(format(byte, '08b') for byte in data[64])
+
+
+
         #Print the extracted information
         print(
             f"\nClockCycles: {clk_count} = {int(clk_count.replace(' ',''), 2)}")
@@ -66,6 +84,21 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
             for i in range(mem_data_to_show):
                 print(f"{i}:  {memory[i]} = {int(memory[i].replace(' ',''), 2)}")
 
+        console.print(f"[bold red]ifid_instruc[/bold red]: {ifid_instruc} = {int(ifid_instruc.replace(' ', ''), 2)}")
+        console.print(f"[bold red]ifid_pc4[/bold red]: {ifid_pc4} = {int(ifid_pc4.replace(' ', ''), 2)}")
+        console.print(f"[bold red]idex_instruc[/bold red]: {idex_instruc} = {int(idex_instruc.replace(' ', ''), 2)}")
+        console.print(f"[bold red]idex_dato_rs[/bold red]: {idex_dato_rs} = {int(idex_dato_rs.replace(' ', ''), 2)}")
+        console.print(f"[bold red]idex_dato_rt[/bold red]: {idex_dato_rt} = {int(idex_dato_rt.replace(' ', ''), 2)}")
+        console.print(f"[bold red]idex_extend[/bold red]: {idex_extend} = {int(idex_extend.replace(' ', ''), 2)}")
+        console.print(f"[bold red]exmem_instruc[/bold red]: {exmem_instruc} = {int(exmem_instruc.replace(' ', ''), 2)}")
+        console.print(f"[bold red]exmem_alu[/bold red]: {exmem_alu} = {int(exmem_alu.replace(' ', ''), 2)}")
+        console.print(f"[bold red]exmem_pcbranch[/bold red]: {exmem_pcbranch} = {int(exmem_pcbranch.replace(' ', ''), 2)}")
+        console.print(f"[bold red]exmem_dato_rt[/bold red]: {exmem_dato_rt} = {int(exmem_dato_rt.replace(' ', ''), 2)}")
+        console.print(f"[bold red]exmem_extend[/bold red]: {exmem_extend} = {int(exmem_extend.replace(' ', ''), 2)}")
+        console.print(f"[bold red]memwb_instruc[/bold red]: {memwb_instruc} = {int(memwb_instruc.replace(' ', ''), 2)}")
+        console.print(f"[bold red]memwb_alu[/bold red]: {memwb_alu} = {int(memwb_alu.replace(' ', ''), 2)}")
+        console.print(f"[bold red]memwb_extend[/bold red]: {memwb_extend} = {int(memwb_extend.replace(' ', ''), 2)}")
+        console.print(f"[bold red]memwb_datamem[/bold red]: {memwb_datamem} = {int(memwb_datamem.replace(' ', ''), 2)}")
 #Cuando es por pasos
 def print_data_step(data_received, prev_data_received, registers_to_show, mem_data_to_show):
     if data_received:

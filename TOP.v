@@ -9,6 +9,7 @@ module TOP
         parameter SIZE_MEM_DATA         = 16,
         parameter BAUD_RATE             = 9600,
         parameter CLK_FREQ              = 50000000,
+        parameter BITS_REGS             = 5,
         parameter RX_TICK_BAUD          = 16 //16 veces la tasa de baudio,una frecuencia de muestreo más alta que la tasa de baudios para recuperar los datos
 
     )  
@@ -34,6 +35,25 @@ module TOP
         wire    [BITS_SIZE-1:0]     data_mem;
         wire                        halt;
         wire    [BITS_SIZE-1:0]     data_register; //valor del banckregisters enviado desde mips
+
+
+
+    //wires latch data
+        wire    [BITS_SIZE-1:0]     ifid_instruc;
+        wire    [BITS_SIZE-1:0]     ifid_pc4;
+        wire    [BITS_SIZE-1:0]     idex_instruc;
+        wire    [BITS_SIZE-1:0]     idex_dato_rs;
+        wire    [BITS_SIZE-1:0]     idex_dato_rt;
+        wire    [BITS_SIZE-1:0]     idex_extend;
+        wire    [BITS_SIZE-1:0]     exmem_instruc;
+        wire    [BITS_SIZE-1:0]     exmem_alu;
+        wire    [BITS_SIZE-1:0]     exmem_pcbranch;
+        wire    [BITS_SIZE-1:0]     exmem_dato_rt;
+        wire    [BITS_SIZE-1:0]     exmem_extend;
+        wire    [BITS_SIZE-1:0]     memwb_instruc;
+        wire    [BITS_SIZE-1:0]     memwb_alu;
+        wire    [BITS_SIZE-1:0]     memwb_extend;
+        wire    [BITS_SIZE-1:0]     memwb_datamem;
 
 
 
@@ -79,6 +99,21 @@ module TOP
         .o_pc                           (pc),
         .o_data_register                (data_register),
         .o_data_MEM_debug               (data_mem),
+        .o_IFID_instruct                (ifid_instruc),
+        .o_IFID_PC4                     (ifid_pc4),
+        .o_IDEX_instruct                (idex_instruc),
+        .o_IDEX_dato_rs                 (idex_dato_rs),
+        .o_IDEX_dato_rt                 (idex_dato_rt),
+        .o_IDEX_extend                  (idex_extend),
+        .o_EXMEM_instruc                (exmem_instruc),
+        .o_EXMEM_alu_result             (exmem_alu),
+        .o_EXMEM_pcbranch               (exmem_pcbranch),
+        .o_EXMEM_dato_rt                (exmem_dato_rt),
+        .o_EXMEM_extend                 (exmem_extend),
+        .o_MEMWB_instruct               (memwb_instruc),
+        .o_MEMWB_alu_result             (memwb_alu),
+        .o_MEMWB_datamem                (memwb_datamem),
+        .o_MEMWB_extend                 (memwb_extend),
         .o_mips_halt                    (halt)
     );
 
@@ -117,6 +152,28 @@ module TOP
         .i_data_bankregisters   (data_register),
         .i_data_mem             (data_mem),
         .i_halt                 (halt),
+
+
+        .i_ifid_instruct                (ifid_instruc),
+        .i_ifid_pc4                     (ifid_pc4),
+        .i_idex_instruct                (idex_instruc),
+        .i_idex_dato_rs                 (idex_dato_rs),
+        .i_idex_dato_rt                 (idex_dato_rt),
+        .i_idex_reg_dst                 (idex_reg_dst),
+        .i_idex_extend                  (idex_extend),
+        .i_exmem_instruc                (exmem_instruc),
+        .i_exmem_alu_result             (exmem_alu),
+        .i_exmem_pcbranch               (exmem_pcbranch),
+        .i_exmem_dato_rt                (exmem_dato_rt),
+        .i_exmem_extend                 (exmem_extend),
+        .i_exmem_reg_dst                (exmem_reg_dst),
+        .i_memwb_instruct               (memwb_instruc),
+        .i_memwb_alu_result             (memwb_alu),
+        .i_memwb_reg_dst                (memwb_reg_dst),
+        .i_memwb_datamem                (memwb_datamem),
+        .i_memwb_extend                 (memwb_extend),
+
+
         .o_ctl_clk_wiz          (ctl_clk_wiz),
         .o_uart_rx_reset        (uart_rx_reset),
         .o_flag_tx_ready        (uart_tx_start),
