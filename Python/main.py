@@ -79,7 +79,8 @@ def main():
                 input_char = input("input: ")
                 if (input_char == 'n'):
                     ser.write(input_char.encode())
-                    data_received, err = receiver.receive_result(ser, 50)
+                    # data_received, err = receiver.receive_result(ser, 50)
+                    data_received, err = receiver.receive_result(ser, 65)
                     if(err == 1):
                         mode = 'IDLE'
                         console.print("Finish Program",style="bold green")
@@ -88,7 +89,7 @@ def main():
                         console.print("-------------------------------------",style="bold red")
                         printer.print_data_step(data_received, previous_data, registers_bank_print, memory_data_print)
                         previous_data = data_received
-            sys.exit()
+            
         elif (mode == 'CONTINUOUS'):
             console.print("---------MODO CONTINUO---------",style="bold red")
             input_char == 'c'
@@ -96,6 +97,7 @@ def main():
            # data_received, err = receiver.receive_result(ser, 50)
             data_received, err = receiver.receive_result(ser, 65)
             printer.print_data_continuo(data_received , registers_bank_print ,memory_data_print)
+            console.print("Finish Program",style="bold green")
             mode = 'IDLE'
 
 if __name__ == "__main__":
