@@ -36,7 +36,6 @@ module TOP_MIPS
         output  wire                                o_mips_halt,
 
         output  wire     [BITS_SIZE-1:0]            o_IFID_instruct,
-        output  wire     [BITS_SIZE-1:0]            o_IFID_PC4,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_instruct,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_dato_rs,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_dato_rt,
@@ -256,7 +255,6 @@ module TOP_MIPS
 
     //OUTPUT
     assign o_IFID_instruct          =   IFID_Instr;
-    assign o_IFID_PC4               =   IFID_PC4;
     assign o_data_register          =   ID_data_register_Debug;
     assign o_IDEX_instruct          =   IDEX_instruction;
     assign o_IDEX_dato_rs           =   IDEX_register1;
@@ -311,7 +309,7 @@ module TOP_MIPS
         .i_instruction              (IF_Instr),
         .o_pc4                      (IFID_PC4),
         .o_pc8                      (IFID_PC8),
-        .o_instruction              (IFID_Instr)
+        .o_instruction              (IFID_Instr) 
     );
 
 

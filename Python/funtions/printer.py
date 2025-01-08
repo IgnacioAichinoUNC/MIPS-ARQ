@@ -55,20 +55,19 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
 
         pipeline_data = {
             'ifid_instruc': ' '.join(format(byte, '08b') for byte in data[50]),
-            'ifid_pc4': ' '.join(format(byte, '08b') for byte in data[51]),
-            'idex_instruc': ' '.join(format(byte, '08b') for byte in data[52]),
-            'idex_dato_rs': ' '.join(format(byte, '08b') for byte in data[53]),
-            'idex_dato_rt': ' '.join(format(byte, '08b') for byte in data[54]),
-            'idex_extend': ' '.join(format(byte, '08b') for byte in data[55]),
-            'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[56]),
-            'exmem_alu': ' '.join(format(byte, '08b') for byte in data[57]),
-            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[58]),
-            'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[59]),
-            'exmem_extend': ' '.join(format(byte, '08b') for byte in data[60]),
-            'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[61]),
-            'memwb_alu': ' '.join(format(byte, '08b') for byte in data[62]),
-            'memwb_extend': ' '.join(format(byte, '08b') for byte in data[63]),
-            'memwb_datamem': ' '.join(format(byte, '08b') for byte in data[64]),
+            'idex_instruc': ' '.join(format(byte, '08b') for byte in data[51]),
+            'idex_dato_rs': ' '.join(format(byte, '08b') for byte in data[52]),
+            'idex_dato_rt': ' '.join(format(byte, '08b') for byte in data[53]),
+            'idex_extend': ' '.join(format(byte, '08b') for byte in data[54]),
+            'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[55]),
+            'exmem_alu': ' '.join(format(byte, '08b') for byte in data[56]),
+            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[57]),
+            'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[58]),
+            'exmem_extend': ' '.join(format(byte, '08b') for byte in data[59]),
+            'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[60]),
+            'memwb_alu': ' '.join(format(byte, '08b') for byte in data[61]),
+            'memwb_extend': ' '.join(format(byte, '08b') for byte in data[62]),
+            'memwb_datamem': ' '.join(format(byte, '08b') for byte in data[63]),
         }
 
         
@@ -88,7 +87,7 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
 
         # Imprimir la información por etapas
         stages_info = {
-            'IF/ID': ['ifid_instruc', 'ifid_pc4'],
+            'IF/ID': ['ifid_instruc'],
             'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend'],
             'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_pcbranch', 'exmem_dato_rt', 'exmem_extend'],
             'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
@@ -146,21 +145,21 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
 
         pipeline_data = {
             'ifid_instruc': ' '.join(format(byte, '08b') for byte in data[50]),
-            'ifid_pc4': ' '.join(format(byte, '08b') for byte in data[51]),
-            'idex_instruc': ' '.join(format(byte, '08b') for byte in data[52]),
-            'idex_dato_rs': ' '.join(format(byte, '08b') for byte in data[53]),
-            'idex_dato_rt': ' '.join(format(byte, '08b') for byte in data[54]),
-            'idex_extend': ' '.join(format(byte, '08b') for byte in data[55]),
-            'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[56]),
-            'exmem_alu': ' '.join(format(byte, '08b') for byte in data[57]),
-            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[58]),
-            'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[59]),
-            'exmem_extend': ' '.join(format(byte, '08b') for byte in data[60]),
-            'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[61]),
-            'memwb_alu': ' '.join(format(byte, '08b') for byte in data[62]),
-            'memwb_extend': ' '.join(format(byte, '08b') for byte in data[63]),
-            'memwb_datamem': ' '.join(format(byte, '08b') for byte in data[64]),
+            'idex_instruc': ' '.join(format(byte, '08b') for byte in data[51]),
+            'idex_dato_rs': ' '.join(format(byte, '08b') for byte in data[52]),
+            'idex_dato_rt': ' '.join(format(byte, '08b') for byte in data[53]),
+            'idex_extend': ' '.join(format(byte, '08b') for byte in data[54]),
+            'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[55]),
+            'exmem_alu': ' '.join(format(byte, '08b') for byte in data[56]),
+            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[57]),
+            'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[58]),
+            'exmem_extend': ' '.join(format(byte, '08b') for byte in data[59]),
+            'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[60]),
+            'memwb_alu': ' '.join(format(byte, '08b') for byte in data[61]),
+            'memwb_extend': ' '.join(format(byte, '08b') for byte in data[62]),
+            'memwb_datamem': ' '.join(format(byte, '08b') for byte in data[63]),
         }
+
 
         print(f"Total de bloques: {len(data)}")
         print(f"\nClockCycles: {clk_count} = {int(clk_count.replace(' ',''), 2)}")
@@ -200,7 +199,7 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
                     print(f"r{i}:  {memory[i]} = {int(memory[i].replace(' ',''), 2)}")                  
 
         stages_info = {
-            'IF/ID': ['ifid_instruc', 'ifid_pc4'],
+            'IF/ID': ['ifid_instruc'],
             'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend'],
             'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_pcbranch', 'exmem_dato_rt', 'exmem_extend'],
             'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']

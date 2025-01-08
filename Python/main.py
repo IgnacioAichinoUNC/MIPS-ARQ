@@ -80,7 +80,7 @@ def main():
                 if (input_char == 'n'):
                     ser.write(input_char.encode())
                     # data_received, err = receiver.receive_result(ser, 50)
-                    data_received, err = receiver.receive_result(ser, 65)
+                    data_received, err = receiver.receive_result(ser, 64)
                     if(err == 1):
                         mode = 'IDLE'
                         console.print("Finish Program",style="bold green")
@@ -95,7 +95,7 @@ def main():
             input_char == 'c'
             ser.write(input_char.encode())
            # data_received, err = receiver.receive_result(ser, 50)
-            data_received, err = receiver.receive_result(ser, 65)
+            data_received, err = receiver.receive_result(ser, 64)
             printer.print_data_continuo(data_received , registers_bank_print ,memory_data_print)
             console.print("Finish Program",style="bold green")
             mode = 'IDLE'

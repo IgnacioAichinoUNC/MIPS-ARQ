@@ -27,7 +27,6 @@ module UnitDebug
 
         //LATCHS DATA
         input           [BITS_SIZE-1:0]         i_ifid_instruct,
-        input           [BITS_SIZE-1:0]         i_ifid_pc4,
         input           [BITS_SIZE-1:0]         i_idex_instruct,
         input           [BITS_SIZE-1:0]         i_idex_dato_rs,
         input           [BITS_SIZE-1:0]         i_idex_dato_rt,
@@ -255,17 +254,17 @@ module UnitDebug
                         state_next                <= SEND_DATA_TX;
                     end
 
-                    1: //se envia numero de ciclos realizados en total desde el inicio
+                    1: // Se envia numero de ciclos realizados en total desde el inicio
                     begin
                         tx_data_32_next           <= i_clk_wiz_count;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
                         state_next                <= SEND_DATA_TX;
                     end
 
-                    2: // envio data de los 32 registros
+                    2: // Envio data de los 32 registros
                     begin
-                        tx_data_32_next             <= i_data_bankregisters;
-                        reg_tx_register_counter_next    <= reg_tx_register_counter + 1;
+                        tx_data_32_next              <= i_data_bankregisters;
+                        reg_tx_register_counter_next <= reg_tx_register_counter + 1;
                         
                         if(reg_tx_register_counter == BANK_REGISTERS_SIZE-1) begin
                             reg_tx_selector_data_next <= reg_tx_selector_data + 1;
@@ -273,7 +272,7 @@ module UnitDebug
                         state_next  <= SEND_DATA_TX;
                     end
 
-                    3: //Envio el contenido de memoria de datos
+                    3: // Envio el contenido de memoria de datos
                     begin
                         tx_data_32_next         <= i_data_mem;
                         reg_tx_counter_mem_next <= reg_tx_counter_mem + 1;
@@ -286,125 +285,117 @@ module UnitDebug
 
                     4: // Enviar la instrucción de la etapa IF/ID
                     begin
-                        tx_data_32_next         <= i_ifid_instruct;
+                        tx_data_32_next           <= i_ifid_instruct;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    5: // Enviar el valor de PC+4 de la etapa IF/ID
+                    5: // Enviar la instrucción de la etapa ID/EX
                     begin
-                        tx_data_32_next         <= i_ifid_pc4;
+                        tx_data_32_next           <= i_idex_instruct;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    6: // Enviar la instrucción de la etapa ID/EX
+                    6: // Enviar el dato de registro rs de la etapa ID/EX
                     begin
-                        tx_data_32_next         <= i_idex_instruct;
+                        tx_data_32_next           <= i_idex_dato_rs;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    7: // Enviar el dato de registro rs de la etapa ID/EX
+                    7: // Enviar el dato de registro rt de la etapa ID/EX
                     begin
-                        tx_data_32_next         <= i_idex_dato_rs;
+                        tx_data_32_next           <= i_idex_dato_rt;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    8: // Enviar el dato de registro rt de la etapa ID/EX
+                    8: // Enviar el valor extendido de la etapa ID/EX
                     begin
-                        tx_data_32_next         <= i_idex_dato_rt;
+                        tx_data_32_next           <= i_idex_extend;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    9: // Enviar el valor extendido de la etapa ID/EX
+                    9: // Enviar la instrucción de la etapa EX/MEM
                     begin
-                        tx_data_32_next         <= i_idex_extend;
+                        tx_data_32_next           <= i_exmem_instruc;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    10: // Enviar la instrucción de la etapa EX/MEM
+                    10: // Enviar el valor ALU de la etapa EX/MEM
                     begin
-                        tx_data_32_next         <= i_exmem_instruc;
+                        tx_data_32_next           <= i_exmem_alu_result;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    11: // Enviar el valor ALU de la etapa EX/MEM
+                    11: // Enviar el valor de PC branch de la etapa EX/MEM
                     begin
-                        tx_data_32_next         <= i_exmem_alu_result;
+                        tx_data_32_next           <= i_exmem_pcbranch;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    12: // Enviar el valor de PC branch de la etapa EX/MEM
+                    12: // Enviar el dato de registro rt de la etapa EX/MEM
                     begin
-                        tx_data_32_next         <= i_exmem_pcbranch;
+                        tx_data_32_next           <= i_exmem_dato_rt;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    13: // Enviar el dato de registro rt de la etapa EX/MEM
+                    13: // Enviar el valor extendido de la etapa EX/MEM
                     begin
-                        tx_data_32_next         <= i_exmem_dato_rt;
+                        tx_data_32_next           <= i_exmem_extend;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    14: // Enviar el valor extendido de la etapa EX/MEM
+                    14: // Enviar la instrucción de la etapa MEM/WB
                     begin
-                        tx_data_32_next         <= i_exmem_extend;
+                        tx_data_32_next           <= i_memwb_instruct;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    15: // Enviar la instrucción de la etapa MEM/WB
+                    15: // Enviar el valor ALU de la etapa MEM/WB
                     begin
-                        tx_data_32_next         <= i_memwb_instruct;
+                        tx_data_32_next           <= i_memwb_alu_result;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    16: // Enviar el valor ALU de la etapa MEM/WB
+                    16: // Enviar el valor extendido de la etapa MEM/WB
                     begin
-                        tx_data_32_next         <= i_memwb_alu_result;
+                        tx_data_32_next           <= i_memwb_extend;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    17: // Enviar el valor extendido de la etapa MEM/WB
+                    17: // Enviar los datos de memoria de la etapa MEM/WB
                     begin
-                        tx_data_32_next         <= i_memwb_extend;
+                        tx_data_32_next           <= i_memwb_datamem;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
+                        state_next                <= SEND_DATA_TX;
                     end
 
-                    18: // Enviar los datos de memoria de la etapa MEM/WB
+                    18: // Envie todo
                     begin
-                        tx_data_32_next         <= i_memwb_datamem;
-                        reg_tx_selector_data_next <= reg_tx_selector_data + 1;
-                        state_next              <= SEND_DATA_TX;
-                    end
+                        reg_tx_selector_data_next <= 0;
 
-                    19: // Envie todo
-                    begin
-                        reg_tx_selector_data_next  <= 0;
-
-                        if(mode  == MGMT_STEP) begin
-                            state_next  <= STEP;
-                        end else 
-                        begin
-                            state_next  <= IDLE;
+                        if(mode == MGMT_STEP) begin
+                            state_next <= STEP;
+                        end else begin
+                            state_next <= IDLE;
                         end
                     end
 
                     default:
                     begin
-                        reg_tx_selector_data_next   <= 0;
-                        state_next                  <= IDLE;
+                        reg_tx_selector_data_next <= 0;
+                        state_next                <= IDLE;
                     end
                 endcase 
             end

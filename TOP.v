@@ -40,7 +40,6 @@ module TOP
 
     //wires latch data
         wire    [BITS_SIZE-1:0]     ifid_instruc;
-        wire    [BITS_SIZE-1:0]     ifid_pc4;
         wire    [BITS_SIZE-1:0]     idex_instruc;
         wire    [BITS_SIZE-1:0]     idex_dato_rs;
         wire    [BITS_SIZE-1:0]     idex_dato_rt;
@@ -100,7 +99,6 @@ module TOP
         .o_data_register                (data_register),
         .o_data_MEM_debug               (data_mem),
         .o_IFID_instruct                (ifid_instruc),
-        .o_IFID_PC4                     (ifid_pc4),
         .o_IDEX_instruct                (idex_instruc),
         .o_IDEX_dato_rs                 (idex_dato_rs),
         .o_IDEX_dato_rt                 (idex_dato_rt),
@@ -154,8 +152,7 @@ module TOP
         .i_halt                 (halt),
 
 
-        .i_ifid_instruct                (ifid_instruc),
-        .i_ifid_pc4                     (ifid_pc4),
+        .i_ifid_instruct                (ifid_instruc),  
         .i_idex_instruct                (idex_instruc),
         .i_idex_dato_rs                 (idex_dato_rs),
         .i_idex_dato_rt                 (idex_dato_rt),
