@@ -33,7 +33,22 @@ module TOP_MIPS
         output  wire     [BITS_SIZE-1:0]            o_pc,
         output  wire     [BITS_SIZE-1:0]            o_data_register,
         output  wire     [BITS_SIZE-1:0]            o_data_MEM_debug,
-        output  wire                                o_mips_halt
+        output  wire                                o_mips_halt,
+
+        output  wire     [BITS_SIZE-1:0]            o_IFID_instruct,
+        output  wire     [BITS_SIZE-1:0]            o_IDEX_instruct,
+        output  wire     [BITS_SIZE-1:0]            o_IDEX_dato_rs,
+        output  wire     [BITS_SIZE-1:0]            o_IDEX_dato_rt,
+        output  wire     [BITS_SIZE-1:0]            o_IDEX_extend,
+        output  wire     [BITS_SIZE-1:0]            o_EXMEM_instruc,
+        output  wire     [BITS_SIZE-1:0]            o_EXMEM_alu_result,
+        output  wire     [BITS_SIZE-1:0]            o_EXMEM_pcbranch,
+        output  wire     [BITS_SIZE-1:0]            o_EXMEM_dato_rt,
+        output  wire     [BITS_SIZE-1:0]            o_EXMEM_extend,
+        output  wire     [BITS_SIZE-1:0]            o_MEMWB_instruct,
+        output  wire     [BITS_SIZE-1:0]            o_MEMWB_alu_result,
+        output  wire     [BITS_SIZE-1:0]            o_MEMWB_datamem,
+        output  wire     [BITS_SIZE-1:0]            o_MEMWB_extend
     );
 
 // ---------IF-----------------------------------------------
@@ -222,7 +237,7 @@ module TOP_MIPS
     assign ID_register_rs           =    IFID_Instr[BITS_INMEDIATE+BITS_REGS+BITS_REGS-1:BITS_INMEDIATE+BITS_REGS];//BITS_INMEDIATE+RT+RS-1=16+5+5-1=25; BITS_INMEDIATE+RT=16+5=21; [25-21]
     assign ID_register_rt           =    IFID_Instr[BITS_INMEDIATE+BITS_REGS-1:BITS_INMEDIATE];//BITS_INMEDIATE+RT-1=16+5-1=20; BITS_INMEDIATE=16; [20-16]
     assign ID_register_rd           =    IFID_Instr[BITS_INMEDIATE-1:BITS_INMEDIATE-BITS_REGS]; //BITS_INMEDIATE-1=16-1=15; BITS_INMEDIATE-RD=16-5=11; [15-11]
-    assign o_data_register          =    ID_data_register_Debug;
+
     //SumadorJump
     assign EX_alu_shamt             =    IDEX_instruction[10:6];
     //Extensor
@@ -232,10 +247,26 @@ module TOP_MIPS
     //Control ALU
     assign EX_ctl_alu_instruction   =    IDEX_extension[BITS_ALU-1:0];
     assign EX_ctl_alu_opcode        =    IDEX_instruction[BITS_SIZE-1:BITS_REGS+BITS_REGS+BITS_INMEDIATE];
-    
+    assign o_EXMEM_instruc          =   EXMEM_Instr;
+    assign o_EXMEM_alu_result       =   EXMEM_alu;
+    assign o_EXMEM_pcbranch         =   MEMWB_ctl_halt;
+    assign o_EXMEM_dato_rt          =   EXMEM_register2;
+    assign o_EXMEM_extend           =   EXMEM_extension;
+
     //OUTPUT
-    assign o_data_MEM_debug           =   MEM_dato_mem_Debug;    
-    assign o_mips_halt                =   MEMWB_ctl_halt;
+    assign o_IFID_instruct          =   IFID_Instr;
+    assign o_data_register          =   ID_data_register_Debug;
+    assign o_IDEX_instruct          =   IDEX_instruction;
+    assign o_IDEX_dato_rs           =   IDEX_register1;
+    assign o_IDEX_dato_rt           =   IDEX_register2;
+    assign o_IDEX_extend            =   IDEX_extension;
+    assign o_MEMWB_instruct         =   MEMWB_instruction;
+    assign o_MEMWB_alu_result       =   MEMWB_alu;
+    assign o_MEMWB_datamem          =   MEMWB_dato_mem;
+    assign o_MEMWB_extend           =   MEMWB_extension;
+    assign o_data_MEM_debug         =   MEM_dato_mem_Debug; 
+    assign o_mips_halt              =   MEMWB_ctl_halt;
+   
 
 //ETAPA IF
     IF#(
@@ -278,7 +309,7 @@ module TOP_MIPS
         .i_instruction              (IF_Instr),
         .o_pc4                      (IFID_PC4),
         .o_pc8                      (IFID_PC8),
-        .o_instruction              (IFID_Instr)
+        .o_instruction              (IFID_Instr) 
     );
 
 

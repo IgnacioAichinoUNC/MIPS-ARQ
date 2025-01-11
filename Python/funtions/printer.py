@@ -53,6 +53,25 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
             for i in range(mem_data_to_show)
         ]
 
+        pipeline_data = {
+            'ifid_instruc': ' '.join(format(byte, '08b') for byte in data[50]),
+            'idex_instruc': ' '.join(format(byte, '08b') for byte in data[51]),
+            'idex_dato_rs': ' '.join(format(byte, '08b') for byte in data[52]),
+            'idex_dato_rt': ' '.join(format(byte, '08b') for byte in data[53]),
+            'idex_extend': ' '.join(format(byte, '08b') for byte in data[54]),
+            'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[55]),
+            'exmem_alu': ' '.join(format(byte, '08b') for byte in data[56]),
+            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[57]),
+            'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[58]),
+            'exmem_extend': ' '.join(format(byte, '08b') for byte in data[59]),
+            'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[60]),
+            'memwb_alu': ' '.join(format(byte, '08b') for byte in data[61]),
+            'memwb_extend': ' '.join(format(byte, '08b') for byte in data[62]),
+            'memwb_datamem': ' '.join(format(byte, '08b') for byte in data[63]),
+        }
+
+        
+
         #Print the extracted information
         print(
             f"\nClockCycles: {clk_count} = {int(clk_count.replace(' ',''), 2)}")
@@ -66,13 +85,26 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
             for i in range(mem_data_to_show):
                 print(f"{i}:  {memory[i]} = {int(memory[i].replace(' ',''), 2)}")
 
+        # Imprimir la información por etapas
+        stages_info = {
+            'IF/ID': ['ifid_instruc'],
+            'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend'],
+            'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_pcbranch', 'exmem_dato_rt', 'exmem_extend'],
+            'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
+        }
+        for stage, variables in stages_info.items():
+            console.print(f"[bold blue]--- {stage} Stage ---[/bold blue]")
+            for var in variables:
+                binary_value = pipeline_data[var]
+                decimal_value = int(binary_value.replace(' ', ''), 2)
+                hex_value = hex(decimal_value)
+                console.print(f"[bold red]{var}[/bold red]: {binary_value} = {decimal_value} = {hex_value}")
+
 #Cuando es por pasos
 def print_data_step(data_received, prev_data_received, registers_to_show, mem_data_to_show):
     if data_received:
         console = Console()
-        #Dividir 'data_received' en bloques de 4 elementos (4 bytes)
         data = [data_received[i:i+4] for i in range(0, len(data_received), 4)]
-
         #Dividir 'prev_data_received'
         prev_data = (
             [prev_data_received[i:i+4] for i in range(0, len(prev_data_received), 4)]
@@ -93,7 +125,6 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
             ' '.join(format(byte, '08b') for byte in data[i+2]) 
             for i in range(32)
         ]
-
         prev_registers_value = (
             [
                 ' '.join(format(byte, '08b') for byte in prev_data[i+2]) 
@@ -105,13 +136,32 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
             ' '.join(format(byte, '08b') for byte in data[i+34]) 
             for i in range(16)
         ]
-
         prev_memory = (
             [
                 ' '.join(format(byte, '08b') for byte in prev_data[i+34]) 
                 for i in range(16)
             ] if prev_data != 0 else []
         )
+
+        pipeline_data = {
+            'ifid_instruc': ' '.join(format(byte, '08b') for byte in data[50]),
+            'idex_instruc': ' '.join(format(byte, '08b') for byte in data[51]),
+            'idex_dato_rs': ' '.join(format(byte, '08b') for byte in data[52]),
+            'idex_dato_rt': ' '.join(format(byte, '08b') for byte in data[53]),
+            'idex_extend': ' '.join(format(byte, '08b') for byte in data[54]),
+            'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[55]),
+            'exmem_alu': ' '.join(format(byte, '08b') for byte in data[56]),
+            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[57]),
+            'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[58]),
+            'exmem_extend': ' '.join(format(byte, '08b') for byte in data[59]),
+            'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[60]),
+            'memwb_alu': ' '.join(format(byte, '08b') for byte in data[61]),
+            'memwb_extend': ' '.join(format(byte, '08b') for byte in data[62]),
+            'memwb_datamem': ' '.join(format(byte, '08b') for byte in data[63]),
+        }
+
+
+        print(f"Total de bloques: {len(data)}")
         print(f"\nClockCycles: {clk_count} = {int(clk_count.replace(' ',''), 2)}")
 
         if(prev_data != 0):
@@ -147,3 +197,17 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
                         console.print(f"r{i}: {memory[i]} = {int(memory[i].replace(' ',''), 2)}",style="bold yellow") #cuando cambia un registro en la memoria cambio en amarillo
                 else:
                     print(f"r{i}:  {memory[i]} = {int(memory[i].replace(' ',''), 2)}")                  
+
+        stages_info = {
+            'IF/ID': ['ifid_instruc'],
+            'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend'],
+            'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_pcbranch', 'exmem_dato_rt', 'exmem_extend'],
+            'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
+        }
+        for stage, variables in stages_info.items():
+            console.print(f"[bold blue]--- {stage} Stage ---[/bold blue]")
+            for var in variables:
+                binary_value = pipeline_data[var]
+                decimal_value = int(binary_value.replace(' ', ''), 2)
+                hex_value = hex(decimal_value)
+                console.print(f"[bold red]{var}[/bold red]: {binary_value} = {decimal_value} = {hex_value}")

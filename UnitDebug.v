@@ -25,6 +25,22 @@ module UnitDebug
         input                                   i_halt,
 
 
+        //LATCHS DATA
+        input           [BITS_SIZE-1:0]         i_ifid_instruct,
+        input           [BITS_SIZE-1:0]         i_idex_instruct,
+        input           [BITS_SIZE-1:0]         i_idex_dato_rs,
+        input           [BITS_SIZE-1:0]         i_idex_dato_rt,
+        input           [BITS_SIZE-1:0]         i_idex_extend,
+        input           [BITS_SIZE-1:0]         i_exmem_instruc,
+        input           [BITS_SIZE-1:0]         i_exmem_alu_result,
+        input           [BITS_SIZE-1:0]         i_exmem_pcbranch,
+        input           [BITS_SIZE-1:0]         i_exmem_dato_rt,
+        input           [BITS_SIZE-1:0]         i_exmem_extend,
+        input           [BITS_SIZE-1:0]         i_memwb_instruct,
+        input           [BITS_SIZE-1:0]         i_memwb_alu_result,
+        input           [BITS_SIZE-1:0]         i_memwb_datamem,
+        input           [BITS_SIZE-1:0]         i_memwb_extend,
+
         output                                  o_ctl_clk_wiz,
         output                                  o_uart_rx_reset,
         output                                  o_flag_tx_ready,
@@ -71,7 +87,7 @@ module UnitDebug
     reg                             reg_flag_tx_ready, reg_flag_tx_ready_next;
     reg    [BITS_SIZE-1:0]          tx_data_32, tx_data_32_next;
     reg    [1:0]                    reg_tx_counter_bytes, reg_tx_counter_bytes_next;
-    reg    [2:0]                    reg_tx_selector_data, reg_tx_selector_data_next;
+    reg    [4:0]                    reg_tx_selector_data, reg_tx_selector_data_next;
     reg    [REG_COUNT_SIZE-1:0]     reg_tx_register_counter, reg_tx_register_counter_next;
     reg    [MEM_COUNT_SIZE-1:0]     reg_tx_counter_mem, reg_tx_counter_mem_next;
 
@@ -229,8 +245,8 @@ module UnitDebug
             LOAD_DATA_TX:
             begin
                 debug_state_next <= 6;
-                
-                case(reg_tx_selector_data)
+
+                case (reg_tx_selector_data)
                     0: // Envia el dato de PC del MIPS
                     begin
                         tx_data_32_next           <= i_mips_pc;
@@ -238,51 +254,68 @@ module UnitDebug
                         state_next                <= SEND_DATA_TX;
                     end
 
-                    1: //se envia numero de ciclos realizados en total desde el inicio
+                    1: // Envia el número de ciclos realizados
                     begin
                         tx_data_32_next           <= i_clk_wiz_count;
                         reg_tx_selector_data_next <= reg_tx_selector_data + 1;
                         state_next                <= SEND_DATA_TX;
                     end
 
-                    2: // envio data de los 32 registros
+                    2: // Envio data de los 32 registros
                     begin
-                        tx_data_32_next             <= i_data_bankregisters;
-                        reg_tx_register_counter_next    <= reg_tx_register_counter + 1;
-                        
-                        if(reg_tx_register_counter == BANK_REGISTERS_SIZE-1) begin
+                        tx_data_32_next              <= i_data_bankregisters;
+                        reg_tx_register_counter_next <= reg_tx_register_counter + 1;
+
+                        if (reg_tx_register_counter == BANK_REGISTERS_SIZE-1) begin
                             reg_tx_selector_data_next <= reg_tx_selector_data + 1;
                         end
-                        state_next  <= SEND_DATA_TX;
+                        state_next <= SEND_DATA_TX;
                     end
 
-                    3: //Envio el contenido de memoria de datos
+                    3: // Envio el contenido de memoria de datos
                     begin
                         tx_data_32_next         <= i_data_mem;
                         reg_tx_counter_mem_next <= reg_tx_counter_mem + 1;
 
-                        if(reg_tx_counter_mem == MEM_DATA_SIZE-1) begin
+                        if (reg_tx_counter_mem == MEM_DATA_SIZE-1) begin
                             reg_tx_selector_data_next <= reg_tx_selector_data + 1;
                         end
-                        state_next  <= SEND_DATA_TX;
+                        state_next <= SEND_DATA_TX;
                     end
 
-                    4: //envie todo 
-                    begin
-                        reg_tx_selector_data_next  <= 0;
+                    default: begin
+                        case (reg_tx_selector_data)
+                            4: tx_data_32_next <= i_ifid_instruct;
+                            5: tx_data_32_next <= i_idex_instruct;
+                            6: tx_data_32_next <= i_idex_dato_rs;
+                            7: tx_data_32_next <= i_idex_dato_rt;
+                            8: tx_data_32_next <= i_idex_extend;
+                            9: tx_data_32_next <= i_exmem_instruc;
+                            10: tx_data_32_next <= i_exmem_alu_result;
+                            11: tx_data_32_next <= i_exmem_pcbranch;
+                            12: tx_data_32_next <= i_exmem_dato_rt;
+                            13: tx_data_32_next <= i_exmem_extend;
+                            14: tx_data_32_next <= i_memwb_instruct;
+                            15: tx_data_32_next <= i_memwb_alu_result;
+                            16: tx_data_32_next <= i_memwb_extend;
+                            17: tx_data_32_next <= i_memwb_datamem;
 
-                        if(mode  == MGMT_STEP) begin
-                            state_next  <= STEP;
-                        end else 
-                        begin
-                            state_next  <= IDLE;
+                            18: begin
+                                reg_tx_selector_data_next <= 0;
+                                state_next <= (mode == MGMT_STEP) ? STEP : IDLE;
+                            end
+
+                            default: begin
+                                reg_tx_selector_data_next <= 0;
+                                state_next <= IDLE;
+                            end
+                        endcase
+
+                        // Incrementar selector y avanzar estado si no es el caso 18
+                        if (reg_tx_selector_data >= 4 && reg_tx_selector_data < 18) begin
+                            reg_tx_selector_data_next <= reg_tx_selector_data + 1;
+                            state_next <= SEND_DATA_TX;
                         end
-                    end
-
-                    default:
-                    begin
-                        reg_tx_selector_data_next   <= 0;
-                        state_next                  <= IDLE;
                     end
                 endcase
             end
