@@ -77,8 +77,8 @@ RISC_DICTIONARY = {
 
 def send(file_bin, serial):
 
-    #La D (data) se envia para indicar el estado a la unit debug para cargar
-    serial.write('d'.encode())
+    #La r (RUN) se envia para indicar el estado a la unit debug para cargar
+    serial.write('r'.encode())
 
     time.sleep(0.1)
     with open(file_bin, 'rb') as file:

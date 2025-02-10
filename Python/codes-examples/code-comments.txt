@@ -1,0 +1,38 @@
+# LDE (Lectura después de Escritura)
+ADDI r1, r0, 5        # r1 = r0 + 5 → r1 = 5
+AND r2, r1, r1        # r2 = r1 AND r1 → r2 = 5 (depende de r1, riesgo LDE)
+OR r3, r1, r2         # r3 = r1 OR r2 → r3 = 5 (otra dependencia de r1)
+
+# EDL (Escritura después de Lectura)
+LW r4, 0(r5)          # r4 = Memoria[r5] → r4 depende de la memoria
+SLL r4, r4, 2         # r4 = r4 << 2 → r4 se sobrescribe después de usarse (riesgo EDL)
+
+# EDE (Escritura después de Escritura)
+ADDI r6, r0, 10       # r6 = r0 + 10 → r6 = 10
+SUBU r6, r6, r1       # r6 = r6 - r1 → r6 = 10 - 5 = 5 (se sobrescribe inmediatamente)
+
+# Instrucciones tipo I
+ORI r7, r0, 15        # r7 = r0 OR 15 → r7 = 15
+SLTI r8, r7, 10       # r8 = (r7 < 10) ? 1 : 0 → r8 = 0
+
+-----------------------------------------------------------------------------
+BEQ r8, r0, 3         # salta (r8 = r0)
+ADDI r9, r8, 2        # r9 = r8 + 2 → r9 = 2
+
+LUI r10, 0xFFFF       # r10 = 0xFFFF0000 → r10 = 11111111 11111111 00000000 00000000
+SB r10, 4(r5)         # Guarda el byte menos significativo de r10 en Memoria[r5 + 4]
+
+# Instrucciones tipo J
+J 5                   # Salta a la posición 5
+ADDI r11, r0, 20      # (Se omite porque se salta)
+
+JAL 7                 # Salta a la posición 7 y guarda PC+4 en r31
+SLL r12, r12, 1       # (Se omite porque se salta)
+
+JR r31                # Retorna a la dirección almacenada en r31
+
+# Instrucciones tipo R
+SLL r13, r1, 3        # r13 = r1 << 3 → r13 = 5 << 3 = 40
+SRL r14, r13, 2       # r14 = r13 >> 2 → r14 = 40 >> 2 = 10
+XOR r15, r14, r9      # r15 = r14 XOR r9 → r15 = 10 XOR 2 = 8
+SLT r16, r15, r8      # r16 = (r15 < r8) ? 1 : 0 → r16 = 0

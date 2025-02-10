@@ -17,8 +17,7 @@ module TOP
         input   wire                    i_clk,
         input   wire                    i_reset,
         input   wire                    i_uart_rx,
-        output  wire                    o_uart_tx,
-        output  wire        [3:0]       o_debug_state  //conozco el estado en el que esta el debug
+        output  wire                    o_uart_tx
     );
 
         localparam  MEM_INSTR_SIZE      = $clog2(SIZE_MEM_INSTRUC);
@@ -176,8 +175,7 @@ module TOP
         .o_flag_instr_write     (flag_write_mem_instr),
         .o_select_addr_registers  (select_addr_registers), 
         .o_select_addr_mem_instr (select_addr_mem_instr),
-        .o_dato_mem_instruction (dato_mem_ins),
-        .o_debug_state          (o_debug_state)
+        .o_dato_mem_instruction (dato_mem_ins)
      );
 
     always @(posedge wire_clk_wz)

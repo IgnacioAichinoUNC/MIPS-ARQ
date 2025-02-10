@@ -92,13 +92,20 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
             'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_pcbranch', 'exmem_dato_rt', 'exmem_extend'],
             'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
         }
+        
+        show_decimal_vars = {'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'exmem_alu', 'exmem_dato_rt', 'memwb_alu', 'memwb_datamem'}
+
         for stage, variables in stages_info.items():
             console.print(f"[bold blue]--- {stage} Stage ---[/bold blue]")
             for var in variables:
                 binary_value = pipeline_data[var]
-                decimal_value = int(binary_value.replace(' ', ''), 2)
-                hex_value = hex(decimal_value)
-                console.print(f"[bold red]{var}[/bold red]: {binary_value} = {decimal_value} = {hex_value}")
+                if var in show_decimal_vars:
+                    decimal_value = int(binary_value.replace(' ', ''), 2)
+                    console.print(f"[bold red]{var}[/bold red]: {binary_value} = {decimal_value}")
+                else:
+                    console.print(f"[bold red]{var}[/bold red]: {binary_value}")
+                
+
 
 #Cuando es por pasos
 def print_data_step(data_received, prev_data_received, registers_to_show, mem_data_to_show):
@@ -204,10 +211,16 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
             'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_pcbranch', 'exmem_dato_rt', 'exmem_extend'],
             'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
         }
+
+        show_decimal_vars = {'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'exmem_alu', 'exmem_dato_rt', 'memwb_alu', 'memwb_datamem'}
+
         for stage, variables in stages_info.items():
             console.print(f"[bold blue]--- {stage} Stage ---[/bold blue]")
             for var in variables:
                 binary_value = pipeline_data[var]
-                decimal_value = int(binary_value.replace(' ', ''), 2)
-                hex_value = hex(decimal_value)
-                console.print(f"[bold red]{var}[/bold red]: {binary_value} = {decimal_value} = {hex_value}")
+                if var in show_decimal_vars:
+                    decimal_value = int(binary_value.replace(' ', ''), 2)
+                    console.print(f"[bold red]{var}[/bold red]: {binary_value} = {decimal_value}")
+                else:
+                    console.print(f"[bold red]{var}[/bold red]: {binary_value}")
+                
