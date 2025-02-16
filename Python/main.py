@@ -75,7 +75,7 @@ def send_program_boton():
 
     while True:
         if mode == 'IDLE':
-            console.print("La consola permite ejecutar el programa en 2 modos posibles")
+            console.print("\n\nLa consola permite ejecutar el programa en 2 modos posibles")
             console.print("Ingrese el modo que desea ejecutar:", style="bold green")
             console.print("Modo Step by Step ( Ingrese caracter 's' )", style="bold blue")
             console.print("Modo Continuo ( Ingrese caracter 'c' )", style="bold blue")

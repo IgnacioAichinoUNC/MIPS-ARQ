@@ -40,7 +40,7 @@ module TOP_MIPS
         output  wire     [BITS_SIZE-1:0]            o_IDEX_dato_rs,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_dato_rt,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_extend,
-        output  wire     [BITS_SIZE-1:0]            o_IDEX_JUMP
+        output  wire     [BITS_SIZE-1:0]            o_IDEX_JUMP,
         output  wire     [BITS_SIZE-1:0]            o_EXMEM_instruc,
         output  wire     [BITS_SIZE-1:0]            o_EXMEM_alu_result,
         output  wire     [BITS_SIZE-1:0]            o_EXMEM_pcbranch,

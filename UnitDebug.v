@@ -299,7 +299,7 @@ module UnitDebug
                         endcase
 
                         // Incrementar selector y avanzar estado si no es el caso 18
-                        if (reg_tx_selector_data >= 4 && reg_tx_selector_data < 18) begin
+                        if (reg_tx_selector_data >= 4 && reg_tx_selector_data < 19) begin
                             reg_tx_selector_data_next <= reg_tx_selector_data + 1;
                             state_next <= SEND_DATA_TX;
                         end

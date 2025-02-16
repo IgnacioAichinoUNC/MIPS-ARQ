@@ -13,7 +13,7 @@ module sign_extensor #(
 
     reg [BITS_OUT-1:0] reg_extension_result;
 
-    always @(*)
+    always @(*)   
     begin
         case(i_extension_mode) //Dependiendo el tipo de instrucción recibida tengo que extender la instrucción de una forma u otra
 

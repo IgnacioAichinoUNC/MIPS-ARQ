@@ -9,8 +9,8 @@ addi r11,r0,20
 j 14
 nop
 nop              
-sll r12,r12,1       
-sll r13,r1,3        
+add r13,r1,r3       
+add r14,r13,r1       
 srl r14,r13,2       
 xor r15,r14,r9      
 slt r16,r15,r8
