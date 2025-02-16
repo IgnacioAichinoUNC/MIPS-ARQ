@@ -84,7 +84,7 @@ def send(file_bin, serial):
     with open(file_bin, 'rb') as file:
         data = file.read().replace(b'\r\n', b'')
         num_byte = []
-        for i in track(range(int(len(data)/8)), description="ENVIANDO..."):
+        for i in track(range(int(len(data)/8)), description="Loading program"):
             num = int(data[i*8:(i+1)*8], 2).to_bytes(1, byteorder='big')
             serial.write(num)
             time.sleep(0.05)

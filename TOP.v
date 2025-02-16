@@ -43,6 +43,7 @@ module TOP
         wire    [BITS_SIZE-1:0]     idex_dato_rs;
         wire    [BITS_SIZE-1:0]     idex_dato_rt;
         wire    [BITS_SIZE-1:0]     idex_extend;
+        wire    [BITS_SIZE-1:0]     idex_jump;
         wire    [BITS_SIZE-1:0]     exmem_instruc;
         wire    [BITS_SIZE-1:0]     exmem_alu;
         wire    [BITS_SIZE-1:0]     exmem_pcbranch;
@@ -102,6 +103,7 @@ module TOP
         .o_IDEX_dato_rs                 (idex_dato_rs),
         .o_IDEX_dato_rt                 (idex_dato_rt),
         .o_IDEX_extend                  (idex_extend),
+        .o_IDEX_JUMP                    (idex_jump),
         .o_EXMEM_instruc                (exmem_instruc),
         .o_EXMEM_alu_result             (exmem_alu),
         .o_EXMEM_pcbranch               (exmem_pcbranch),
@@ -156,6 +158,7 @@ module TOP
         .i_idex_dato_rs                 (idex_dato_rs),
         .i_idex_dato_rt                 (idex_dato_rt),
         .i_idex_extend                  (idex_extend),
+        .i_idex_jump                    (idex_jump),
         .i_exmem_instruc                (exmem_instruc),
         .i_exmem_alu_result             (exmem_alu),
         .i_exmem_pcbranch               (exmem_pcbranch),

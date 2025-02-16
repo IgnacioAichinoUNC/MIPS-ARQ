@@ -59,36 +59,36 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
             'idex_dato_rs': ' '.join(format(byte, '08b') for byte in data[52]),
             'idex_dato_rt': ' '.join(format(byte, '08b') for byte in data[53]),
             'idex_extend': ' '.join(format(byte, '08b') for byte in data[54]),
-            'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[55]),
-            'exmem_alu': ' '.join(format(byte, '08b') for byte in data[56]),
-            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[57]),
-            'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[58]),
-            'exmem_extend': ' '.join(format(byte, '08b') for byte in data[59]),
-            'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[60]),
-            'memwb_alu': ' '.join(format(byte, '08b') for byte in data[61]),
-            'memwb_extend': ' '.join(format(byte, '08b') for byte in data[62]),
-            'memwb_datamem': ' '.join(format(byte, '08b') for byte in data[63]),
+            'idex_jump': ' '.join(format(byte, '08b') for byte in data[55]),
+            'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[56]),
+            'exmem_alu': ' '.join(format(byte, '08b') for byte in data[57]),
+            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[58]),
+            'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[59]),
+            'exmem_extend': ' '.join(format(byte, '08b') for byte in data[60]),
+            'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[61]),
+            'memwb_alu': ' '.join(format(byte, '08b') for byte in data[62]),
+            'memwb_extend': ' '.join(format(byte, '08b') for byte in data[63]),
+            'memwb_datamem': ' '.join(format(byte, '08b') for byte in data[64]),
         }
 
-        
 
         #Print the extracted information
         print(
             f"\nClockCycles: {clk_count} = {int(clk_count.replace(' ',''), 2)}")
         print(f"\nPC: {pc} = {int(pc.replace(' ',''), 2)}")
         if (registers_to_show > 0):
-            console.print("REGISTER FILE",style="bold red")
+            console.print("Banco de Registos",style="bold blue")
             for i in range(registers_to_show):
-                print(f"{i}:  {registers_value[i]} = {int(registers_value[i].replace(' ',''), 2)}")                  
+                print(f"register{i}: Binary value {registers_value[i]}= {int(registers_value[i].replace(' ',''), 2)}")                  
         if (mem_data_to_show > 0):
-            console.print("DATA MEMORY",style="bold red")
+            console.print("Memoria de Datos",style="bold blue")
             for i in range(mem_data_to_show):
-                print(f"{i}:  {memory[i]} = {int(memory[i].replace(' ',''), 2)}")
+                print(f"Address{i}:{memory[i]}= {int(memory[i].replace(' ',''), 2)}")
 
-        # Imprimir la información por etapas
+        #Imprimir la información por etapas
         stages_info = {
             'IF/ID': ['ifid_instruc'],
-            'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend'],
+            'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'idex_jump'],
             'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_pcbranch', 'exmem_dato_rt', 'exmem_extend'],
             'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
         }
@@ -150,23 +150,24 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
             ] if prev_data != 0 else []
         )
 
+        
         pipeline_data = {
             'ifid_instruc': ' '.join(format(byte, '08b') for byte in data[50]),
             'idex_instruc': ' '.join(format(byte, '08b') for byte in data[51]),
             'idex_dato_rs': ' '.join(format(byte, '08b') for byte in data[52]),
             'idex_dato_rt': ' '.join(format(byte, '08b') for byte in data[53]),
             'idex_extend': ' '.join(format(byte, '08b') for byte in data[54]),
-            'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[55]),
-            'exmem_alu': ' '.join(format(byte, '08b') for byte in data[56]),
-            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[57]),
-            'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[58]),
-            'exmem_extend': ' '.join(format(byte, '08b') for byte in data[59]),
-            'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[60]),
-            'memwb_alu': ' '.join(format(byte, '08b') for byte in data[61]),
-            'memwb_extend': ' '.join(format(byte, '08b') for byte in data[62]),
-            'memwb_datamem': ' '.join(format(byte, '08b') for byte in data[63]),
+            'idex_jump': ' '.join(format(byte, '08b') for byte in data[55]),
+            'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[56]),
+            'exmem_alu': ' '.join(format(byte, '08b') for byte in data[57]),
+            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[58]),
+            'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[59]),
+            'exmem_extend': ' '.join(format(byte, '08b') for byte in data[60]),
+            'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[61]),
+            'memwb_alu': ' '.join(format(byte, '08b') for byte in data[62]),
+            'memwb_extend': ' '.join(format(byte, '08b') for byte in data[63]),
+            'memwb_datamem': ' '.join(format(byte, '08b') for byte in data[64]),
         }
-
 
         print(f"Total de bloques: {len(data)}")
         print(f"\nClockCycles: {clk_count} = {int(clk_count.replace(' ',''), 2)}")
@@ -174,9 +175,11 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
         if(prev_data != 0):
             if( pc == pc_prev):
                 console.print("PC",style="white")
+                console.print(f"BURBUJA DETECT", style="bold underline red on red")  #Fondo rojo para burbuja
                 console.print(f"{pc} = {int(pc.replace(' ',''), 2)}", style="bold underline red on red")  #Fondo rojo para burbuja
             elif(int(pc.replace(' ',''), 2) != int(pc_prev.replace(' ',''), 2)+4):
                 console.print("PC",style="white")
+                console.print(f"BRANCH DETECT", style="bold underline red on red")  #Fondo rojo para burbuja
                 console.print(f"{pc} = {int(pc.replace(' ',''), 2)}",style="bold underline red on green") #si hago un salto, cambio de pc, fondo verde
             else:
                 print(f"\nPC: \n{pc} = {int(pc.replace(' ',''), 2)}")
@@ -184,30 +187,30 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
             print(f"\nPC: \n{pc} = {int(pc.replace(' ',''), 2)}")
 
         if (registers_to_show > 0):
-            console.print("REGISTER FILE",style="bold red")
+            console.print("REGISTER FILE",style="bold blue")
             for i in range(registers_to_show):
                 if(prev_data != 0):                    
                     if(registers_value[i] == prev_registers_value[i] ):
-                        print(f"r{i}:  {registers_value[i]} = {int(registers_value[i].replace(' ',''), 2)}") #si no cambia no lo pinto de otro color
+                        print(f"register{i}: Binary value {registers_value[i]}= {int(registers_value[i].replace(' ',''), 2)}") #si no cambia no lo pinto de otro color
                     else:
-                        console.print(f"r{i}: {registers_value[i]} = {int(registers_value[i].replace(' ',''), 2)}",style="bold yellow") #cuando cambia un registro cambio en amarillo
+                        console.print(f"register{i}: Binary value {registers_value[i]} = {int(registers_value[i].replace(' ',''), 2)}",style="bold yellow") #cuando cambia un registro cambio en amarillo
                 else:
                     print(f"r{i}:  {registers_value[i]} = {int(registers_value[i].replace(' ',''), 2)}")                   
 
         if (mem_data_to_show > 0):
-            console.print("DATA MEMORY",style="bold red")
+            console.print("Memoria de Datos",style="bold blue")
             for i in range(mem_data_to_show):
                 if(prev_data != 0): 
                     if(memory[i] == prev_memory[i] or prev_data == 0):
-                        print(f"r{i}:  {memory[i]} = {int(memory[i].replace(' ',''), 2)}")
+                        print(f"Address{i}:{memory[i]} = {int(memory[i].replace(' ',''), 2)}")
                     else:
-                        console.print(f"r{i}: {memory[i]} = {int(memory[i].replace(' ',''), 2)}",style="bold yellow") #cuando cambia un registro en la memoria cambio en amarillo
+                        console.print(f"Address{i}:{memory[i]} = {int(memory[i].replace(' ',''), 2)}",style="bold yellow") #cuando cambia un registro en la memoria cambio en amarillo
                 else:
                     print(f"r{i}:  {memory[i]} = {int(memory[i].replace(' ',''), 2)}")                  
 
         stages_info = {
             'IF/ID': ['ifid_instruc'],
-            'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend'],
+            'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'idex_jump'],
             'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_pcbranch', 'exmem_dato_rt', 'exmem_extend'],
             'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
         }

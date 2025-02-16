@@ -31,6 +31,7 @@ module UnitDebug
         input           [BITS_SIZE-1:0]         i_idex_dato_rs,
         input           [BITS_SIZE-1:0]         i_idex_dato_rt,
         input           [BITS_SIZE-1:0]         i_idex_extend,
+        input           [BITS_SIZE-1:0]         i_idex_jump,
         input           [BITS_SIZE-1:0]         i_exmem_instruc,
         input           [BITS_SIZE-1:0]         i_exmem_alu_result,
         input           [BITS_SIZE-1:0]         i_exmem_pcbranch,
@@ -275,17 +276,18 @@ module UnitDebug
                             6: tx_data_32_next <= i_idex_dato_rs;
                             7: tx_data_32_next <= i_idex_dato_rt;
                             8: tx_data_32_next <= i_idex_extend;
-                            9: tx_data_32_next <= i_exmem_instruc;
-                            10: tx_data_32_next <= i_exmem_alu_result;
-                            11: tx_data_32_next <= i_exmem_pcbranch;
-                            12: tx_data_32_next <= i_exmem_dato_rt;
-                            13: tx_data_32_next <= i_exmem_extend;
-                            14: tx_data_32_next <= i_memwb_instruct;
-                            15: tx_data_32_next <= i_memwb_alu_result;
-                            16: tx_data_32_next <= i_memwb_extend;
-                            17: tx_data_32_next <= i_memwb_datamem;
+                            9: tx_data_32_next <= i_idex_jump;
+                            10: tx_data_32_next <= i_exmem_instruc;
+                            11: tx_data_32_next <= i_exmem_alu_result;
+                            12: tx_data_32_next <= i_exmem_pcbranch;
+                            13: tx_data_32_next <= i_exmem_dato_rt;
+                            14: tx_data_32_next <= i_exmem_extend;
+                            15: tx_data_32_next <= i_memwb_instruct;
+                            16: tx_data_32_next <= i_memwb_alu_result;
+                            17: tx_data_32_next <= i_memwb_extend;
+                            18: tx_data_32_next <= i_memwb_datamem;
 
-                            18: begin
+                            19: begin
                                 reg_tx_selector_data_next <= 0;
                                 state_next <= (mode == MGMT_STEP) ? STEP : IDLE;
                             end

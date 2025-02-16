@@ -66,12 +66,12 @@ module EX
         .o_result           (o_alu_result)
     );
 
-    mux_alu_shamt
+    mux_alu_datoA
     #(
         .BITS_SIZE              (BITS_SIZE),
         .BITS_CORTOCIRCUITO     (BITS_CORTOCIRCUITO)
     )
-    mux_alu_shamt
+    mux_alu_datoA
     (
         .i_corto_register_A     (i_corto_register_A),
         .i_idex_register1       (i_register1),
@@ -80,12 +80,12 @@ module EX
         .o_mux_alu_a            (mux_data_a)
     );
     
-    mux_alu
+    mux_alu_datoB
     #(
         .BITS_SIZE              (BITS_SIZE),
         .BITS_CORTOCIRCUITO     (BITS_CORTOCIRCUITO)
     )
-    mux_alu
+    mux_alu_datoB
     (
         .i_alu_src              (i_idex_ctl_alu_src),
         .i_corto_register_B     (i_corto_register_B),

@@ -40,6 +40,7 @@ module TOP_MIPS
         output  wire     [BITS_SIZE-1:0]            o_IDEX_dato_rs,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_dato_rt,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_extend,
+        output  wire     [BITS_SIZE-1:0]            o_IDEX_JUMP
         output  wire     [BITS_SIZE-1:0]            o_EXMEM_instruc,
         output  wire     [BITS_SIZE-1:0]            o_EXMEM_alu_result,
         output  wire     [BITS_SIZE-1:0]            o_EXMEM_pcbranch,
@@ -245,11 +246,11 @@ module TOP_MIPS
     
 //EX
     //Control ALU
-    assign EX_ctl_alu_instruction   =    IDEX_extension[BITS_ALU-1:0];
-    assign EX_ctl_alu_opcode        =    IDEX_instruction[BITS_SIZE-1:BITS_REGS+BITS_REGS+BITS_INMEDIATE];
+    assign EX_ctl_alu_instruction   =   IDEX_extension[BITS_ALU-1:0];
+    assign EX_ctl_alu_opcode        =   IDEX_instruction[BITS_SIZE-1:BITS_REGS+BITS_REGS+BITS_INMEDIATE];
     assign o_EXMEM_instruc          =   EXMEM_Instr;
     assign o_EXMEM_alu_result       =   EXMEM_alu;
-    assign o_EXMEM_pcbranch         =   MEMWB_ctl_halt;
+    assign o_EXMEM_pcbranch         =   EXMEM_PC_Branch;
     assign o_EXMEM_dato_rt          =   EXMEM_register2;
     assign o_EXMEM_extend           =   EXMEM_extension;
 
@@ -260,6 +261,7 @@ module TOP_MIPS
     assign o_IDEX_dato_rs           =   IDEX_register1;
     assign o_IDEX_dato_rt           =   IDEX_register2;
     assign o_IDEX_extend            =   IDEX_extension;
+    assign o_IDEX_JUMP              =   IDEX_DJump;
     assign o_MEMWB_instruct         =   MEMWB_instruction;
     assign o_MEMWB_alu_result       =   MEMWB_alu;
     assign o_MEMWB_datamem          =   MEMWB_dato_mem;

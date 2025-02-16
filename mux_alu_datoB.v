@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module mux_alu
+module mux_alu_datoB
     #(
         parameter BITS_SIZE             = 32,
         parameter BITS_CORTOCIRCUITO    = 3
