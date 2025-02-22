@@ -6,7 +6,8 @@ lw r4,0(r5)
 sll r4,r4,2       
 addi r6,r0,10      
 addi r11,r0,20      
-j 12 
+j 12
+nop
 sll r12,r12,1       
 add r13,r1,r3       
 add r14,r13,r1      

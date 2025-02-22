@@ -578,9 +578,9 @@ module TOP_MIPS
     Unidad_de_Cortocicuito
     (
         .i_EXMEM_register_write (EXMEM_ctl_register_write), 
-        .i_EXMEM_rd             (EXMEM_register_dst),       
+        .i_EXMEM_rdrt           (EXMEM_register_dst),       
         .i_MEMWB_reg_write      (MEMWB_ctl_register_write),    
-        .i_MEMWB_rd             (MEMWB_register_dst),      
+        .i_MEMWB_rdrt           (MEMWB_register_dst),      
         .i_rs                   (IDEX_RS),                  
         .i_rt                   (IDEX_RT),                 
         .o_mux_A                (corto_register_A),         

@@ -7,9 +7,9 @@ module UnitCortocircuito
     )
     (
         input   wire                            i_EXMEM_register_write,
-        input   wire [BITS_REGS-1  :0]          i_EXMEM_rd,
+        input   wire [BITS_REGS-1  :0]          i_EXMEM_rdrt,
         input   wire                            i_MEMWB_reg_write,
-        input   wire [BITS_REGS-1  :0]          i_MEMWB_rd, 
+        input   wire [BITS_REGS-1  :0]          i_MEMWB_rdrt, 
         input   wire [BITS_REGS-1  :0]          i_rs,
         input   wire [BITS_REGS-1  :0]          i_rt,
         
@@ -22,10 +22,10 @@ module UnitCortocircuito
     
     always @(*)
     begin
-        if(i_EXMEM_register_write && (i_rs == i_EXMEM_rd))begin
+        if(i_EXMEM_register_write && (i_rs == i_EXMEM_rdrt))begin
             reg_mux_A = 3'b001;
         end
-        else if (i_MEMWB_reg_write && (i_rs == i_MEMWB_rd))begin
+        else if (i_MEMWB_reg_write && (i_rs == i_MEMWB_rdrt))begin
             reg_mux_A = 3'b010;
         end
         else begin
@@ -35,10 +35,10 @@ module UnitCortocircuito
       
     always @(*)
     begin
-        if (i_EXMEM_register_write && (i_rt == i_EXMEM_rd)) begin
+        if (i_EXMEM_register_write && (i_rt == i_EXMEM_rdrt)) begin
             reg_mux_B = 3'b001;
         end
-        else if (i_MEMWB_reg_write && (i_rt == i_MEMWB_rd)) begin
+        else if (i_MEMWB_reg_write && (i_rt == i_MEMWB_rdrt)) begin
             reg_mux_B = 3'b010;
         end
         else begin

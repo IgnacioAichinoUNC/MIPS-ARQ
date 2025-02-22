@@ -90,7 +90,7 @@ module EXMEM
              begin 
                 reg_pc4             <=  {BITS_SIZE{1'b0}};
                 reg_pc8             <=  {BITS_SIZE{1'b0}};
-                reg_pc_branch       <=  {BITS_SIZE{1'b0}};
+                //reg_pc_branch       <=  {BITS_SIZE{1'b0}};
                 reg_instruction     <=  {BITS_SIZE{1'b0}};
                 reg_zero            <=  1'b0;
                 reg_alu             <=  {BITS_SIZE{1'b0}};        
@@ -99,8 +99,8 @@ module EXMEM
                 reg_extension       <=  {BITS_SIZE{1'b0}};
                 
                 // M
-                reg_branch          <=  1'b0;
-                reg_neq_branch      <=  1'b0;
+                //reg_branch          <=  1'b0;
+               //reg_neq_branch      <=  1'b0;
                 reg_mem_write       <=  1'b0;
                 reg_mem_read        <=  1'b0;
                 reg_datamem_size     <=  2'b00;

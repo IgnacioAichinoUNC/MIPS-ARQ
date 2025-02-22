@@ -93,7 +93,7 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
             'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
         }
         
-        show_decimal_vars = {'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'exmem_alu', 'exmem_dato_rt', 'memwb_alu', 'memwb_datamem'}
+        show_decimal_vars = {'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'idex_jump', 'exmem_alu', 'exmem_dato_rt', 'exmem_pcbranch', 'memwb_alu', 'memwb_datamem'}
 
         for stage, variables in stages_info.items():
             console.print(f"[bold blue]--- {stage} Stage ---[/bold blue]")
@@ -215,7 +215,7 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
             'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
         }
 
-        show_decimal_vars = {'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'exmem_alu', 'exmem_dato_rt', 'memwb_alu', 'memwb_datamem'}
+        show_decimal_vars = {'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'idex_jump', 'exmem_alu', 'exmem_dato_rt', 'exmem_pcbranch', 'memwb_alu', 'memwb_datamem'}
 
         for stage, variables in stages_info.items():
             console.print(f"[bold blue]--- {stage} Stage ---[/bold blue]")
