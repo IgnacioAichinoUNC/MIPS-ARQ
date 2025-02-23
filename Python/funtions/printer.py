@@ -59,10 +59,10 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
             'idex_dato_rs': ' '.join(format(byte, '08b') for byte in data[52]),
             'idex_dato_rt': ' '.join(format(byte, '08b') for byte in data[53]),
             'idex_extend': ' '.join(format(byte, '08b') for byte in data[54]),
-            'idex_jump': ' '.join(format(byte, '08b') for byte in data[55]),
+            'ifid_jump': ' '.join(format(byte, '08b') for byte in data[55]),
             'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[56]),
             'exmem_alu': ' '.join(format(byte, '08b') for byte in data[57]),
-            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[58]),
+            'ifid_pcbranch': ' '.join(format(byte, '08b') for byte in data[58]),
             'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[59]),
             'exmem_extend': ' '.join(format(byte, '08b') for byte in data[60]),
             'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[61]),
@@ -87,13 +87,13 @@ def print_data_continuo(data_received, registers_to_show, mem_data_to_show):
 
         #Imprimir la información por etapas
         stages_info = {
-            'IF/ID': ['ifid_instruc'],
-            'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'idex_jump'],
-            'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_pcbranch', 'exmem_dato_rt', 'exmem_extend'],
+            'IF/ID': ['ifid_instruc', 'ifid_jump', 'ifid_pcbranch'],
+            'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend'],
+            'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_dato_rt', 'exmem_extend'],
             'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
         }
         
-        show_decimal_vars = {'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'idex_jump', 'exmem_alu', 'exmem_dato_rt', 'exmem_pcbranch', 'memwb_alu', 'memwb_datamem'}
+        show_decimal_vars = {'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'ifid_jump', 'ifid_pcbranch', 'exmem_alu', 'exmem_dato_rt', 'memwb_alu', 'memwb_datamem'}
 
         for stage, variables in stages_info.items():
             console.print(f"[bold blue]--- {stage} Stage ---[/bold blue]")
@@ -157,10 +157,10 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
             'idex_dato_rs': ' '.join(format(byte, '08b') for byte in data[52]),
             'idex_dato_rt': ' '.join(format(byte, '08b') for byte in data[53]),
             'idex_extend': ' '.join(format(byte, '08b') for byte in data[54]),
-            'idex_jump': ' '.join(format(byte, '08b') for byte in data[55]),
+            'ifid_jump': ' '.join(format(byte, '08b') for byte in data[55]),
             'exmem_instruc': ' '.join(format(byte, '08b') for byte in data[56]),
             'exmem_alu': ' '.join(format(byte, '08b') for byte in data[57]),
-            'exmem_pcbranch': ' '.join(format(byte, '08b') for byte in data[58]),
+            'ifid_pcbranch': ' '.join(format(byte, '08b') for byte in data[58]),
             'exmem_dato_rt': ' '.join(format(byte, '08b') for byte in data[59]),
             'exmem_extend': ' '.join(format(byte, '08b') for byte in data[60]),
             'memwb_instruc': ' '.join(format(byte, '08b') for byte in data[61]),
@@ -209,13 +209,13 @@ def print_data_step(data_received, prev_data_received, registers_to_show, mem_da
                     print(f"r{i}:  {memory[i]} = {int(memory[i].replace(' ',''), 2)}")                  
 
         stages_info = {
-            'IF/ID': ['ifid_instruc'],
-            'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'idex_jump'],
-            'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_pcbranch', 'exmem_dato_rt', 'exmem_extend'],
+            'IF/ID': ['ifid_instruc', 'ifid_jump', 'ifid_pcbranch'],
+            'ID/EX': ['idex_instruc', 'idex_dato_rs', 'idex_dato_rt', 'idex_extend'],
+            'EX/MEM': ['exmem_instruc', 'exmem_alu', 'exmem_dato_rt', 'exmem_extend'],
             'MEM/WB': ['memwb_instruc', 'memwb_alu', 'memwb_extend', 'memwb_datamem']
         }
-
-        show_decimal_vars = {'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'idex_jump', 'exmem_alu', 'exmem_dato_rt', 'exmem_pcbranch', 'memwb_alu', 'memwb_datamem'}
+        
+        show_decimal_vars = {'idex_dato_rs', 'idex_dato_rt', 'idex_extend', 'ifid_jump', 'ifid_pcbranch', 'exmem_alu', 'exmem_dato_rt', 'memwb_alu', 'memwb_datamem'}
 
         for stage, variables in stages_info.items():
             console.print(f"[bold blue]--- {stage} Stage ---[/bold blue]")

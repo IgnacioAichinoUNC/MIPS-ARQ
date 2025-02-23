@@ -39,14 +39,14 @@ module TOP
 
     //wires latch data
         wire    [BITS_SIZE-1:0]     ifid_instruc;
+        wire    [BITS_SIZE-1:0]     id_jump;
+        wire    [BITS_SIZE-1:0]     id_pc_branch;
         wire    [BITS_SIZE-1:0]     idex_instruc;
         wire    [BITS_SIZE-1:0]     idex_dato_rs;
         wire    [BITS_SIZE-1:0]     idex_dato_rt;
         wire    [BITS_SIZE-1:0]     idex_extend;
-        wire    [BITS_SIZE-1:0]     idex_jump;
         wire    [BITS_SIZE-1:0]     exmem_instruc;
         wire    [BITS_SIZE-1:0]     exmem_alu;
-        wire    [BITS_SIZE-1:0]     exmem_pcbranch;
         wire    [BITS_SIZE-1:0]     exmem_dato_rt;
         wire    [BITS_SIZE-1:0]     exmem_extend;
         wire    [BITS_SIZE-1:0]     memwb_instruc;
@@ -99,14 +99,14 @@ module TOP
         .o_data_register                (data_register),
         .o_data_MEM_debug               (data_mem),
         .o_IFID_instruct                (ifid_instruc),
+        .o_ID_JUMP                      (id_jump),
+        .o_ID_PC_BRANCH                 (id_pc_branch),
         .o_IDEX_instruct                (idex_instruc),
         .o_IDEX_dato_rs                 (idex_dato_rs),
         .o_IDEX_dato_rt                 (idex_dato_rt),
         .o_IDEX_extend                  (idex_extend),
-        .o_IDEX_JUMP                    (idex_jump),
         .o_EXMEM_instruc                (exmem_instruc),
         .o_EXMEM_alu_result             (exmem_alu),
-        .o_EXMEM_pcbranch               (exmem_pcbranch),
         .o_EXMEM_dato_rt                (exmem_dato_rt),
         .o_EXMEM_extend                 (exmem_extend),
         .o_MEMWB_instruct               (memwb_instruc),
@@ -152,16 +152,15 @@ module TOP
         .i_data_mem             (data_mem),
         .i_halt                 (halt),
 
-
-        .i_ifid_instruct                (ifid_instruc),  
+        .i_ifid_instruct                (ifid_instruc),
+        .i_id_jump                      (id_jump),
+        .i_id_pc_branch                 (id_pc_branch),
         .i_idex_instruct                (idex_instruc),
         .i_idex_dato_rs                 (idex_dato_rs),
         .i_idex_dato_rt                 (idex_dato_rt),
         .i_idex_extend                  (idex_extend),
-        .i_idex_jump                    (idex_jump),
         .i_exmem_instruc                (exmem_instruc),
         .i_exmem_alu_result             (exmem_alu),
-        .i_exmem_pcbranch               (exmem_pcbranch),
         .i_exmem_dato_rt                (exmem_dato_rt),
         .i_exmem_extend                 (exmem_extend),
         .i_memwb_instruct               (memwb_instruc),

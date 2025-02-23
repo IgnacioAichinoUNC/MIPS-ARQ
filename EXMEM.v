@@ -86,7 +86,7 @@ module EXMEM
     reg                     reg_halt;
 
     always @(posedge i_clk)
-        if(i_flush_latch | i_reset)
+        if( i_reset)
              begin 
                 reg_pc4             <=  {BITS_SIZE{1'b0}};
                 reg_pc8             <=  {BITS_SIZE{1'b0}};

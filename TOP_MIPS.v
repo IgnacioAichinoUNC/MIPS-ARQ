@@ -36,14 +36,14 @@ module TOP_MIPS
         output  wire                                o_mips_halt,
 
         output  wire     [BITS_SIZE-1:0]            o_IFID_instruct,
+        output  wire     [BITS_SIZE-1:0]            o_ID_JUMP,
+        output  wire     [BITS_SIZE-1:0]            o_ID_PC_BRANCH,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_instruct,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_dato_rs,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_dato_rt,
         output  wire     [BITS_SIZE-1:0]            o_IDEX_extend,
-        output  wire     [BITS_SIZE-1:0]            o_IDEX_JUMP,
         output  wire     [BITS_SIZE-1:0]            o_EXMEM_instruc,
         output  wire     [BITS_SIZE-1:0]            o_EXMEM_alu_result,
-        output  wire     [BITS_SIZE-1:0]            o_EXMEM_pcbranch,
         output  wire     [BITS_SIZE-1:0]            o_EXMEM_dato_rt,
         output  wire     [BITS_SIZE-1:0]            o_EXMEM_extend,
         output  wire     [BITS_SIZE-1:0]            o_MEMWB_instruct,
@@ -70,6 +70,9 @@ module TOP_MIPS
     wire                            ifid_unit_risk_write;  //Riesgo de escritura
     wire                            id_unit_risk_mux;
     wire                            id_unit_risk_latch;
+
+    wire    [BITS_SIZE-1:0]         wire_muxPC_ID;
+    wire    [BITS_SIZE-1:0]         ID_PC_BRANCH;
 
      //Banco de registros
     wire     [BITS_REGS-1:0]        ID_register_rs;
@@ -250,18 +253,18 @@ module TOP_MIPS
     assign EX_ctl_alu_opcode        =   IDEX_instruction[BITS_SIZE-1:BITS_REGS+BITS_REGS+BITS_INMEDIATE];
     assign o_EXMEM_instruc          =   EXMEM_Instr;
     assign o_EXMEM_alu_result       =   EXMEM_alu;
-    assign o_EXMEM_pcbranch         =   EXMEM_PC_Branch;
     assign o_EXMEM_dato_rt          =   EXMEM_register2;
     assign o_EXMEM_extend           =   EXMEM_extension;
 
     //OUTPUT
     assign o_IFID_instruct          =   IFID_Instr;
+    assign o_ID_JUMP                =   ID_JUMP_o;
+    assign o_ID_PC_BRANCH           =   ID_PC_BRANCH;
     assign o_data_register          =   ID_data_register_Debug;
     assign o_IDEX_instruct          =   IDEX_instruction;
     assign o_IDEX_dato_rs           =   IDEX_register1;
     assign o_IDEX_dato_rt           =   IDEX_register2;
     assign o_IDEX_extend            =   IDEX_extension;
-    assign o_IDEX_JUMP              =   IDEX_DJump;
     assign o_MEMWB_instruct         =   MEMWB_instruction;
     assign o_MEMWB_alu_result       =   MEMWB_alu;
     assign o_MEMWB_datamem          =   MEMWB_dato_mem;
@@ -284,12 +287,13 @@ module TOP_MIPS
         .i_instruction_address      (IF_IntrAddress_Debug),
         .i_instruction              (IF_Instr_Debug),
         .i_flag_write_intruc        (IF_flag_WriteInstr_Debug),
-        .i_is_jump                  (IDEX_ctl_jump),
-        .i_is_JALR                  (IDEX_ctl_JALR),
-        .i_pc_source                (MEM_PC_src_o),
-        .i_suma_branch              (EXMEM_PC_Branch),
-        .i_suma_jump                (IDEX_DJump),
-        .i_rs                       (EX_alu_register_A),
+        .i_mux_pc_o                 (wire_muxPC_ID),
+        //.i_is_jump                  (IDEX_ctl_jump),
+        //.i_is_JALR                  (IDEX_ctl_JALR),
+        //.i_pc_source                (MEM_PC_src_o),
+        //.i_suma_branch              (EXMEM_PC_Branch),
+        //.i_suma_jump                (ID_JUMP_o),
+        //.i_rs                       (EX_alu_register_A),
         .o_IF_PC4                   (IF_PC4_o),
         .o_IF_PC                    (o_pc),
         .o_instruction              (IF_Instr),
@@ -336,16 +340,24 @@ module TOP_MIPS
         .i_wb_addr_rd           (WB_register_adrr_result),
         .i_wb_data              (WB_data_write),
         .i_IFID_JUMP            (ID_JUMP_i),
-        .i_IDEX_PC4             (IDEX_PC4),
+        .i_IFID_PC4             (IFID_PC4),
         .i_id_inmediate         (ID_intruct_16),
         .i_ctl_extension_mode   (ctl_unit_extend_mode),
+
+        .i_is_jump              (ctl_unit_jump),
+        .i_is_JALR              (ctl_unit_jal_R),
+        .i_branch               (ctl_unit_branch),
+        .i_neq_branch           (ctl_unit_neq_branch),
+
         .o_rs                   (ID_data_rs),
         .o_rt                   (ID_data_rt),
         .o_data_tx_debug        (ID_data_register_Debug),
         .o_ID_JUMP              (ID_JUMP_o),
-        .o_extension_result     (ID_intruct_ext) 
+        .o_extension_result     (ID_intruct_ext),
+        .o_ID_PC_BRANCH         (ID_PC_BRANCH),  
+        .o_wire_IF_PC           (wire_muxPC_ID)
     );
-  
+
 
     //Unidad de Control
     UnitControl#(
@@ -484,7 +496,7 @@ module TOP_MIPS
         .i_rs                      (ID_register_rs),
         .i_rt                      (ID_register_rt),
         .i_rd                      (ID_register_rd),
-        .i_DJump                   (ID_JUMP_o),
+        //.i_DJump                   (ID_JUMP_o),
 
         .o_pc4                     (IDEX_PC4),
         .o_pc8                     (IDEX_PC8),
@@ -495,7 +507,7 @@ module TOP_MIPS
         .o_rs                      (IDEX_RS),
         .o_rt                      (IDEX_RT),   
         .o_rd                      (IDEX_RD),
-        .o_DJump                   (IDEX_DJump),
+        //.o_DJump                   (IDEX_DJump),
         //ControlEX
         .o_jump                    (IDEX_ctl_jump),
         .o_jalR                    (IDEX_ctl_JALR),
@@ -653,7 +665,7 @@ module TOP_MIPS
         .o_halt                 (EXMEM_ctl_halt)
     );
 
-    and_branch #(
+    /*and_branch #(
     )
     module_and_branch
     (
@@ -661,7 +673,7 @@ module TOP_MIPS
         .i_neq_branch   (EXMEM_ctl_neq_branch),
         .i_zero         (EXMEM_zero_alu),
         .o_pc_source    (MEM_PC_src_o)
-    );
+    );*/
     
     //ETAPA MEM
     MEM #(

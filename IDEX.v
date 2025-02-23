@@ -53,7 +53,7 @@ module IDEX
         output  wire    [BITS_REGS-1:0]     o_rs,
         output  wire    [BITS_REGS-1:0]     o_rt,
         output  wire    [BITS_REGS-1:0]     o_rd,
-        output  wire    [BITS_SIZE-1:0]     o_DJump,
+       // output  wire    [BITS_SIZE-1:0]     o_DJump,
         ///ControlEX
         output  wire                        o_jump,
         output  wire                        o_jal,
@@ -85,7 +85,7 @@ module IDEX
     reg     [BITS_REGS-1:0] reg_rs;
     reg     [BITS_REGS-1:0] reg_rt;
     reg     [BITS_REGS-1:0] reg_rd;
-    reg     [BITS_SIZE-1:0] reg_DJump;
+    //reg     [BITS_SIZE-1:0] reg_DJump;
 
     //RegEX
     reg                     reg_jump;
@@ -112,7 +112,7 @@ module IDEX
 
 
     always @(posedge i_clk)
-        if(i_flush_latch | i_reset)
+        if( i_reset)
         begin
             reg_PC4             <=  {BITS_SIZE{1'b0}};
             reg_PC8             <=  {BITS_SIZE{1'b0}};
@@ -123,7 +123,7 @@ module IDEX
             reg_rs              <=  {BITS_REGS{1'b0}};
             reg_rt              <=  {BITS_REGS{1'b0}};
             reg_rd              <=  {BITS_REGS{1'b0}};
-            reg_DJump           <=  {BITS_SIZE{1'b0}};
+           // reg_DJump           <=  {BITS_SIZE{1'b0}};
 
             //EX
             reg_jump            <=  1'b0;
@@ -159,7 +159,7 @@ module IDEX
             reg_rs              <=  i_rs;
             reg_rt              <=  i_rt;
             reg_rd              <=  i_rd;
-            reg_DJump           <=  i_DJump;
+           // reg_DJump           <=  i_DJump;
 
             //EX
             reg_jump            <=  i_jump;
@@ -195,7 +195,7 @@ module IDEX
     assign o_rs             =   reg_rs;
     assign o_rt             =   reg_rt;
     assign o_rd             =   reg_rd;
-    assign o_DJump          =   reg_DJump;
+    //assign o_DJump          =   reg_DJump;
 
     //ControlEX
     assign o_jump            =   reg_jump;

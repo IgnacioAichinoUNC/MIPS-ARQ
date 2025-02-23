@@ -37,7 +37,7 @@ module EX
 
         assign  o_data_register_A  =      mux_data_a;
    
-    sum_branch
+    /*sum_branch
     #
     (
         .BITS_SIZE          (BITS_SIZE)
@@ -47,7 +47,7 @@ module EX
         .i_extension_data   (i_id_extension),
         .i_sum_pc4          (i_id_pc4),
         .o_sum_pc_branch    (o_sum_pc_branch)
-    );
+    );*/
 
     alu
     #(

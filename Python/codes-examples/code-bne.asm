@@ -1,9 +1,9 @@
 addi r1,r0,5        
 addi r2,r0,5
 addi r3,r0,15
-addi r6,r0,10 
+addi r6,r0,10
 sub r9,r8,r7  
-beq r1,r2,4     
+bne r13,r14,4     
 addi r4,r0,20
 lhu r6,1(r3)
 addi r5,r0,20

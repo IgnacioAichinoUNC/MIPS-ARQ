@@ -31,10 +31,10 @@ module UnitDebug
         input           [BITS_SIZE-1:0]         i_idex_dato_rs,
         input           [BITS_SIZE-1:0]         i_idex_dato_rt,
         input           [BITS_SIZE-1:0]         i_idex_extend,
-        input           [BITS_SIZE-1:0]         i_idex_jump,
+        input           [BITS_SIZE-1:0]         i_id_jump,
+        input           [BITS_SIZE-1:0]         i_id_pc_branch,
         input           [BITS_SIZE-1:0]         i_exmem_instruc,
         input           [BITS_SIZE-1:0]         i_exmem_alu_result,
-        input           [BITS_SIZE-1:0]         i_exmem_pcbranch,
         input           [BITS_SIZE-1:0]         i_exmem_dato_rt,
         input           [BITS_SIZE-1:0]         i_exmem_extend,
         input           [BITS_SIZE-1:0]         i_memwb_instruct,
@@ -276,10 +276,10 @@ module UnitDebug
                             6: tx_data_32_next <= i_idex_dato_rs;
                             7: tx_data_32_next <= i_idex_dato_rt;
                             8: tx_data_32_next <= i_idex_extend;
-                            9: tx_data_32_next <= i_idex_jump;
+                            9: tx_data_32_next <= i_id_jump;
                             10: tx_data_32_next <= i_exmem_instruc;
                             11: tx_data_32_next <= i_exmem_alu_result;
-                            12: tx_data_32_next <= i_exmem_pcbranch;
+                            12: tx_data_32_next <= i_id_pc_branch;
                             13: tx_data_32_next <= i_exmem_dato_rt;
                             14: tx_data_32_next <= i_exmem_extend;
                             15: tx_data_32_next <= i_memwb_instruct;
