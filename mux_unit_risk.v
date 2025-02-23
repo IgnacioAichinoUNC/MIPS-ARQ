@@ -5,10 +5,7 @@ module mux_unit_risk
     input   wire            i_risk,
     // Unidad de Control
     input   wire            i_reg_dst_rd,
-    input   wire            i_jump,
     input   wire            i_jal,
-    input   wire            i_branch,
-    input   wire            i_neq_branch,
     input   wire            i_mem_read,
     input   wire            i_mem_to_reg,
     input   wire    [1:0]   i_unit_alu_op,
@@ -20,14 +17,10 @@ module mux_unit_risk
     input   wire    [1:0]   i_data_load_size,
     input   wire            i_zero_extend,
     input   wire            i_lui,
-    input   wire            i_jalR,
     input   wire            i_halt,
 
     output  wire            o_reg_dst_rd,
-    output  wire            o_jump,
     output  wire            o_jal,
-    output  wire            o_branch,
-    output  wire            o_neq_branch,
     output  wire            o_mem_read,
     output  wire            o_mem_to_reg,
     output  wire    [1:0]   o_unit_alu_op,
@@ -39,15 +32,11 @@ module mux_unit_risk
     output  wire    [1:0]   o_data_load_size,
     output  wire            o_zero_extend,
     output  wire            o_lui,
-    output  wire            o_jalR,
     output  wire            o_halt
     );
 
         reg           reg_dst_rd;
-        reg           reg_jump;
         reg           reg_jal;
-        reg           reg_branch;
-        reg           reg_neq_branch;
         reg           reg_mem_read;    
         reg           reg_mem_to_reg;
         reg    [1:0]  reg_unit_alu_op;
@@ -59,7 +48,6 @@ module mux_unit_risk
         reg    [1:0]  reg_data_load_size;
         reg           reg_zero_extend;
         reg           reg_lui;
-        reg           reg_jalR;
 
 
         always @(*)
@@ -67,10 +55,7 @@ module mux_unit_risk
             if(i_risk)
                 begin
                     reg_dst_rd          <=  1'b0;
-                    reg_jump            <=  1'b0;
                     reg_jal             <=  1'b0;
-                    reg_branch          <=  1'b0;
-                    reg_neq_branch      <=  1'b0;
                     reg_mem_read        <=  1'b0;
                     reg_mem_to_reg      <=  1'b0;
                     reg_unit_alu_op     <=  1'b0;
@@ -82,15 +67,11 @@ module mux_unit_risk
                     reg_data_load_size  <=  1'b0;
                     reg_zero_extend     <=  1'b0;
                     reg_lui             <=  1'b0;
-                    reg_jalR            <=  1'b0;
                 end
             else
                 begin
                     reg_dst_rd          <=  i_reg_dst_rd;
-                    reg_jump            <=  i_jump;
                     reg_jal             <=  i_jal;
-                    reg_branch          <=  i_branch;
-                    reg_neq_branch      <=  i_neq_branch;
                     reg_mem_read        <=  i_mem_read;
                     reg_mem_to_reg      <=  i_mem_to_reg;
                     reg_unit_alu_op     <=  i_unit_alu_op;
@@ -102,15 +83,11 @@ module mux_unit_risk
                     reg_data_load_size  <=  i_data_load_size;
                     reg_zero_extend     <=  i_zero_extend;
                     reg_lui             <=  i_lui;
-                    reg_jalR            <=  i_jalR;
                 end
           end
 
         assign o_reg_dst_rd     = reg_dst_rd;
-        assign o_jump           = reg_jump;
         assign o_jal            = reg_jal;
-        assign o_branch         = reg_branch;
-        assign o_neq_branch     = reg_neq_branch;
         assign o_mem_read       = reg_mem_read;
         assign o_mem_to_reg     = reg_mem_to_reg;
         assign o_unit_alu_op    = reg_unit_alu_op;
@@ -122,6 +99,5 @@ module mux_unit_risk
         assign o_data_load_size = reg_data_load_size;
         assign o_zero_extend    = reg_zero_extend;
         assign o_lui            = reg_lui;
-        assign o_jalR           = reg_jalR;
         assign o_halt           = i_halt;
 endmodule

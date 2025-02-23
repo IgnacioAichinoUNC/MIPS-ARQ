@@ -23,9 +23,7 @@ module EX
         input  wire                                i_ctl_select_reg_rd,
         input  wire      [BITS_REGS-1:0]           i_rt,
         input  wire      [BITS_REGS-1:0]           i_rd,
-        output wire      [BITS_SIZE-1:0]           o_sum_pc_branch,
         output wire      [BITS_SIZE-1:0]           o_data_register_A,
-        output wire                                o_alu_zero,
         output wire      [BITS_SIZE-1:0]           o_alu_result,
         output wire      [BITS_REGS-1:0]           o_mux_register_rd 
         
@@ -37,17 +35,6 @@ module EX
 
         assign  o_data_register_A  =      mux_data_a;
    
-    /*sum_branch
-    #
-    (
-        .BITS_SIZE          (BITS_SIZE)
-    )
-    sum_branch
-    (
-        .i_extension_data   (i_id_extension),
-        .i_sum_pc4          (i_id_pc4),
-        .o_sum_pc_branch    (o_sum_pc_branch)
-    );*/
 
     alu
     #(

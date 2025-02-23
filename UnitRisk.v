@@ -6,7 +6,6 @@ module UnitRisk
        
     )
     (
-        input   wire                    i_EXMEM_flush, //es el mismo que se utiliza en IF para seleccionar suma_branch en el mux de PC
         input   wire                    i_IDEX_mem_read, //señal que indica si debo leer de la memoria.
         input   wire                    i_EXMEM_mem_read, //señal que indica si debo leer de la memoria. ESTE PUEDE SER IGUAL QUE i_IDEX_mem_read EN EL CASO QUE NO HAYA UN BRANCH.
         input   wire                    i_JALR, //vale 1 en JALR o JR
@@ -17,13 +16,10 @@ module UnitRisk
         input   wire [BITS_REGS-1:0]    i_IFID_rt, //Rt que viene de la etapa IF
         output  wire                    o_risk_mux,
         output  wire                    o_pc_write,
-        output  wire                    o_IFID_write,
-        output  wire                    o_flush_latch
+        output  wire                    o_IFID_write
     );
 
     reg reg_IFID_write;
-    reg reg_flush_latch;
-    reg reg_IFID_flush;
     reg reg_risk_mux ;
     reg reg_pc_write;
 
@@ -32,21 +28,8 @@ module UnitRisk
         reg_risk_mux        <=      1'b0;
         reg_pc_write        <=      1'b1;
         reg_IFID_write      <=      1'b1;
-        reg_flush_latch     <=      1'b0;
-        reg_IFID_flush      <=      1'b0;
     end
 
-    always @(*)
-    begin
-        if(i_EXMEM_flush) //En el caso que sea un branch tiene que volver a la etapa IF para buscar la nueva instrucción
-        begin
-            reg_flush_latch      <= 1'b1;
-        end
-        else
-        begin
-            reg_flush_latch      <= 1'b0;
-        end
-    end
 
     always @(*)
     begin
@@ -80,5 +63,4 @@ module UnitRisk
     assign  o_risk_mux      =   reg_risk_mux;
     assign  o_pc_write      =   reg_pc_write;
     assign  o_IFID_write    =   reg_IFID_write;
-    assign  o_flush_latch   =   reg_flush_latch;
 endmodule

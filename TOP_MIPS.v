@@ -69,7 +69,6 @@ module TOP_MIPS
     wire                            if_risk_pc_write;       //Unidad de riesgo para write en PC
     wire                            ifid_unit_risk_write;  //Riesgo de escritura
     wire                            id_unit_risk_mux;
-    wire                            id_unit_risk_latch;
 
     wire    [BITS_SIZE-1:0]         wire_muxPC_ID;
     wire    [BITS_SIZE-1:0]         ID_PC_BRANCH;
@@ -115,9 +114,6 @@ module TOP_MIPS
     wire     [BITS_EXTENSION-1:0]   mux_ctl_unit_data_load_size;
     wire                            mux_ctl_unit_register_write;
     wire                            mux_ctl_unit_mem_to_reg;
-    wire                            mux_ctl_unit_branch;
-    wire                            mux_ctl_unit_neq_branch;
-    wire                            mux_ctl_unit_jump;
     wire                            mux_ctl_unit_jal;
     wire                            mux_ctl_unit_register_rd;
     wire                            mux_ctl_unit_alu_src;
@@ -125,7 +121,6 @@ module TOP_MIPS
     wire                            mux_ctl_unit_mem_write;
     wire                            mux_ctl_unit_zero_extend;
     wire                            mux_ctl_unit_lui;
-    wire                            mux_ctl_unit_jal_R;
     wire                            mux_ctl_unit_halt;
     //IDEX
     wire    [BITS_SIZE-1:0]         IDEX_PC4;
@@ -135,22 +130,17 @@ module TOP_MIPS
     wire    [BITS_REGS-1:0]         IDEX_RS;
     wire    [BITS_REGS-1:0]         IDEX_RT;
     wire    [BITS_REGS-1:0]         IDEX_RD;
-    wire    [BITS_SIZE-1:0]         IDEX_DJump;
     wire    [BITS_SIZE-1:0]         IDEX_extension;
     wire    [BITS_SIZE-1:0]         IDEX_instruction;
     wire                            IDEX_ctl_alu_src;
-    wire                            IDEX_ctl_jump;
     wire                            IDEX_ctl_jal;
     wire    [1:0]                   IDEX_ctl_unit_alu_op;
     wire                            IDEX_ctl_register_rd;
-    wire                            IDEX_ctl_branch;
-    wire                            IDEX_ctl_neq_branch;
     wire                            IDEX_ctl_mem_write;
     wire                            IDEX_ctl_mem_read;
     wire                            IDEX_ctl_mem_to_reg;
     wire                            IDEX_ctl_register_write;
     wire                            IDEX_ctl_lui;
-    wire                            IDEX_ctl_JALR;
     wire                            IDEX_ctl_halt;
     wire    [1:0]                   IDEX_ctl_datomem_size;
     wire    [1:0]                   IDEX_ctL_dataload_size;
@@ -160,10 +150,8 @@ module TOP_MIPS
 //--------EX--------------------------------------------
     //ALU
     wire     [BITS_SIZE-1:0]        EX_alu_result;
-    wire                            EX_flag_alu_zero;
     wire     [BITS_REGS-1:0]        EX_alu_shamt;
     //Sumador branch
-    wire     [BITS_SIZE-1:0]        EX_sum_pc_branch;
     //MuxShamt
     wire     [BITS_SIZE-1:0]        EX_alu_register_A;
     //Unidad cortocircuito
@@ -179,15 +167,11 @@ module TOP_MIPS
     //EXMEM
     wire    [BITS_SIZE-1:0]         EXMEM_PC4;
     wire    [BITS_SIZE-1:0]         EXMEM_PC8;
-    wire    [BITS_SIZE-1:0]         EXMEM_PC_Branch;
     wire    [BITS_SIZE-1:0]         EXMEM_Instr;
-    wire                            EXMEM_zero_alu;
     wire    [BITS_SIZE-1:0]         EXMEM_alu;    
     wire    [BITS_SIZE-1:0]         EXMEM_register2;
     wire    [BITS_REGS-1:0]         EXMEM_register_dst;
     wire    [BITS_SIZE-1:0]         EXMEM_extension;
-    wire                            EXMEM_ctl_branch;
-    wire                            EXMEM_ctl_neq_branch;
     wire                            EXMEM_ctl_mem_write;
     wire                            EXMEM_ctl_mem_read;
     wire                            EXMEM_ctl_mem_to_reg;
@@ -199,7 +183,6 @@ module TOP_MIPS
     wire                            EXMEM_ctl_halt;
 
 //--------MEM--------------------------------------------
-    wire                            MEM_PC_src_o;
     wire    [BITS_SIZE-1:0]         MEM_dato_mem;
     wire    [BITS_SIZE-1:0]         MEM_dato_mem_Debug; 
     //MEMWB  
@@ -288,12 +271,6 @@ module TOP_MIPS
         .i_instruction              (IF_Instr_Debug),
         .i_flag_write_intruc        (IF_flag_WriteInstr_Debug),
         .i_mux_pc_o                 (wire_muxPC_ID),
-        //.i_is_jump                  (IDEX_ctl_jump),
-        //.i_is_JALR                  (IDEX_ctl_JALR),
-        //.i_pc_source                (MEM_PC_src_o),
-        //.i_suma_branch              (EXMEM_PC_Branch),
-        //.i_suma_jump                (ID_JUMP_o),
-        //.i_rs                       (EX_alu_register_A),
         .o_IF_PC4                   (IF_PC4_o),
         .o_IF_PC                    (o_pc),
         .o_instruction              (IF_Instr),
@@ -393,7 +370,6 @@ module TOP_MIPS
     )
     Unidad_de_Riesgos
     (
-        .i_EXMEM_flush              (MEM_PC_src_o),
         .i_IDEX_mem_read            (IDEX_ctl_mem_read),
         .i_EXMEM_mem_read           (EXMEM_ctl_mem_read),
         .i_JALR                     (ctl_unit_jal_R),
@@ -404,8 +380,7 @@ module TOP_MIPS
         .i_IFID_rt                  (ID_register_rt),
         .o_risk_mux                 (id_unit_risk_mux),
         .o_pc_write                 (if_risk_pc_write),
-        .o_IFID_write               (ifid_unit_risk_write),
-        .o_flush_latch              (id_unit_risk_latch)
+        .o_IFID_write               (ifid_unit_risk_write)
     );
 
 
@@ -415,10 +390,7 @@ module TOP_MIPS
     (
         .i_risk                     (id_unit_risk_mux),
         .i_reg_dst_rd               (ctl_unit_register_rd),
-        .i_jump                     (ctl_unit_jump),
         .i_jal                      (ctl_unit_jal),
-        .i_branch                   (ctl_unit_branch),
-        .i_neq_branch               (ctl_unit_neq_branch),
         .i_mem_read                 (ctl_unit_mem_read),
         .i_mem_to_reg               (ctl_unit_mem_to_reg),
         .i_unit_alu_op              (ctl_unit_alu_op),
@@ -430,13 +402,9 @@ module TOP_MIPS
         .i_data_load_size           (ctl_unit_data_load_size),
         .i_zero_extend              (ctl_unit_zero_extend),
         .i_lui                      (ctl_unit_lui),
-        .i_jalR                     (ctl_unit_jal_R),
         .i_halt                     (ctl_unit_halt),
         .o_reg_dst_rd               (mux_ctl_unit_register_rd),
-        .o_jump                     (mux_ctl_unit_jump),
         .o_jal                      (mux_ctl_unit_jal),
-        .o_branch                   (mux_ctl_unit_branch),
-        .o_neq_branch               (mux_ctl_unit_neq_branch),
         .o_mem_read                 (mux_ctl_unit_mem_read),
         .o_mem_to_reg               (mux_ctl_unit_mem_to_reg),
         .o_unit_alu_op              (mux_ctl_unit_alu_op),
@@ -448,7 +416,6 @@ module TOP_MIPS
         .o_data_load_size           (mux_ctl_unit_data_load_size),
         .o_zero_extend              (mux_ctl_unit_zero_extend),
         .o_lui                      (mux_ctl_unit_lui),
-        .o_jalR                     (mux_ctl_unit_jal_R),
         .o_halt                     (mux_ctl_unit_halt)
     );  
 
@@ -463,20 +430,16 @@ module TOP_MIPS
         .i_clk                      (i_clk),
         .i_reset                    (i_reset),
         .i_step                     (i_ctl_clk_wiz),
-        .i_flush_latch              (id_unit_risk_latch),
         .i_pc4                      (IFID_PC4),
         .i_pc8                      (IFID_PC8),
         .i_instruction              (IFID_Instr),
 
         //ControlEX
-        .i_jump                     (mux_ctl_unit_jump),
         .i_jal                      (mux_ctl_unit_jal),
         .i_alu_src                  (mux_ctl_unit_alu_src),
         .i_unit_alu_op              (mux_ctl_unit_alu_op),
         .i_reg_dst_rd               (mux_ctl_unit_register_rd),
          //ControlMEM
-        .i_branch                   (mux_ctl_unit_branch),
-        .i_neq_branch               (mux_ctl_unit_neq_branch),
         .i_mem_write                (mux_ctl_unit_mem_write),
         .i_mem_read                 (mux_ctl_unit_mem_read),
         .i_datomem_size             (mux_ctl_unit_dato_mem_size),
@@ -486,7 +449,6 @@ module TOP_MIPS
         .i_data_load_size           (mux_ctl_unit_data_load_size),
         .i_zero_extend              (mux_ctl_unit_zero_extend),
         .i_lui                      (mux_ctl_unit_lui),
-        .i_jalR                     (mux_ctl_unit_jal_R),
         .i_halt                     (mux_ctl_unit_halt),
 
         //Modules
@@ -496,7 +458,6 @@ module TOP_MIPS
         .i_rs                      (ID_register_rs),
         .i_rt                      (ID_register_rt),
         .i_rd                      (ID_register_rd),
-        //.i_DJump                   (ID_JUMP_o),
 
         .o_pc4                     (IDEX_PC4),
         .o_pc8                     (IDEX_PC8),
@@ -507,17 +468,12 @@ module TOP_MIPS
         .o_rs                      (IDEX_RS),
         .o_rt                      (IDEX_RT),   
         .o_rd                      (IDEX_RD),
-        //.o_DJump                   (IDEX_DJump),
         //ControlEX
-        .o_jump                    (IDEX_ctl_jump),
-        .o_jalR                    (IDEX_ctl_JALR),
         .o_jal                     (IDEX_ctl_jal),
         .o_alu_src                 (IDEX_ctl_alu_src),
         .o_unit_alu_op             (IDEX_ctl_unit_alu_op),
         .o_register_rd_dst         (IDEX_ctl_register_rd),
         //ControlMEM
-        .o_branch                  (IDEX_ctl_branch),
-        .o_neq_branch              (IDEX_ctl_neq_branch),
         .o_mem_write               (IDEX_ctl_mem_write),
         .o_mem_read                (IDEX_ctl_mem_read),
         .o_datamem_size            (IDEX_ctl_datomem_size),
@@ -529,8 +485,6 @@ module TOP_MIPS
         .o_lui                     (IDEX_ctl_lui),
         .o_halt                    (IDEX_ctl_halt)
     );
-
-    //ETAPA EX
 
 //ETAPA EX
     EX#(
@@ -556,9 +510,7 @@ module TOP_MIPS
         .i_ctl_select_reg_rd        (IDEX_ctl_register_rd),
         .i_rt                       (IDEX_RT),
         .i_rd                       (IDEX_RD),
-        .o_alu_zero                 (EX_flag_alu_zero),
         .o_alu_result               (EX_alu_result),
-        .o_sum_pc_branch            (EX_sum_pc_branch),
         .o_data_register_A          (EX_alu_register_A),
         .o_mux_register_rd          (EX_mux_register_rd)
     );
@@ -611,12 +563,9 @@ module TOP_MIPS
         .i_clk                  (i_clk),
         .i_reset                (i_reset),
         .i_step                 (i_ctl_clk_wiz),
-        .i_flush_latch          (id_unit_risk_latch),
         .i_pc4                  (IDEX_PC4),
         .i_pc8                  (IDEX_PC8),
-        .i_pc_branch            (EX_sum_pc_branch),
         .i_idex_instruction     (IDEX_instruction),
-        .i_flag_alu_zero        (EX_flag_alu_zero),
         .i_alu_result           (EX_alu_result),
         .i_idex_register2       (IDEX_register2),
         .i_register_dst         (EX_mux_register_rd),
@@ -624,8 +573,6 @@ module TOP_MIPS
 
         //ControlMEM
         .i_jal                  (IDEX_ctl_jal),
-        .i_branch               (IDEX_ctl_branch),
-        .i_neq_branch           (IDEX_ctl_neq_branch),
         .i_mem_write            (IDEX_ctl_mem_write),
         .i_mem_read             (IDEX_ctl_mem_read),
         .i_datamem_size         (IDEX_ctl_datomem_size),
@@ -640,9 +587,7 @@ module TOP_MIPS
 
         .o_pc4                  (EXMEM_PC4),
         .o_pc8                  (EXMEM_PC8),
-        .o_pc_branch            (EXMEM_PC_Branch),
         .o_instruction          (EXMEM_Instr),
-        .o_zero                 (EXMEM_zero_alu),
         .o_alu                  (EXMEM_alu),
         .o_register_2           (EXMEM_register2),
         .o_register_rd_dst      (EXMEM_register_dst),
@@ -650,8 +595,6 @@ module TOP_MIPS
 
         //ControlMEM
         .o_jal                  (EXMEM_ctl_jal),
-        .o_branch               (EXMEM_ctl_branch),
-        .o_neq_branch           (EXMEM_ctl_neq_branch),
         .o_mem_write            (EXMEM_ctl_mem_write),
         .o_mem_read             (EXMEM_ctl_mem_read),
         .o_datamem_size         (EXMEM_ctl_datomem_size),
@@ -664,16 +607,6 @@ module TOP_MIPS
         .o_lui                  (EXMEM_ctl_lui),
         .o_halt                 (EXMEM_ctl_halt)
     );
-
-    /*and_branch #(
-    )
-    module_and_branch
-    (
-        .i_branch       (EXMEM_ctl_branch),
-        .i_neq_branch   (EXMEM_ctl_neq_branch),
-        .i_zero         (EXMEM_zero_alu),
-        .o_pc_source    (MEM_PC_src_o)
-    );*/
     
     //ETAPA MEM
     MEM #(

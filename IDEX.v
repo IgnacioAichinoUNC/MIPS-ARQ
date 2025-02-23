@@ -10,7 +10,6 @@ module IDEX
         input   wire                        i_clk,
         input   wire                        i_reset,
         input   wire                        i_step,
-        input   wire                        i_flush_latch,
         input   wire    [BITS_SIZE-1:0]     i_pc4,
         input   wire    [BITS_SIZE-1:0]     i_pc8,
         input   wire    [BITS_SIZE-1:0]     i_instruction,
@@ -21,17 +20,13 @@ module IDEX
         input   wire    [BITS_REGS-1:0]     i_rt,
         input   wire    [BITS_REGS-1:0]     i_rd,
         input   wire    [BITS_REGS-1:0]     i_rs,
-        input   wire    [BITS_SIZE-1:0]     i_DJump,
         
         ///ControlEX
         input   wire                        i_reg_dst_rd,
-        input   wire                        i_jump,
         input   wire                        i_jal,
         input   wire                        i_alu_src,
         input   wire    [1:0]               i_unit_alu_op,
         ///ControlMEM
-        input   wire                        i_branch,
-        input   wire                        i_neq_branch,
         input   wire                        i_mem_write,
         input   wire                        i_mem_read ,
         input   wire    [1:0]               i_datomem_size,
@@ -41,7 +36,6 @@ module IDEX
         input   wire    [1:0]               i_data_load_size,
         input   wire                        i_zero_extend,
         input   wire                        i_lui,
-        input   wire                        i_jalR,
         input   wire                        i_halt,
 
         output  wire    [BITS_SIZE-1:0]     o_pc4,
@@ -53,16 +47,13 @@ module IDEX
         output  wire    [BITS_REGS-1:0]     o_rs,
         output  wire    [BITS_REGS-1:0]     o_rt,
         output  wire    [BITS_REGS-1:0]     o_rd,
-       // output  wire    [BITS_SIZE-1:0]     o_DJump,
+
         ///ControlEX
-        output  wire                        o_jump,
         output  wire                        o_jal,
         output  wire                        o_alu_src,
         output  wire    [1:0]               o_unit_alu_op,
         output  wire                        o_register_rd_dst,
         ///ControlMEM
-        output  wire                        o_branch,
-        output  wire                        o_neq_branch,
         output  wire                        o_mem_write,
         output  wire                        o_mem_read ,
         output  wire    [1:0]               o_datamem_size,
@@ -71,8 +62,7 @@ module IDEX
         output  wire                        o_register_write,
         output  wire    [1:0]               o_data_load_size,
         output  wire                        o_zero_extend,
-        output  wire                        o_lui ,
-        output  wire                        o_jalR,
+        output  wire                        o_lui,
         output  wire                        o_halt
     );
 
@@ -85,18 +75,14 @@ module IDEX
     reg     [BITS_REGS-1:0] reg_rs;
     reg     [BITS_REGS-1:0] reg_rt;
     reg     [BITS_REGS-1:0] reg_rd;
-    //reg     [BITS_SIZE-1:0] reg_DJump;
 
     //RegEX
-    reg                     reg_jump;
     reg                     reg_jal ;
     reg                     reg_alu_src;
     reg     [1:0]           reg_unit_alu_op;
     reg                     reg_register_rd;
 
     //RegMEM
-    reg                     reg_branch;
-    reg                     reg_neq_branch;
     reg                     reg_mem_write ;
     reg                     reg_mem_read;
     reg     [1:0]           reg_datamem_size;
@@ -107,7 +93,6 @@ module IDEX
     reg     [1:0]           reg_data_load_size;
     reg                     reg_zero_extend;
     reg                     reg_lui;
-    reg                     reg_jalR;
     reg                     reg_halt;
 
 
@@ -123,19 +108,14 @@ module IDEX
             reg_rs              <=  {BITS_REGS{1'b0}};
             reg_rt              <=  {BITS_REGS{1'b0}};
             reg_rd              <=  {BITS_REGS{1'b0}};
-           // reg_DJump           <=  {BITS_SIZE{1'b0}};
 
             //EX
-            reg_jump            <=  1'b0;
-            reg_jalR            <=  1'b0;
             reg_jal             <=  1'b0;
             reg_alu_src         <=  1'b0;
             reg_unit_alu_op     <=  2'b00;
             reg_register_rd     <=  1'b0;
 
             //M
-            reg_branch          <=  1'b0;
-            reg_neq_branch      <=  1'b0;
             reg_mem_write       <=  1'b0;
             reg_mem_read        <=  1'b0;
             reg_datamem_size    <=  2'b00;
@@ -159,19 +139,14 @@ module IDEX
             reg_rs              <=  i_rs;
             reg_rt              <=  i_rt;
             reg_rd              <=  i_rd;
-           // reg_DJump           <=  i_DJump;
 
             //EX
-            reg_jump            <=  i_jump;
-            reg_jalR            <=  i_jalR;
             reg_jal             <=  i_jal;
             reg_alu_src         <=  i_alu_src;
             reg_unit_alu_op     <=  i_unit_alu_op;
             reg_register_rd     <=  i_reg_dst_rd;
 
             //MEM
-            reg_branch          <=  i_branch;
-            reg_neq_branch      <=  i_neq_branch;
             reg_mem_write       <=  i_mem_write;
             reg_mem_read        <=  i_mem_read;
             reg_datamem_size     <=  i_datomem_size;
@@ -195,19 +170,14 @@ module IDEX
     assign o_rs             =   reg_rs;
     assign o_rt             =   reg_rt;
     assign o_rd             =   reg_rd;
-    //assign o_DJump          =   reg_DJump;
 
     //ControlEX
-    assign o_jump            =   reg_jump;
-    assign o_jalR            =   reg_jalR;
     assign o_jal             =   reg_jal;
     assign o_alu_src         =   reg_alu_src;
     assign o_unit_alu_op     =   reg_unit_alu_op;
     assign o_register_rd_dst =   reg_register_rd ;
 
     //ControlMEM
-    assign o_branch          =   reg_branch;
-    assign o_neq_branch      =   reg_neq_branch;
     assign o_mem_write       =   reg_mem_write;
     assign o_mem_read        =   reg_mem_read;
     assign o_datamem_size    =   reg_datamem_size;
