@@ -31,9 +31,10 @@ module UnitDebug
         input           [BITS_SIZE-1:0]         i_idex_dato_rs,
         input           [BITS_SIZE-1:0]         i_idex_dato_rt,
         input           [BITS_SIZE-1:0]         i_idex_extend,
+        input           [BITS_SIZE-1:0]         i_id_jump,
+        input           [BITS_SIZE-1:0]         i_id_pc_branch,
         input           [BITS_SIZE-1:0]         i_exmem_instruc,
         input           [BITS_SIZE-1:0]         i_exmem_alu_result,
-        input           [BITS_SIZE-1:0]         i_exmem_pcbranch,
         input           [BITS_SIZE-1:0]         i_exmem_dato_rt,
         input           [BITS_SIZE-1:0]         i_exmem_extend,
         input           [BITS_SIZE-1:0]         i_memwb_instruct,
@@ -49,16 +50,14 @@ module UnitDebug
         output          [BITS_REGS-1:0]         o_select_addr_registers,
         output                                  o_flag_instr_write,
         output          [MEM_INST_SIZE_BITS-1:0]o_select_addr_mem_instr,
-        output          [BITS_SIZE-1:0]         o_dato_mem_instruction,
-        output          [3:0]                   o_debug_state
-
+        output          [BITS_SIZE-1:0]         o_dato_mem_instruction
 
     );
 
     localparam IDLE             =   4'b0000;      //estado default
     localparam CONTINUO         =   4'b0010;     //'c' modo continuo para mips
     localparam STEP             =   4'b0001;      //'s' modo step mips
-    localparam DATA_RX_LOAD     =   4'b0011;     //'d' estado data load donde se habilita la carga de instrucciones cuando se tienen los 32 bits por rx
+    localparam DATA_RX_LOAD     =   4'b0011;     //'r' estado data load donde se habilita la carga de instrucciones cuando se tienen los 32 bits por rx
     localparam SEND_DATA_TX     =   4'b0100;      //  envio 8 btis
     localparam WAIT_TX          =   4'b0110;      
     localparam LOAD_DATA_TX     =   4'b0111;      //segun el contador se carga la data para enviar (pc, registros y ciclos)
@@ -74,7 +73,6 @@ module UnitDebug
 
     reg                             reg_ctl_clk_wiz;
     reg     [4:0]                   state, state_next;
-    reg     [3:0]                   debug_state, debug_state_next;
     reg                             uart_rx_reset, uart_rx_reset_next;
     reg     [BITS_SIZE-1:0]         reg_instruccion, reg_instruccion_next;
     reg                             reg_rx_instr_write, reg_rx_instr_write_next;
@@ -111,9 +109,8 @@ module UnitDebug
                 tx_data_32              <= 0;
                 mode                    <= MGMT_STOP;
                 mips_step               <= 0;
-                debug_state             <= 0;
-            end else begin
-                debug_state             <= debug_state_next;
+            end 
+            else begin
                 state                   <= state_next;
                 uart_rx_reset           <= uart_rx_reset_next;
                 reg_instruccion         <= reg_instruccion_next;
@@ -135,7 +132,6 @@ module UnitDebug
     always @*
     begin
         state_next                  <= state;
-        debug_state_next            <= debug_state;
         uart_rx_reset_next          <= uart_rx_reset;
         reg_instruccion_next        <= reg_instruccion;
         reg_rx_counter_bytes_next   <= reg_rx_counter_bytes;
@@ -154,8 +150,6 @@ module UnitDebug
         case (state)
             IDLE:
             begin
-                debug_state_next <= 1;
-
                 if (~i_uart_rx_flag_ready) begin 
                     uart_rx_reset_next  <= 0;
                 end 
@@ -164,7 +158,7 @@ module UnitDebug
                     case(i_uart_rx_data)
                         8'b01100011:    state_next  <= CONTINUO; // c
                         8'b01110011:    state_next  <= STEP;    // s
-                        8'b01100100:    state_next  <= PREPARE_INSTRUCT; //d
+                        8'b01110010:    state_next  <= PREPARE_INSTRUCT; //r
                         default:        state_next  <= IDLE;      
                     endcase
                 end
@@ -179,7 +173,6 @@ module UnitDebug
             end
             STEP:
             begin
-                debug_state_next    <= 2;
                 mode_next           <= MGMT_STEP;
 
                 if( i_halt ) begin
@@ -204,8 +197,6 @@ module UnitDebug
             end
             PREPARE_INSTRUCT:
             begin
-                debug_state_next <= 3;
-
                 if (~i_uart_rx_flag_ready) begin
                     uart_rx_reset_next  <= 0;
                 end 
@@ -218,8 +209,6 @@ module UnitDebug
             end
             DATA_RX_LOAD: //Chequeo si ya tengo los 32 bits por el contador
             begin
-                debug_state_next <= 4;
-                
                 if(reg_rx_counter_bytes == 0) begin
                     reg_rx_instr_write_next     <= 1; //habilita escribir la instruccion
                     state_next                  <= DATA_INSTR;
@@ -230,7 +219,6 @@ module UnitDebug
             end
             DATA_INSTR: 
             begin
-                debug_state_next        <= 5;
                 reg_rx_instr_write_next <= 0; 
 
                 if(reg_instruccion == 32'b11111111111111111111111111111111) begin //instruccion armada HALT se vuelve al inicio
@@ -244,8 +232,6 @@ module UnitDebug
             end
             LOAD_DATA_TX:
             begin
-                debug_state_next <= 6;
-
                 case (reg_tx_selector_data)
                     0: // Envia el dato de PC del MIPS
                     begin
@@ -290,17 +276,18 @@ module UnitDebug
                             6: tx_data_32_next <= i_idex_dato_rs;
                             7: tx_data_32_next <= i_idex_dato_rt;
                             8: tx_data_32_next <= i_idex_extend;
-                            9: tx_data_32_next <= i_exmem_instruc;
-                            10: tx_data_32_next <= i_exmem_alu_result;
-                            11: tx_data_32_next <= i_exmem_pcbranch;
-                            12: tx_data_32_next <= i_exmem_dato_rt;
-                            13: tx_data_32_next <= i_exmem_extend;
-                            14: tx_data_32_next <= i_memwb_instruct;
-                            15: tx_data_32_next <= i_memwb_alu_result;
-                            16: tx_data_32_next <= i_memwb_extend;
-                            17: tx_data_32_next <= i_memwb_datamem;
+                            9: tx_data_32_next <= i_id_jump;
+                            10: tx_data_32_next <= i_exmem_instruc;
+                            11: tx_data_32_next <= i_exmem_alu_result;
+                            12: tx_data_32_next <= i_id_pc_branch;
+                            13: tx_data_32_next <= i_exmem_dato_rt;
+                            14: tx_data_32_next <= i_exmem_extend;
+                            15: tx_data_32_next <= i_memwb_instruct;
+                            16: tx_data_32_next <= i_memwb_alu_result;
+                            17: tx_data_32_next <= i_memwb_extend;
+                            18: tx_data_32_next <= i_memwb_datamem;
 
-                            18: begin
+                            19: begin
                                 reg_tx_selector_data_next <= 0;
                                 state_next <= (mode == MGMT_STEP) ? STEP : IDLE;
                             end
@@ -312,7 +299,7 @@ module UnitDebug
                         endcase
 
                         // Incrementar selector y avanzar estado si no es el caso 18
-                        if (reg_tx_selector_data >= 4 && reg_tx_selector_data < 18) begin
+                        if (reg_tx_selector_data >= 4 && reg_tx_selector_data < 19) begin
                             reg_tx_selector_data_next <= reg_tx_selector_data + 1;
                             state_next <= SEND_DATA_TX;
                         end
@@ -321,7 +308,6 @@ module UnitDebug
             end
             SEND_DATA_TX:
             begin
-                debug_state_next        <= 7;
                 uart_tx_data_next       <= tx_data_32[ BITS_SIZE-1: BITS_SIZE - SIZE_TRAMA];
                 reg_flag_tx_ready_next  <= 1;
 
@@ -333,8 +319,6 @@ module UnitDebug
             end
             WAIT_TX:
             begin
-                debug_state_next <= 8;
-
                 if(i_uart_tx_done) begin
                     if(reg_tx_counter_bytes == 0) begin
                         state_next <= LOAD_DATA_TX;
@@ -361,7 +345,6 @@ module UnitDebug
         endcase
     end
 
-    assign o_debug_state            = debug_state;
     assign o_flag_tx_ready          = reg_flag_tx_ready;
     assign o_uart_tx_data           = uart_tx_data;
     assign o_uart_rx_reset          = uart_rx_reset;

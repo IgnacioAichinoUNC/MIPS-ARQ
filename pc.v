@@ -15,7 +15,7 @@ module pc#
         output  wire    [SIZE_ADDR_PC-1:0]  o_pc_8          
     );
     
-    reg [SIZE_ADDR_PC-1  :0] reg_pc;
+    reg [SIZE_ADDR_PC-1:0] reg_pc = {SIZE_ADDR_PC{1'b0}};
 
     always @(negedge i_clk)
     begin

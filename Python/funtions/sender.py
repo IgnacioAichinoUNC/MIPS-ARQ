@@ -77,14 +77,14 @@ RISC_DICTIONARY = {
 
 def send(file_bin, serial):
 
-    #La D (data) se envia para indicar el estado a la unit debug para cargar
-    serial.write('d'.encode())
+    #La r (RUN) se envia para indicar el estado a la unit debug para cargar
+    serial.write('r'.encode())
 
     time.sleep(0.1)
     with open(file_bin, 'rb') as file:
         data = file.read().replace(b'\r\n', b'')
         num_byte = []
-        for i in track(range(int(len(data)/8)), description="ENVIANDO..."):
+        for i in track(range(int(len(data)/8)), description="Loading program"):
             num = int(data[i*8:(i+1)*8], 2).to_bytes(1, byteorder='big')
             serial.write(num)
             time.sleep(0.05)

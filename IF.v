@@ -12,19 +12,13 @@ module IF #(
 	input   wire    [BITS_SIZE-1:0] i_instruction_address,
 	input   wire    [BITS_SIZE-1:0] i_instruction,
 	input   wire                    i_flag_write_intruc,
-	input   wire                    i_is_jump,
-	input   wire                    i_is_JALR,
-	input   wire                    i_pc_source,
-	input   wire    [BITS_SIZE-1:0] i_suma_branch,
-	input   wire    [BITS_SIZE-1:0] i_suma_jump,
-	input   wire    [BITS_SIZE-1:0] i_rs,
+    input   wire    [BITS_SIZE-1:0] i_mux_pc_o,
 	output  wire    [BITS_SIZE-1:0] o_IF_PC4,
 	output  wire    [BITS_SIZE-1:0] o_IF_PC,
 	output  wire    [BITS_SIZE-1:0] o_instruction,
 	output  wire    [BITS_SIZE-1:0] o_IF_PC8                                
 	                  
 );
-    wire [BITS_SIZE-1:0]  wire_IF_PC;
     wire [BITS_SIZE-1:0]  wire_o_IF_PC;
     wire [BITS_SIZE-1:0]  wire_o_IF_PC4;
 
@@ -42,7 +36,7 @@ module IF #(
         .i_clk              (i_clk),
         .i_reset            (i_reset),
         .i_step             (i_step),
-        .i_mux_pc_o         (wire_IF_PC),
+        .i_mux_pc_o         (i_mux_pc_o),
         .i_pc_write         (i_hazard_pc_write),
         .o_pc               (wire_o_IF_PC),
         .o_pc_4             (wire_o_IF_PC4),
@@ -64,22 +58,6 @@ module IF #(
         .i_instruction          (i_instruction),
         .i_flag_write_intruc    (i_flag_write_intruc),
         .o_instruction          (o_instruction)
-    );
-
-    mux_pc
-    #(
-        .SIZE_ADDR_PC           (BITS_SIZE)
-    )
-    mux_pc_select
-    (
-        .i_is_jump          (i_is_jump),
-        .i_is_JALR          (i_is_JALR),
-        .i_pc_source        (i_pc_source),
-        .i_suma_branch      (i_suma_branch),
-        .i_suma_pc4         (wire_o_IF_PC4),
-        .i_suma_jump        (i_suma_jump),
-        .i_rs               (i_rs),
-        .o_pc               (wire_IF_PC)
     );
 
 endmodule

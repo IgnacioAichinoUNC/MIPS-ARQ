@@ -57,6 +57,7 @@ def send_program_boton():
         messagebox.showerror("Error", "Por favor, ingrese un puerto COM valido.")
         return
 
+    print(f"Console LOG Interactive")
     print(f"Codigo Asm a enviar: {selected_file} - Puerto COM: {serial_port} - Baudios: 9600")
     file_bin = "code.bin"
     sender.create_bin(selected_file, file_bin)
@@ -74,20 +75,24 @@ def send_program_boton():
 
     while True:
         if mode == 'IDLE':
-            console.print("Ingrese el modo que desea ejecutar", style="bold red")
-            console.print("s (STEP) c (CONTINUOUS) e (EXIT)", style="bold blue")
-            input_char = input("Mode: ")
+            console.print("\n\nLa consola permite ejecutar el programa en 2 modos posibles")
+            console.print("Ingrese el modo que desea ejecutar:", style="bold green")
+            console.print("Modo Step by Step ( Ingrese caracter 's' )", style="bold blue")
+            console.print("Modo Continuo ( Ingrese caracter 'c' )", style="bold blue")
+            console.print("Exit ( Ingrese caracter 'e' ) ", style="bold red")
+            input_char = input("Input Mode selector: ")
             previous_data = 0
             mode = cases.get(input_char, default)(ser, input_char)
 
         elif mode == 'STEP':
-            console.print("---------MODO STEP---------", style="bold red")
+            console.print("---------MODO STEP by STEP---------", style="bold blue")
+            console.print("Durante este modo puede indicar cuando avanzar un ciclo de reloj en la ejecucion")
             while input_char != 'e':
-                console.print("Ingrese n (next) para avanzar el ciclo de reloj", style="bold red")
-                input_char = input("input: ")
+                console.print("Ingrese el caracter 'n' NEXT para avanzar", style="bold green")
+                input_char = input("Clock input: ")
                 if input_char == 'n':
                     ser.write(input_char.encode())
-                    data_received, err = receiver.receive_result(ser, 64)
+                    data_received, err = receiver.receive_result(ser, 65)
                     if err == 1:
                         mode = 'IDLE'
                         console.print("Finish Program", style="bold green")
@@ -99,9 +104,10 @@ def send_program_boton():
 
         elif mode == 'CONTINUOUS':
             console.print("---------MODO CONTINUO---------", style="bold red")
+            console.print("Durante este modo se ejecuto el programa hasta su ultima intruccion")
             input_char = 'c'
             ser.write(input_char.encode())
-            data_received, err = receiver.receive_result(ser, 64)
+            data_received, err = receiver.receive_result(ser, 65)
             printer.print_data_continuo(data_received, registers_bank_print, memory_data_print)
             mode = 'IDLE'
 
