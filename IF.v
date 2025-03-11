@@ -31,7 +31,7 @@ module IF #(
    #(
         .SIZE_ADDR_PC       (BITS_SIZE)
     )
-    program_counter_strike
+    program_counter
     (
         .i_clk              (i_clk),
         .i_reset            (i_reset),
